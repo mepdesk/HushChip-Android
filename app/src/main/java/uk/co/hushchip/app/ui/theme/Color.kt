@@ -2,41 +2,53 @@ package uk.co.hushchip.app.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+object HushColors {
+    val bg            = Color(0xFF09090B)
+    val bgRaised      = Color(0xFF0E0E10)
+    val bgSurface     = Color(0xFF111113)
+    val border        = Color(0xFF1A1A1E)
+    val borderHover   = Color(0xFF28282E)
+    val textGhost     = Color(0xFF38383E)
+    val textFaint     = Color(0xFF5A5A64)
+    val textMuted     = Color(0xFF8A8A96)
+    val textBody      = Color(0xFFA8A8B4)
+    val textBright    = Color(0xFFCDCDD6)
+    val textWhite     = Color(0xFFE4E4EC)
+    val danger        = Color(0xFFC45555)
+    val dangerBorder  = Color(0xFF3D2020)
+    val dangerBg      = Color(0x26C45555)
+}
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+// Keep old names as aliases temporarily so the build doesn't break.
+// These will be removed once all components are updated.
+val HushButtonBlue = HushColors.borderHover
+val HushButtonPurple = HushColors.bg
+val SatoButtonBlue = HushColors.borderHover
+val SatoGradientPurple = HushColors.bgRaised
+val SatoButtonPurple = HushColors.bg
+val SatoGradientPurpleLight = HushColors.textFaint
+val SatoGray = HushColors.textBody
+val SatoLightGrey = HushColors.textMuted
+val SatoDarkPurple = HushColors.bg
+val SatoLightPurple = HushColors.borderHover
+val SatoDividerPurple = HushColors.border
+val SatoCardPurple = HushColors.bgRaised
+val SatoToggleGray = HushColors.textMuted
+val SatoToggleBlack = HushColors.bg
+val SatoGreen = HushColors.textMuted
+val SatoPurple = HushColors.bg
+val SatoDarkGray = HushColors.textFaint
+val SatoActiveTracer = HushColors.textMuted
+val SatoInactiveTracer = HushColors.textFaint
+val SatoToggled = HushColors.borderHover
+val SatoChecked = HushColors.textFaint
+val SatoChecker = HushColors.textMuted
+val SatoNfcBlue = HushColors.textMuted
 
-//todo: generalise naming.
-val HushButtonBlue = Color(0xFF525684)
-val SatoGradientPurple = Color(0xFF513C68)
-val HushButtonPurple = Color(0xFF3B2055)
-val SatoGradientPurpleLight = Color(0xFF8C42CF)
-val SatoGray = Color(0xFFD9C7EB)
-val SatoLightGrey = Color(0xFFC6C6C6)
-
-// MENU
-val SatoDarkPurple = Color(0xFF2D2F46)
-val SatoLightPurple = Color(0xFF485979)
-val SatoDividerPurple = Color(0xFF585D72) //for generate as well
-val SatoCardPurple = Color(0xFF3A374F)
-
-// SETTINGS
-val SatoToggleGray = Color(0xFFABADB0)
-val SatoToggleBlack = Color(0xFF292B3D)
-val SatoGreen = Color(0xFF24B59B)
-
-// GENERATE
-val SatoPurple = Color(0xFF3B2055)
-val SatoDarkGray = Color(0xFF594D53)
-val SatoActiveTracer = Color(0xFF8E8E93)
-val SatoInactiveTracer = Color(0xFF785467)
-val SatoToggled = Color(0xFF3C3C43)
-val SatoChecked = Color(0xFF594D53)
-val SatoChecker = Color(0xFF956B80)
-
-// NFC scann
-val SatoNfcBlue = Color(0xFF007aff)
+// Standard Material colors (unused but keep for compilation)
+val Purple80 = HushColors.textFaint
+val PurpleGrey80 = HushColors.textFaint
+val Pink80 = HushColors.textFaint
+val Purple40 = HushColors.textFaint
+val PurpleGrey40 = HushColors.textFaint
+val Pink40 = HushColors.textFaint

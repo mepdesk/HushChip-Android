@@ -89,7 +89,7 @@ fun HomeHeaderRow(
             },
         ) {
             Image(
-                painter = painterResource(R.drawable.ic_sato_small),
+                painter = painterResource(R.drawable.ic_launcher_foreground),
                 contentDescription = "logo",
                 modifier = Modifier
                     .size(45.dp),

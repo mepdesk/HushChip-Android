@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,6 +28,7 @@ import uk.co.hushchip.app.ui.components.shared.StepCircles
 import uk.co.hushchip.app.ui.components.shared.WelcomeViewTitle
 import uk.co.hushchip.app.ui.theme.HushButtonBlue
 import uk.co.hushchip.app.ui.theme.HushButtonPurple
+import uk.co.hushchip.app.ui.theme.HushColors
 
 @Composable
 fun WelcomeView(
@@ -46,7 +46,7 @@ fun WelcomeView(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.primary)
+            .background(HushColors.bg)
             .pointerInput(Unit) {
                 detectHorizontalDragGestures { change, dragAmount ->
                     when {
@@ -62,14 +62,6 @@ fun WelcomeView(
                 }
             }
     ) {
-        Image(
-            painter = painterResource(R.drawable.seedkeeper_background_welcome),
-            contentDescription = null,
-            modifier = Modifier
-                .fillMaxSize()
-                .align(Alignment.BottomCenter),
-            contentScale = ContentScale.FillBounds
-        )
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier

@@ -92,15 +92,6 @@ fun CardAuthenticity(
                 .padding(horizontal = 16.dp)
         ) {
             WelcomeViewTitle()
-            Image(
-                painter = painterResource(id = R.drawable.ic_sato_small),
-                contentDescription = null,
-                modifier = Modifier
-                    .padding(10.dp)
-                    .height(150.dp),
-                contentScale = ContentScale.FillHeight,
-                colorFilter = ColorFilter.tint(logoColor.value)
-            )
             CardAuthenticityTextBox(
                 cardAuthTitle = stringResource(cardAuthTitle.value),
                 cardAuthText = stringResource(cardAuthText.value),
