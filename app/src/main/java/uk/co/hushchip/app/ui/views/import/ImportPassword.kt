@@ -32,15 +32,15 @@ import uk.co.hushchip.app.data.AppErrorMsg
 import uk.co.hushchip.app.data.SecretData
 import uk.co.hushchip.app.data.NfcActionType
 import uk.co.hushchip.app.data.PasswordOptions
-import uk.co.hushchip.app.data.SeedkeeperPreferences
+import uk.co.hushchip.app.data.HushChipPreferences
 import uk.co.hushchip.app.ui.components.import.InputField
 import uk.co.hushchip.app.ui.components.import.PasswordOptionsBox
 import uk.co.hushchip.app.ui.components.import.SecretTextField
 import uk.co.hushchip.app.ui.components.home.NfcDialog
 import uk.co.hushchip.app.ui.components.shared.PopUpDialog
-import uk.co.hushchip.app.ui.components.shared.SatoButton
+import uk.co.hushchip.app.ui.components.shared.HushButton
 import uk.co.hushchip.app.ui.components.shared.TitleTextField
-import uk.co.hushchip.app.ui.theme.SatoButtonPurple
+import uk.co.hushchip.app.ui.theme.HushButtonPurple
 import uk.co.hushchip.app.ui.theme.SatoPurple
 import uk.co.hushchip.app.utils.isClickable
 import uk.co.hushchip.app.viewmodels.SharedViewModel
@@ -96,7 +96,7 @@ fun ImportPassword(
         mutableStateOf<Set<String>>(emptySet())
     }
     retrievedSet.value = settings.getStringSet(
-        SeedkeeperPreferences.USED_LOGINS.name,
+        HushChipPreferences.USED_LOGINS.name,
         emptySet()
     ) ?: emptySet()
 
@@ -108,15 +108,15 @@ fun ImportPassword(
             list = retrievedSet.value.toList(),
             onClick = { email ->
                 val currentSet =
-                    settings.getStringSet(SeedkeeperPreferences.USED_LOGINS.name, emptySet())
+                    settings.getStringSet(HushChipPreferences.USED_LOGINS.name, emptySet())
                         ?.toMutableSet() ?: mutableSetOf()
                 if (currentSet.remove(email)) {
                     settings.edit()
-                        .putStringSet(SeedkeeperPreferences.USED_LOGINS.name, currentSet)
+                        .putStringSet(HushChipPreferences.USED_LOGINS.name, currentSet)
                         .apply()
                 }
                 retrievedSet.value = settings.getStringSet(
-                    SeedkeeperPreferences.USED_LOGINS.name,
+                    HushChipPreferences.USED_LOGINS.name,
                     emptySet()
                 ) ?: emptySet()
                 if (retrievedSet.value.isEmpty()) {
@@ -240,7 +240,7 @@ fun ImportPassword(
 
             // generate button
             if (importMode == ImportMode.GENERATE_A_SECRET) {
-                SatoButton(
+                HushButton(
                     modifier = Modifier
                         .weight(1f),
                     onClick = {
@@ -253,7 +253,7 @@ fun ImportPassword(
                         {
                             appError.value = AppErrorMsg.NO_CHAR_SELECTED
                             showError.value = true
-                            return@SatoButton
+                            return@HushButton
                         } else {
                             showError.value = false
                         }
@@ -271,39 +271,39 @@ fun ImportPassword(
             }
 
             //Import
-            SatoButton(
+            HushButton(
                 modifier = Modifier,
                 onClick = {
                     //check inputs
                     if (curValueLabel.value.isEmpty()){
                         appError.value = AppErrorMsg.LABEL_EMPTY
                         showError.value = true
-                        return@SatoButton
+                        return@HushButton
                     }
                     if (curValueLabel.value.toByteArray(Charsets.UTF_8).size > 127){
                         appError.value = AppErrorMsg.LABEL_TOO_LONG
                         showError.value = true
-                        return@SatoButton
+                        return@HushButton
                     }
                     if (secret.value.isEmpty()){
                         appError.value = AppErrorMsg.PASSWORD_EMPTY
                         showError.value = true
-                        return@SatoButton
+                        return@HushButton
                     }
                     if (secret.value.toByteArray(Charsets.UTF_8).size > 255){
                         appError.value = AppErrorMsg.PASSWORD_TOO_LONG
                         showError.value = true
-                        return@SatoButton
+                        return@HushButton
                     }
                     if (curValueLogin.value.toByteArray(Charsets.UTF_8).size > 255){
                         appError.value = AppErrorMsg.LOGIN_TOO_LONG
                         showError.value = true
-                        return@SatoButton
+                        return@HushButton
                     }
                     if (curValueUrl.value.toByteArray(Charsets.UTF_8).size > 255){
                         appError.value = AppErrorMsg.URL_TOO_LONG
                         showError.value = true
-                        return@SatoButton
+                        return@HushButton
                     }
 
                     val secretData = SecretData(
@@ -320,7 +320,7 @@ fun ImportPassword(
                         if (payloadBytes.size > 255){
                             appError.value = AppErrorMsg.SECRET_TOO_LONG_FOR_V1
                             showError.value = true
-                            return@SatoButton
+                            return@HushButton
                         }
                     }
 
@@ -336,7 +336,7 @@ fun ImportPassword(
                         val stringSet = listOf(curValueLogin.value).toSet()
                         retrievedSet.value += stringSet
                         settings.edit().putStringSet(
-                            SeedkeeperPreferences.USED_LOGINS.name,
+                            HushChipPreferences.USED_LOGINS.name,
                             retrievedSet.value
                         ).apply()
                     }
@@ -347,7 +347,7 @@ fun ImportPassword(
                         secret,
                         curValueLabel
                     )
-                ) SatoButtonPurple else SatoButtonPurple.copy(alpha = 0.6f),
+                ) HushButtonPurple else HushButtonPurple.copy(alpha = 0.6f),
             ) // import button
         } // Row
     }

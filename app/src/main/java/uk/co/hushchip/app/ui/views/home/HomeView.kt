@@ -18,7 +18,7 @@ import uk.co.hushchip.app.data.NfcResultCode
 import uk.co.hushchip.app.data.PinCodeAction
 import uk.co.hushchip.app.ui.components.home.HomeHeaderRow
 import uk.co.hushchip.app.ui.components.home.SatoGradientButton
-import uk.co.hushchip.app.ui.components.home.SatoRoundButton
+import uk.co.hushchip.app.ui.components.home.HushRoundButton
 import uk.co.hushchip.app.utils.webviewActivityIntent
 import uk.co.hushchip.app.viewmodels.SharedViewModel
 
@@ -60,7 +60,7 @@ fun HomeView(
                 )
             } else {
                 // SCAN BUTTON
-                SatoRoundButton(
+                HushRoundButton(
                     text = R.string.scan
                 ) {
                     viewModel.setResultCodeLiveTo(NfcResultCode.NONE)

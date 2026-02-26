@@ -27,11 +27,11 @@ import uk.co.hushchip.app.R
 import uk.co.hushchip.app.data.FactoryResetStatus
 import uk.co.hushchip.app.data.NfcActionType
 import uk.co.hushchip.app.data.NfcResultCode
-import uk.co.hushchip.app.services.SatoLog
+import uk.co.hushchip.app.services.HushLog
 import uk.co.hushchip.app.ui.components.home.NfcDialog
 import uk.co.hushchip.app.ui.components.settings.CardResetButton
 import uk.co.hushchip.app.ui.components.settings.ResetCardTextField
-import uk.co.hushchip.app.ui.components.shared.SatoButton
+import uk.co.hushchip.app.ui.components.shared.HushButton
 import uk.co.hushchip.app.viewmodels.SharedViewModel
 
 @Composable
@@ -68,7 +68,7 @@ fun FactoryResetReady(
             factoryResetStatus.value == FactoryResetStatus.RESET_READY)
         {
             steps.value = viewModel.resultCodeLive.triesLeft ?: 0
-            SatoLog.e("FactoryResetReady", "Remaining steps: ${steps.value}")
+            HushLog.e("FactoryResetReady", "Remaining steps: ${steps.value}")
         }
     }
 
@@ -109,7 +109,7 @@ fun FactoryResetReady(
             containerColor = Color.Red,
         )
         Spacer(modifier = Modifier.height(12.dp))
-        SatoButton(
+        HushButton(
             modifier = Modifier
                 .padding(
                     horizontal = 6.dp

@@ -4,14 +4,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import uk.co.hushchip.app.R
 import uk.co.hushchip.app.data.BackupStatus
-import uk.co.hushchip.app.ui.components.shared.SatoButton
+import uk.co.hushchip.app.ui.components.shared.HushButton
 
 @Composable
 fun MainBackupButton(
     backupStatus: MutableState<BackupStatus>,
     onClick: () -> Unit
 ) {
-    SatoButton(
+    HushButton(
         onClick = {
             onClick()
         },

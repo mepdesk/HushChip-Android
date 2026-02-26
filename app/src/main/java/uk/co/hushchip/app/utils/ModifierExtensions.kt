@@ -17,7 +17,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 
 enum class ButtonState { Pressed, Idle }
 
-fun Modifier.satoClickEffect(onClick: () -> Unit, size: Float = 0.85f) = composed {
+fun Modifier.hushClickEffect(onClick: () -> Unit, size: Float = 0.85f) = composed {
     var buttonState by remember { mutableStateOf(ButtonState.Idle) }
     val scale by animateFloatAsState(if (buttonState == ButtonState.Pressed) size else 1f)
     this

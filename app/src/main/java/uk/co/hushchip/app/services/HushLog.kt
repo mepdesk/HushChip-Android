@@ -4,7 +4,7 @@ import android.util.Log
 import uk.co.hushchip.app.data.LogItem
 import java.util.logging.Level
 
-object SatoLog {
+object HushLog {
     var logList = mutableListOf<LogItem>()
     var isDebugModeActivated = false
 

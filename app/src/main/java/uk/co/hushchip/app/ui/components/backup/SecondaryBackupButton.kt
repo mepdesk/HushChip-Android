@@ -5,14 +5,14 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.graphics.Color
 import uk.co.hushchip.app.R
 import uk.co.hushchip.app.data.BackupStatus
-import uk.co.hushchip.app.ui.components.shared.SatoButton
+import uk.co.hushchip.app.ui.components.shared.HushButton
 
 @Composable
 fun SecondaryBackupButton(
     backupStatus: MutableState<BackupStatus>,
     goBack: () -> Unit,
 ) {
-    SatoButton(
+    HushButton(
         onClick = {
             goBack()
         },

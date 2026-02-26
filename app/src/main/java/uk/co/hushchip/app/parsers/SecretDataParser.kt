@@ -4,7 +4,7 @@ import org.bitcoinj.crypto.MnemonicCode
 import org.satochip.client.seedkeeper.SeedkeeperSecretObject
 import org.satochip.client.seedkeeper.SeedkeeperSecretType
 import uk.co.hushchip.app.data.SecretData
-import uk.co.hushchip.app.services.SatoLog
+import uk.co.hushchip.app.services.HushLog
 import uk.co.hushchip.app.utils.bytesToHex
 import uk.co.hushchip.app.utils.countWords
 import java.nio.ByteBuffer
@@ -47,14 +47,14 @@ class SecretDataParser {
         var index = 0
 
         if (bytes.isEmpty()) {
-            SatoLog.e(TAG, "Byte array is empty")
+            HushLog.e(TAG, "Byte array is empty")
             return null
         }
         val masterseedSize = bytes[index].toUByte().toInt()
         index++
 
         if (masterseedSize < 0 || index + masterseedSize > bytes.size) {
-            SatoLog.e(TAG, "Invalid masterseedSize")
+            HushLog.e(TAG, "Invalid masterseedSize")
             return null
         }
         val masterseedBytes = bytes.copyOfRange(index, index + masterseedSize) // not used currently
@@ -65,7 +65,7 @@ class SecretDataParser {
         index++
 
         if (entropySize < 0 || index + entropySize > bytes.size) {
-            SatoLog.e(TAG, "Invalid mnemonic size")
+            HushLog.e(TAG, "Invalid mnemonic size")
             return null
         }
         val entropyBytes = bytes.copyOfRange(index, index + entropySize)
@@ -82,7 +82,7 @@ class SecretDataParser {
                 index += passphraseSize
                 passphrase = String(passphraseBytes, Charsets.UTF_8)
                 if (passphrase.isEmpty()) {
-                    SatoLog.e(TAG, "Passphrase bytes conversion to string failed")
+                    HushLog.e(TAG, "Passphrase bytes conversion to string failed")
                     passphrase = "Passphrase bytes conversion to string failed"
                 }
             }
@@ -97,7 +97,7 @@ class SecretDataParser {
                 val descriptorBytes = bytes.copyOfRange(index, index + descriptorSize)
                 descriptor = String(descriptorBytes, Charsets.UTF_8)
                 if (descriptor.isEmpty()) {
-                    SatoLog.e(TAG, "Descriptor bytes conversion to string failed")
+                    HushLog.e(TAG, "Descriptor bytes conversion to string failed")
                     descriptor = "Descriptor bytes conversion to string failed"
                 }
             }
@@ -118,20 +118,20 @@ class SecretDataParser {
         var index = 0
 
         if (bytes.isEmpty()) {
-            SatoLog.e(TAG, "Byte array is empty")
+            HushLog.e(TAG, "Byte array is empty")
             return null
         }
         val mnemonicSize = bytes[index].toUByte().toInt()
         index += 1
         if (mnemonicSize < 0 || index + mnemonicSize > bytes.size) {
-            SatoLog.e(TAG, "Invalid mnemonic size")
+            HushLog.e(TAG, "Invalid mnemonic size")
             return null
         }
         val mnemonicBytes = bytes.copyOfRange(index, index + mnemonicSize)
         index += mnemonicSize
         val mnemonic = String(mnemonicBytes, Charsets.UTF_8)
         if (mnemonic.isEmpty()) {
-            SatoLog.e(TAG, "Mnemonic bytes conversion to string failed")
+            HushLog.e(TAG, "Mnemonic bytes conversion to string failed")
             return null
         }
 
@@ -162,13 +162,13 @@ class SecretDataParser {
         val descriptorSize = ByteBuffer.wrap(descriptorSizeArray).short
         index += 2
         if (index + descriptorSize > bytes.size) {
-            SatoLog.e(TAG, "Invalid descriptor size")
+            HushLog.e(TAG, "Invalid descriptor size")
             return null
         }
         val descriptorBytes = bytes.copyOfRange(index, index + descriptorSize)
         var descriptor = String(descriptorBytes, Charsets.UTF_8)
         if (descriptor.isEmpty()) {
-            SatoLog.e(TAG, "Descriptor bytes conversion to string failed")
+            HushLog.e(TAG, "Descriptor bytes conversion to string failed")
             descriptor = "Descriptor bytes conversion to string failed"
         }
         return SecretData(
@@ -186,13 +186,13 @@ class SecretDataParser {
         val dataSize = ByteBuffer.wrap(dataSizeArray).short
         index += 2
         if (index + dataSize > bytes.size) {
-            SatoLog.e(TAG, "Invalid data size")
+            HushLog.e(TAG, "Invalid data size")
             return null
         }
         val dataBytes = bytes.copyOfRange(index, index + dataSize)
         var data = String(dataBytes, Charsets.UTF_8)
         if (data.isEmpty()) {
-            SatoLog.e(TAG, "Data bytes conversion to string failed")
+            HushLog.e(TAG, "Data bytes conversion to string failed")
             data = "Data bytes conversion to string failed" //TODO: return hex value
         }
         return SecretData(
@@ -209,14 +209,14 @@ class SecretDataParser {
         val passwordSize = bytes[index].toInt()
         index += 1
         if (index + passwordSize > bytes.size) {
-            SatoLog.e(TAG, "Invalid password size")
+            HushLog.e(TAG, "Invalid password size")
             return null
         }
         val passwordBytes = bytes.copyOfRange(index, index + passwordSize)
         index += passwordSize
         val password = String(passwordBytes, Charsets.UTF_8)
         if (password.isEmpty()) {
-            SatoLog.e(TAG, "Password bytes conversion to string failed")
+            HushLog.e(TAG, "Password bytes conversion to string failed")
             return null
         }
 
@@ -255,7 +255,7 @@ class SecretDataParser {
     private fun parseMasterseed(bytes: ByteArray): SecretData? {
         val masterseedSize = bytes[0].toInt()
         if (1 + masterseedSize > bytes.size) {
-            SatoLog.e(TAG, "Invalid masterseed size")
+            HushLog.e(TAG, "Invalid masterseed size")
             return null
         }
         val masterseedBytes = bytes.copyOfRange(1, 1 + masterseedSize)
@@ -272,7 +272,7 @@ class SecretDataParser {
     private fun parsePubkey(bytes: ByteArray): SecretData? {
         val pubkeySize = bytes[0].toInt()
         if (1 + pubkeySize > bytes.size) {
-            SatoLog.e(TAG, "Invalid pubkey size")
+            HushLog.e(TAG, "Invalid pubkey size")
             return null
         }
         val pubkeyBytes = bytes.copyOfRange(1, 1 + pubkeySize)
@@ -289,7 +289,7 @@ class SecretDataParser {
     private fun parseGeneralData(bytes: ByteArray): SecretData? {
         val secretSize = bytes[0].toInt()
         if (1 + secretSize > bytes.size) {
-            SatoLog.e(TAG, "Invalid secret size")
+            HushLog.e(TAG, "Invalid secret size")
             return null
         }
         val secretBytes = bytes.copyOfRange(1, 1 + secretSize)

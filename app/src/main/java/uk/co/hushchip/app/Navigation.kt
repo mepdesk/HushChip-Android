@@ -18,8 +18,8 @@ import kotlinx.serialization.Serializable
 import uk.co.hushchip.app.data.ImportMode
 import uk.co.hushchip.app.data.NfcResultCode
 import uk.co.hushchip.app.data.PinCodeAction
-import uk.co.hushchip.app.data.SeedkeeperPreferences
-import uk.co.hushchip.app.services.SatoLog
+import uk.co.hushchip.app.data.HushChipPreferences
+import uk.co.hushchip.app.services.HushLog
 import uk.co.hushchip.app.ui.components.home.NfcDialog
 import uk.co.hushchip.app.ui.theme.SatoGray
 import uk.co.hushchip.app.ui.views.addsecret.AddSecretView
@@ -51,12 +51,12 @@ fun Navigation(
     val navController = rememberNavController()
     val settings = context.getSharedPreferences("seedkeeper", Context.MODE_PRIVATE)
     val debugMode = remember {
-        mutableStateOf(settings.getBoolean(SeedkeeperPreferences.DEBUG_MODE.name, false))
+        mutableStateOf(settings.getBoolean(HushChipPreferences.DEBUG_MODE.name, false))
     }
-    SatoLog.isDebugModeActivated = debugMode.value
+    HushLog.isDebugModeActivated = debugMode.value
     val startDestination =
-        if (settings.getBoolean(SeedkeeperPreferences.FIRST_TIME_LAUNCH.name, true)) {
-            settings.edit().putBoolean(SeedkeeperPreferences.FIRST_TIME_LAUNCH.name, false).apply()
+        if (settings.getBoolean(HushChipPreferences.FIRST_TIME_LAUNCH.name, true)) {
+            settings.edit().putBoolean(HushChipPreferences.FIRST_TIME_LAUNCH.name, false).apply()
             FirstWelcomeView
         } else {
             HomeView
@@ -74,7 +74,7 @@ fun Navigation(
 
     // FIRST TIME SETUP
     if (viewModel.resultCodeLive == NfcResultCode.REQUIRE_SETUP) {
-        SatoLog.d(TAG, "Navigation: Card needs to be setup!")
+        HushLog.d(TAG, "Navigation: Card needs to be setup!")
         navController.navigate(
             PinEntryView(
                 pinCodeAction = PinCodeAction.SETUP_PIN_CODE.name,
@@ -82,7 +82,7 @@ fun Navigation(
             )
         )
     } else if (viewModel.resultCodeLive == NfcResultCode.REQUIRE_SETUP_FOR_BACKUP) {
-        SatoLog.d(TAG, "Navigation: Card needs to be setup!")
+        HushLog.d(TAG, "Navigation: Card needs to be setup!")
         navController.navigate(
             PinEntryView(
                 pinCodeAction = PinCodeAction.SETUP_PIN_CODE.name,

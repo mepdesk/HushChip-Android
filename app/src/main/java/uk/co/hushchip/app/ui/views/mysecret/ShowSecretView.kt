@@ -41,11 +41,11 @@ import uk.co.hushchip.app.parsers.SecretDataParser
 import uk.co.hushchip.app.ui.components.import.SecretTextField
 import uk.co.hushchip.app.ui.components.home.NfcDialog
 import uk.co.hushchip.app.ui.components.mysecret.GetSpecificSecretInfoFields
-import uk.co.hushchip.app.ui.components.mysecret.NewSeedkeeperPopUpDialog
+import uk.co.hushchip.app.ui.components.mysecret.NewCardPopUpDialog
 import uk.co.hushchip.app.ui.components.mysecret.SecretInfoField
 import uk.co.hushchip.app.ui.components.shared.HeaderAlternateRow
-import uk.co.hushchip.app.ui.components.shared.SatoButton
-import uk.co.hushchip.app.ui.theme.SatoButtonPurple
+import uk.co.hushchip.app.ui.components.shared.HushButton
+import uk.co.hushchip.app.ui.theme.HushButtonPurple
 import uk.co.hushchip.app.utils.webviewActivityIntent
 import uk.co.hushchip.app.viewmodels.SharedViewModel
 
@@ -74,7 +74,7 @@ fun ShowSecretView(
         mutableStateOf(false)
     }
     if (isPopUpOpened.value) {
-        NewSeedkeeperPopUpDialog(
+        NewCardPopUpDialog(
             isOpen = isPopUpOpened,
             title = R.string.buySeedkeeper,
             onClick = {
@@ -329,7 +329,7 @@ fun ShowSecretView(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     // delete button
-                    SatoButton(
+                    HushButton(
                         modifier = Modifier.weight(1f),
                         onClick = {
                             if (viewModel.getProtocolVersionInt() == 1) {
@@ -350,11 +350,11 @@ fun ShowSecretView(
                         },
                         text = R.string.deleteSecret,
                         image = R.drawable.delete_icon,
-                        buttonColor = if (viewModel.getProtocolVersionInt() == 1) SatoButtonPurple.copy(alpha = 0.6f) else SatoButtonPurple,
+                        buttonColor = if (viewModel.getProtocolVersionInt() == 1) HushButtonPurple.copy(alpha = 0.6f) else HushButtonPurple,
                         horizontalPadding = 1.dp
                     )
                     // Reveal button
-                    SatoButton(
+                    HushButton(
                         modifier = Modifier.weight(1f),
                         onClick = {
                             if (secret.value?.exportRights == SeedkeeperExportRights.EXPORT_ENCRYPTED_ONLY.value.toInt()) {

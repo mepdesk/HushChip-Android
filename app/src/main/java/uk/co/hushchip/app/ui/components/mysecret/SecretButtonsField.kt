@@ -11,8 +11,8 @@ import androidx.compose.ui.unit.dp
 import org.satochip.client.seedkeeper.SeedkeeperSecretType
 import uk.co.hushchip.app.R
 import uk.co.hushchip.app.data.MySecretStatus
-import uk.co.hushchip.app.ui.components.shared.SatoButton
-import uk.co.hushchip.app.ui.theme.SatoButtonPurple
+import uk.co.hushchip.app.ui.components.shared.HushButton
+import uk.co.hushchip.app.ui.theme.HushButtonPurple
 
 @Composable
 fun SecretButtonsField(
@@ -32,7 +32,7 @@ fun SecretButtonsField(
         when (secretType) {
             SeedkeeperSecretType.MASTERSEED, SeedkeeperSecretType.BIP39_MNEMONIC, SeedkeeperSecretType.ELECTRUM_MNEMONIC  -> {
                 if (subType != 0 || secretType != SeedkeeperSecretType.MASTERSEED) {
-                    SatoButton(
+                    HushButton(
                         modifier = Modifier.weight(1f),
                         onClick = {
                             mySecretStatus.value = MySecretStatus.SEED
@@ -41,7 +41,7 @@ fun SecretButtonsField(
                         image = R.drawable.seed_icon,
                         horizontalPadding = 1.dp
                     )
-                    SatoButton(
+                    HushButton(
                         modifier = Modifier.weight(1f),
                         onClick = {
                             onClick()
@@ -52,7 +52,7 @@ fun SecretButtonsField(
                         text = R.string.seedQR,
                         image = R.drawable.seedqr_icon,
                         horizontalPadding = 1.dp,
-                        buttonColor = if (isSecretShown.value) SatoButtonPurple else SatoButtonPurple.copy(alpha = 0.6f)
+                        buttonColor = if (isSecretShown.value) HushButtonPurple else HushButtonPurple.copy(alpha = 0.6f)
                     )
                 }
             }

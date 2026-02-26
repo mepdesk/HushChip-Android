@@ -33,10 +33,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import uk.co.hushchip.app.R
-import uk.co.hushchip.app.services.SatoLog
+import uk.co.hushchip.app.services.HushLog
 import uk.co.hushchip.app.ui.components.shared.GifImage
 import uk.co.hushchip.app.ui.components.shared.HeaderAlternateRow
-import uk.co.hushchip.app.utils.satoClickEffect
+import uk.co.hushchip.app.utils.hushClickEffect
 import uk.co.hushchip.app.viewmodels.SharedViewModel
 
 private const val TAG = "ShowLogsView"
@@ -84,7 +84,7 @@ fun ShowLogsView(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = stringResource(id = R.string.logsEntriesnumber) + " ${SatoLog.logList.size} ",
+                    text = stringResource(id = R.string.logsEntriesnumber) + " ${HushLog.logList.size} ",
                     style = TextStyle(
                         color = Color.Black,
                         fontSize = 16.sp,
@@ -96,10 +96,10 @@ fun ShowLogsView(
                 GifImage(
                     modifier = Modifier
                         .size(16.dp)
-                        .satoClickEffect(
+                        .hushClickEffect(
                             onClick = {
                                 var logsText = ""
-                                for (log in SatoLog.logList) {
+                                for (log in HushLog.logList) {
                                     val logString =
                                         "${log.date}; ${log.level.name}; ${log.tag}; ${log.msg} \n"
                                     logsText = logsText + logString
@@ -113,7 +113,7 @@ fun ShowLogsView(
                 )
             }
             Spacer(modifier = Modifier.height(35.dp))
-            SatoLog.logList.forEach { log ->
+            HushLog.logList.forEach { log ->
                 Column(
                     modifier = Modifier
                         .fillMaxWidth(),

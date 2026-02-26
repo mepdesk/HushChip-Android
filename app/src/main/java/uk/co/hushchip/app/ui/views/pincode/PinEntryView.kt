@@ -30,11 +30,11 @@ import uk.co.hushchip.app.data.AppErrorMsg
 import uk.co.hushchip.app.data.NfcActionType
 import uk.co.hushchip.app.data.NfcResultCode
 import uk.co.hushchip.app.data.PinCodeAction
-import uk.co.hushchip.app.services.SatoLog
+import uk.co.hushchip.app.services.HushLog
 import uk.co.hushchip.app.ui.components.home.NfcDialog
 import uk.co.hushchip.app.ui.components.shared.HeaderAlternateRow
 import uk.co.hushchip.app.ui.components.shared.InputPinField
-import uk.co.hushchip.app.ui.components.shared.SatoButton
+import uk.co.hushchip.app.ui.components.shared.HushButton
 import uk.co.hushchip.app.viewmodels.SharedViewModel
 
 @Composable
@@ -46,7 +46,7 @@ fun PinEntryView(
     isBackupCard: Boolean,
 ) {
     LaunchedEffect(viewModel.resultCodeLive) {
-        SatoLog.d("PinEntryView", "LaunchedEffect resultCodeLive: ${viewModel.resultCodeLive}")
+        HushLog.d("PinEntryView", "LaunchedEffect resultCodeLive: ${viewModel.resultCodeLive}")
 
         when(pinCodeAction){
             PinCodeAction.ENTER_PIN_CODE -> {
@@ -284,14 +284,14 @@ fun PinEntryView(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                SatoButton(
+                HushButton(
                     modifier = Modifier,
                     text = buttonText.value,
                     onClick = {
                         // update state
                         when (pinCodeAction) {
                             PinCodeAction.ENTER_PIN_CODE -> {
-                                if (!checkPinFormat(pin = curPinValue.value)){ return@SatoButton }
+                                if (!checkPinFormat(pin = curPinValue.value)){ return@HushButton }
                                 viewModel.setPinStringForCard(pinString = curPinValue.value, isBackupCard = isBackupCard)
                                 showNfcDialog.value = true // NfcDialog
                                 viewModel.scanCardForAction(
@@ -303,16 +303,16 @@ fun PinEntryView(
                             PinCodeAction.SETUP_PIN_CODE -> {
                                 when (pinCodeStatus.value){
                                     PinCodeAction.SETUP_PIN_CODE -> {
-                                        if (!checkPinFormat(pin = curSetupPinValue.value)){ return@SatoButton }
+                                        if (!checkPinFormat(pin = curSetupPinValue.value)){ return@HushButton }
                                        pinCodeStatus.value = PinCodeAction.CONFIRM_PIN_CODE
                                     }
                                     PinCodeAction.CONFIRM_PIN_CODE -> {
-                                        if (!checkPinFormat(pin = curConfirmPinValue.value)){ return@SatoButton }
+                                        if (!checkPinFormat(pin = curConfirmPinValue.value)){ return@HushButton }
                                         // check that pins match
                                         if (curSetupPinValue.value != curConfirmPinValue.value) {
                                             appError.value = AppErrorMsg.PIN_MISMATCH
                                             showError.value = true
-                                            return@SatoButton
+                                            return@HushButton
                                         }
                                         // perform setup
                                         viewModel.setPinStringForCard(curSetupPinValue.value, isBackupCard = isBackupCard)
@@ -329,22 +329,22 @@ fun PinEntryView(
                             PinCodeAction.CHANGE_PIN_CODE -> {
                                 when (pinCodeStatus.value){
                                     PinCodeAction.ENTER_PIN_CODE -> {
-                                        if (!checkPinFormat(pin = curPinValue.value)){ return@SatoButton }
+                                        if (!checkPinFormat(pin = curPinValue.value)){ return@HushButton }
                                         // enter existing PIN then switch to new PIN
                                         pinCodeStatus.value = PinCodeAction.CHANGE_PIN_CODE
                                     }
                                     PinCodeAction.CHANGE_PIN_CODE -> {
-                                        if (!checkPinFormat(pin = curChangePinValue.value)){ return@SatoButton }
+                                        if (!checkPinFormat(pin = curChangePinValue.value)){ return@HushButton }
                                         // enter new PIN, then switch to confirm new PIN
                                         pinCodeStatus.value = PinCodeAction.CONFIRM_PIN_CODE
                                     }
                                     PinCodeAction.CONFIRM_PIN_CODE -> {
-                                        if (!checkPinFormat(pin = curConfirmPinValue.value)){ return@SatoButton }
+                                        if (!checkPinFormat(pin = curConfirmPinValue.value)){ return@HushButton }
                                         // check that pins match
                                         if (curChangePinValue.value != curConfirmPinValue.value) {
                                             appError.value = AppErrorMsg.PIN_MISMATCH
                                             showError.value = true
-                                            return@SatoButton
+                                            return@HushButton
                                         }
                                         // perform change
                                         viewModel.setPinStringForCard(curPinValue.value, isBackupCard = false)
@@ -366,7 +366,7 @@ fun PinEntryView(
                 // show a cancel button in case of error
                 if (showError.value){
                     Spacer(modifier = Modifier.height(16.dp))
-                    SatoButton(
+                    HushButton(
                         modifier = Modifier,
                         text = R.string.cancel,
                         onClick = {

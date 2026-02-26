@@ -48,10 +48,10 @@ import androidx.compose.ui.zIndex
 import io.github.g0dkar.qrcode.QRCode
 import uk.co.hushchip.app.R
 import uk.co.hushchip.app.parsers.TAG
-import uk.co.hushchip.app.services.SatoLog
+import uk.co.hushchip.app.services.HushLog
 import uk.co.hushchip.app.ui.components.shared.DataAsQrCode
 import uk.co.hushchip.app.ui.theme.SatoDividerPurple
-import uk.co.hushchip.app.utils.satoClickEffect
+import uk.co.hushchip.app.utils.hushClickEffect
 import uk.co.hushchip.app.utils.getSeedQr
 
 @Composable
@@ -159,7 +159,7 @@ fun SecretTextField(
                             modifier = Modifier
                                 .padding(8.dp)
                                 .size(16.dp)
-                                .satoClickEffect(
+                                .hushClickEffect(
                                     onClick = {
                                         isSeedQRCodeSelected.value =
                                             true //!isSeedQRCodeSelected.value
@@ -178,7 +178,7 @@ fun SecretTextField(
                             modifier = Modifier
                                 .padding(8.dp)
                                 .size(16.dp)
-                                .satoClickEffect(
+                                .hushClickEffect(
                                     onClick = {
                                         isSeedQRCodeSelected.value = false
                                         isQRCodeSelected.value = true // !isQRCodeSelected.value
@@ -195,7 +195,7 @@ fun SecretTextField(
                         modifier = Modifier
                             .padding(8.dp)
                             .size(16.dp)
-                            .satoClickEffect(
+                            .hushClickEffect(
                                 onClick = {
                                     clipboardManager.setText(AnnotatedString(curValue.value))
                                     Toast
@@ -213,7 +213,7 @@ fun SecretTextField(
                         modifier = Modifier
                             .padding(8.dp)
                             .size(16.dp)
-                            .satoClickEffect(
+                            .hushClickEffect(
                                 onClick = {
                                     isQRCodeSelected.value = false
                                     isSeedQRCodeSelected.value = false
@@ -240,7 +240,7 @@ fun SecretTextField(
                 try {
                     qrCodeString = getSeedQr(curValue.value)
                 } catch (e: Exception) {
-                    SatoLog.e(TAG, "Failed to generate SeedQR: ${e}")
+                    HushLog.e(TAG, "Failed to generate SeedQR: ${e}")
                 }
                 qrCodeString?.also { qrCodeString ->
                     val qrCodeBytes = QRCode(qrCodeString).render().getBytes()

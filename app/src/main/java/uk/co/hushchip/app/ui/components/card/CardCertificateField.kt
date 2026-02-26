@@ -27,7 +27,7 @@ import uk.co.hushchip.app.R
 import uk.co.hushchip.app.data.AuthenticityStatus
 import uk.co.hushchip.app.ui.components.shared.GifImage
 import uk.co.hushchip.app.ui.theme.SatoGreen
-import uk.co.hushchip.app.utils.satoClickEffect
+import uk.co.hushchip.app.utils.hushClickEffect
 
 @Composable
 fun CardCertificateField(
@@ -67,7 +67,7 @@ fun CardCertificateField(
             GifImage(
                 modifier = Modifier
                     .size(16.dp)
-                    .satoClickEffect(
+                    .hushClickEffect(
                         onClick = {
                             copyToClipboard(certificates[3] + " " + certificates[1])
                         }

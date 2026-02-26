@@ -13,7 +13,7 @@ object SatochipCardListenerForAction : CardListener {
     override fun onConnected(cardChannel: CardChannel?) {
 
         NFCCardService.isConnected.postValue(true)
-        SatoLog.d(TAG, "onConnected: Card is connected")
+        HushLog.d(TAG, "onConnected: Card is connected")
         try {
             val cmdSet = SatochipCommandSet(cardChannel)
             // start to interact with card
@@ -22,17 +22,17 @@ object SatochipCardListenerForAction : CardListener {
             // TODO: disconnect?
             onDisconnected()
             Thread.sleep(100) // delay to let resultCodeLive update (avoid race condition?)
-            SatoLog.d(TAG, "onConnected: resultAfterConnection delay: ${NFCCardService.resultCodeLive.value}")
+            HushLog.d(TAG, "onConnected: resultAfterConnection delay: ${NFCCardService.resultCodeLive.value}")
             NFCCardService.disableScanForAction()
         } catch (e: Exception) {
-            SatoLog.e(TAG, "onConnected: an exception has been thrown during card init.")
-            SatoLog.e(TAG, Log.getStackTraceString(e))
+            HushLog.e(TAG, "onConnected: an exception has been thrown during card init.")
+            HushLog.e(TAG, Log.getStackTraceString(e))
             onDisconnected()
         }
     }
 
     override fun onDisconnected() {
         NFCCardService.isConnected.postValue(false)
-        SatoLog.d(TAG, "onDisconnected: Card disconnected!")
+        HushLog.d(TAG, "onDisconnected: Card disconnected!")
     }
 }

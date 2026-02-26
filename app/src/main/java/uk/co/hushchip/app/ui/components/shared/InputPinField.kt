@@ -39,7 +39,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import uk.co.hushchip.app.R
-import uk.co.hushchip.app.utils.satoClickEffect
+import uk.co.hushchip.app.utils.hushClickEffect
 
 @Composable
 fun InputPinField(
@@ -60,7 +60,7 @@ fun InputPinField(
         Image(
             modifier = Modifier
                 .size(24.dp)
-                .satoClickEffect(
+                .hushClickEffect(
                     onClick = {
                         passwordVisibility.value = !passwordVisibility.value
                     }

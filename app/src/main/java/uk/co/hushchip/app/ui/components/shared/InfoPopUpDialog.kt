@@ -81,7 +81,7 @@ fun InfoPopUpDialog(
                 textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.height(8.dp))
-            SatoButton(
+            HushButton(
                 onClick = { isOpen.value = !isOpen.value },
                 text = R.string.close
             )

@@ -84,10 +84,10 @@ object NFCCardService {
      * @see NfcActionType
      */
     fun initialize(cmdSet: SatochipCommandSet) {
-        SatoLog.d(TAG, "initialize Start")
+        HushLog.d(TAG, "initialize Start")
         NFCCardService.cmdSet = cmdSet
         parser = cmdSet.parser
-        SatoLog.d(TAG, "initialized")
+        HushLog.d(TAG, "initialized")
         resultCodeLive.postValue(NfcResultCode.BUSY)
 
         when (actionType) {
@@ -96,7 +96,7 @@ object NFCCardService {
                 scanCard(isMasterCard = true)
             }
             NfcActionType.CHANGE_PIN -> {
-                SatoLog.d(TAG, "initialize NfcActionType.CHANGE_PIN")
+                HushLog.d(TAG, "initialize NfcActionType.CHANGE_PIN")
                 changePin()
             }
             NfcActionType.IMPORT_SECRET -> {
@@ -149,7 +149,7 @@ object NFCCardService {
      * @param activity The activity where NFC scanning should be enabled.
      */
     fun scanCardForAction(activity: Activity) {
-        SatoLog.d(TAG, "scanCardForAction thread START")
+        HushLog.d(TAG, "scanCardForAction thread START")
         this.activity = activity
         val cardManager = NFCCardManager()
         cardManager.setCardListener(SatochipCardListenerForAction)
@@ -164,22 +164,22 @@ object NFCCardService {
             NfcAdapter.FLAG_READER_NFC_A or NfcAdapter.FLAG_READER_NFC_B or NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK,
             null
         )
-        SatoLog.d(TAG, "scanCardForAction thread END")
+        HushLog.d(TAG, "scanCardForAction thread END")
     }
 
     /**
      * Disables the NFC reader mode for the current activity to stop scanning for NFC actions.
      */
     fun disableScanForAction() {
-        SatoLog.d(TAG, "disableScanForAction Start")
+        HushLog.d(TAG, "disableScanForAction Start")
         if (activity != null) {
             if (activity?.isFinishing() == true) {
-                SatoLog.e(TAG, "NFCCardService disableScanForAction activity isFinishing()")
+                HushLog.e(TAG, "NFCCardService disableScanForAction activity isFinishing()")
                 return;
             }
             val nfcAdapter = NfcAdapter.getDefaultAdapter(activity)
             nfcAdapter?.disableReaderMode(activity)
-            SatoLog.d(TAG, "disableScanForAction disableReaderMode!")
+            HushLog.d(TAG, "disableScanForAction disableReaderMode!")
         }
     }
 
@@ -187,7 +187,7 @@ object NFCCardService {
      * Reads and processes the data from the NFC card to determine its setup status and version.
      */
     private fun scanCard(isMasterCard : Boolean = true) {
-        SatoLog.d(TAG, "scanCard Start")
+        HushLog.d(TAG, "scanCard Start")
         try {
             isCardDataAvailable.postValue(false)
             cmdSet.cardSelect("seedkeeper").checkOK()
@@ -200,11 +200,11 @@ object NFCCardService {
             } else {
                 backupCardStatus = cardStatusLocal
             }
-            SatoLog.d(TAG, "scanCard cardStatus: $cardStatusLocal")
+            HushLog.d(TAG, "scanCard cardStatus: $cardStatusLocal")
 
             // check setup
             if (!cardStatusLocal.isSetupDone) {
-                SatoLog.d(TAG, "scanCard setup not done CardVersionInt: ${cardStatusLocal.cardVersionInt}")
+                HushLog.d(TAG, "scanCard setup not done CardVersionInt: ${cardStatusLocal.cardVersionInt}")
                 if (isMasterCard) {
                     resultCodeLive.postValue(NfcResultCode.REQUIRE_SETUP)
                 } else {
@@ -229,17 +229,17 @@ object NFCCardService {
                 val secretHeadersLocal = cmdSet.seedkeeperListSecretHeaders()
                 if (isMasterCard){
                     secretHeaders.postValue(secretHeadersLocal)
-                    SatoLog.d(TAG, "scanCard fetched list of secret headers for master with size: ${secretHeadersLocal.size}")
+                    HushLog.d(TAG, "scanCard fetched list of secret headers for master with size: ${secretHeadersLocal.size}")
                 } else {
                     backupSecretHeaders.clear()
                     backupSecretHeaders.addAll(secretHeadersLocal)
-                    SatoLog.d(TAG, "scanCard fetched list of secret headers for backup with size: ${secretHeadersLocal.size}")
+                    HushLog.d(TAG, "scanCard fetched list of secret headers for backup with size: ${secretHeadersLocal.size}")
                 }
             } catch (e: Exception) {
                 secretHeaders.postValue(emptyList())
                 resultCodeLive.postValue(NfcResultCode.NFC_ERROR)
-                SatoLog.e(TAG, "scanCard exception: $e")
-                SatoLog.e(TAG, Log.getStackTraceString(e))
+                HushLog.e(TAG, "scanCard exception: $e")
+                HushLog.e(TAG, Log.getStackTraceString(e))
             }
 
             // getCardLabel
@@ -263,7 +263,7 @@ object NFCCardService {
                         backupSecretHeader.fingerprintBytes.contentEquals(secretHeader.fingerprintBytes)
                     } || secretHeader.type == SeedkeeperSecretType.PUBKEY
                 } as MutableList<SeedkeeperSecretHeader>
-                SatoLog.d(TAG, "scanCard generated list of secretsHeaders for backup with size: ${secretHeadersForBackup.size}")
+                HushLog.d(TAG, "scanCard generated list of secretsHeaders for backup with size: ${secretHeadersForBackup.size}")
             }
 
             // update card status
@@ -273,7 +273,7 @@ object NFCCardService {
             } else {
                 resultCodeLive.postValue(NfcResultCode.BACKUP_CARD_SCANNED_SUCCESSFULLY)
             }
-            SatoLog.d(TAG, "scanCard finished successfully")
+            HushLog.d(TAG, "scanCard finished successfully")
 
         } catch (e: Exception) {
             if (isMasterCard){
@@ -282,8 +282,8 @@ object NFCCardService {
                 backupSecretHeaders.clear()
             }
             resultCodeLive.postValue(NfcResultCode.NFC_ERROR)
-            SatoLog.e(TAG, "scanCard exception: $e")
-            SatoLog.e(TAG, Log.getStackTraceString(e))
+            HushLog.e(TAG, "scanCard exception: $e")
+            HushLog.e(TAG, Log.getStackTraceString(e))
         }
         return
     }
@@ -293,14 +293,14 @@ object NFCCardService {
      */
     private fun getCardAuthenticty() {
         try {
-            SatoLog.d(TAG, "getCardAuthenticty start")
+            HushLog.d(TAG, "getCardAuthenticty start")
             val authResults = cmdSet.cardVerifyAuthenticity()
             if (authResults != null) {
                 if (authResults[0].compareTo("OK") == 0) {
                     authenticityStatus.postValue(AuthenticityStatus.AUTHENTIC)
                 } else {
                     authenticityStatus.postValue(AuthenticityStatus.NOT_AUTHENTIC)
-                    SatoLog.e(TAG, "getCardAuthenticty failed to authenticate card!")
+                    HushLog.e(TAG, "getCardAuthenticty failed to authenticate card!")
                 }
                 certificateList.clear()
                 certificateList.addAll(authResults)
@@ -308,7 +308,7 @@ object NFCCardService {
         } catch (e: Exception) {
             resultCodeLive.postValue(NfcResultCode.NFC_ERROR) // TODO necessary or remove?
             authenticityStatus.postValue(AuthenticityStatus.UNKNOWN)
-            SatoLog.e(TAG, "Failed to authenticate card with error: $e")
+            HushLog.e(TAG, "Failed to authenticate card with error: $e")
         }
     }
 
@@ -316,7 +316,7 @@ object NFCCardService {
      * Setup the NFC card with the necessary configuration and PIN
      */
     private fun cardSetup(isMasterCard: Boolean = true) {
-        SatoLog.d(TAG, "cardSetup start")
+        HushLog.d(TAG, "cardSetup start")
         try {
             cmdSet.cardSelect("seedkeeper").checkOK()
 
@@ -327,7 +327,7 @@ object NFCCardService {
             try {
                 cmdSet.cardSetup(5, pinBytes)
             } catch (error: Exception) {
-                SatoLog.e(TAG, "cardSetup: Error: $error")
+                HushLog.e(TAG, "cardSetup: Error: $error")
             }
 
             if (isMasterCard) {
@@ -337,10 +337,10 @@ object NFCCardService {
             }
         } catch (e: Exception) {
             resultCodeLive.postValue(NfcResultCode.NFC_ERROR)
-            SatoLog.e(TAG, "cardSetup exception: $e")
-            SatoLog.e(TAG, Log.getStackTraceString(e))
+            HushLog.e(TAG, "cardSetup exception: $e")
+            HushLog.e(TAG, Log.getStackTraceString(e))
         }
-        SatoLog.d(TAG, "cardSetup successful")
+        HushLog.d(TAG, "cardSetup successful")
     }
 
     /**
@@ -355,11 +355,11 @@ object NFCCardService {
      */
     private fun verifyPin(isMasterCard : Boolean = true): Boolean {
         try {
-            SatoLog.d(TAG, "verifyPin start")
+            HushLog.d(TAG, "verifyPin start")
             val pinBytes = if (isMasterCard) pinString?.toByteArray(Charsets.UTF_8) else backupPinString?.toByteArray(Charsets.UTF_8)
             cmdSet.setPin0(pinBytes)
             val rapdu = cmdSet.cardVerifyPIN()
-            SatoLog.d(TAG, "verifyPin successful")
+            HushLog.d(TAG, "verifyPin successful")
             return true
         } catch (e: WrongPINException) {
             // reset cached pin
@@ -369,19 +369,19 @@ object NFCCardService {
             val nfcCode = NfcResultCode.WRONG_PIN
             nfcCode.triesLeft = lastDigit
             resultCodeLive.postValue(nfcCode)
-            SatoLog.d(TAG, "verifyPin wrong PIN, ${lastDigit} tries remaining")
-            SatoLog.e(TAG, Log.getStackTraceString(e))
+            HushLog.d(TAG, "verifyPin wrong PIN, ${lastDigit} tries remaining")
+            HushLog.e(TAG, Log.getStackTraceString(e))
         } catch (e: BlockedPINException) {
             // reset cached pin
             if (isMasterCard) pinString = null else backupPinString = null
             // return code
             resultCodeLive.postValue(NfcResultCode.CARD_BLOCKED)
-            SatoLog.d(TAG, "verifyPin PIN blocked")
-            SatoLog.e(TAG, Log.getStackTraceString(e))
+            HushLog.d(TAG, "verifyPin PIN blocked")
+            HushLog.e(TAG, Log.getStackTraceString(e))
         } catch (e: Exception) {
             resultCodeLive.postValue(NfcResultCode.NFC_ERROR)
-            SatoLog.e(TAG, "verifyPin exception: $e")
-            SatoLog.e(TAG, Log.getStackTraceString(e))
+            HushLog.e(TAG, "verifyPin exception: $e")
+            HushLog.e(TAG, Log.getStackTraceString(e))
         }
         return false
     }
@@ -417,7 +417,7 @@ object NFCCardService {
      * Retrieves and sets the logs from the NFC card.
      */
     private fun getCardLogs() {
-        SatoLog.d(TAG, "getCardLogs start")
+        HushLog.d(TAG, "getCardLogs start")
         try {
             cmdSet.cardSelect("seedkeeper").checkOK()
 
@@ -432,11 +432,11 @@ object NFCCardService {
             cardLogs.addAll(cmdSet.seedkeeperPrintLogs(true))
 
             resultCodeLive.postValue(NfcResultCode.CARD_LOGS_FETCHED_SUCCESSFULLY)
-            SatoLog.d(TAG, "getCardLogs successful")
+            HushLog.d(TAG, "getCardLogs successful")
         } catch (e: Exception) {
             resultCodeLive.postValue(NfcResultCode.NFC_ERROR)
-            SatoLog.e(TAG, "getCardLogs exception: $e")
-            SatoLog.e(TAG, Log.getStackTraceString(e))
+            HushLog.e(TAG, "getCardLogs exception: $e")
+            HushLog.e(TAG, Log.getStackTraceString(e))
         }
     }
 
@@ -444,7 +444,7 @@ object NFCCardService {
      * Changes the PIN on the NFC card to a new one provided by the user.
      */
     private fun changePin() {
-        SatoLog.d(TAG, "changePin start")
+        HushLog.d(TAG, "changePin start")
         try {
             cmdSet.cardSelect("seedkeeper").checkOK()
             val pinBytes = pinString?.toByteArray(Charsets.UTF_8)
@@ -462,7 +462,7 @@ object NFCCardService {
             if (!verifyPin(isMasterCard = true)){return}
 
             resultCodeLive.postValue(NfcResultCode.PIN_CHANGED)
-            SatoLog.d(TAG, "changePin successful")
+            HushLog.d(TAG, "changePin successful")
 
         } catch (e: WrongPINException) {
             pinString = null
@@ -471,22 +471,22 @@ object NFCCardService {
             val nfcCode = NfcResultCode.WRONG_PIN
             nfcCode.triesLeft = lastDigit
             resultCodeLive.postValue(nfcCode)
-            SatoLog.d(TAG, "changePin wrong PIN, ${lastDigit} tries remaining")
-            SatoLog.e(TAG, Log.getStackTraceString(e))
+            HushLog.d(TAG, "changePin wrong PIN, ${lastDigit} tries remaining")
+            HushLog.e(TAG, Log.getStackTraceString(e))
         } catch (e: BlockedPINException) {
             pinString = null
             newPinString = null
             resultCodeLive.postValue(NfcResultCode.CARD_BLOCKED)
-            SatoLog.d(TAG, "changePin PIN blocked")
-            SatoLog.e(TAG, Log.getStackTraceString(e))
+            HushLog.d(TAG, "changePin PIN blocked")
+            HushLog.e(TAG, Log.getStackTraceString(e))
         } catch (e: CardMismatchException) {
             resultCodeLive.postValue(NfcResultCode.CARD_MISMATCH)
-            SatoLog.e(TAG, "changePin card mismatch exception: $e")
-            SatoLog.e(TAG, Log.getStackTraceString(e))
+            HushLog.e(TAG, "changePin card mismatch exception: $e")
+            HushLog.e(TAG, Log.getStackTraceString(e))
         } catch (e: Exception) {
             resultCodeLive.postValue(NfcResultCode.NFC_ERROR)
-            SatoLog.e(TAG, "changePin changePin exception: $e")
-            SatoLog.e(TAG, Log.getStackTraceString(e))
+            HushLog.e(TAG, "changePin changePin exception: $e")
+            HushLog.e(TAG, Log.getStackTraceString(e))
         }
 
     }
@@ -535,7 +535,7 @@ object NFCCardService {
      */
     private fun importSecret(data: SecretData) {
         try {
-            SatoLog.d(TAG, "importSecret start")
+            HushLog.d(TAG, "importSecret start")
 
             cmdSet.cardSelect("seedkeeper").checkOK()
 
@@ -555,28 +555,28 @@ object NFCCardService {
             resultCodeLive.postValue(NfcResultCode.SECRET_IMPORTED_SUCCESSFULLY)
         } catch (e: CardMismatchException) {
             resultCodeLive.postValue(NfcResultCode.CARD_MISMATCH)
-            SatoLog.e(TAG, "card mismatch exception: $e")
-            SatoLog.e(TAG, Log.getStackTraceString(e))
+            HushLog.e(TAG, "card mismatch exception: $e")
+            HushLog.e(TAG, Log.getStackTraceString(e))
         } catch (e: APDUException) {
             val sw = e.sw
             if (sw == 0x9C01){
                 resultCodeLive.postValue(NfcResultCode.NO_MEMORY_LEFT)
-                SatoLog.e(TAG, "No memory available for import: $e")
-                SatoLog.e(TAG, Log.getStackTraceString(e))
+                HushLog.e(TAG, "No memory available for import: $e")
+                HushLog.e(TAG, Log.getStackTraceString(e))
             } else if (sw == 0x9C32){
                 resultCodeLive.postValue(NfcResultCode.SECRET_TOO_LONG)
-                SatoLog.e(TAG, "Secret too long for import: $e")
-                SatoLog.e(TAG, Log.getStackTraceString(e))
+                HushLog.e(TAG, "Secret too long for import: $e")
+                HushLog.e(TAG, Log.getStackTraceString(e))
             }
             else {
                 resultCodeLive.postValue(NfcResultCode.CARD_ERROR)
-                SatoLog.e(TAG, "importSecret exception: $e")
-                SatoLog.e(TAG, Log.getStackTraceString(e))
+                HushLog.e(TAG, "importSecret exception: $e")
+                HushLog.e(TAG, Log.getStackTraceString(e))
             }
         } catch (e: Exception) {
             resultCodeLive.postValue(NfcResultCode.NFC_ERROR)
-            SatoLog.e(TAG, "importSecret exception: $e")
-            SatoLog.e(TAG, Log.getStackTraceString(e))
+            HushLog.e(TAG, "importSecret exception: $e")
+            HushLog.e(TAG, Log.getStackTraceString(e))
         }
     }
 
@@ -588,7 +588,7 @@ object NFCCardService {
      */
     private fun exportSecret(sid: Int): SeedkeeperSecretObject? {
         try {
-            SatoLog.d(TAG, "exportSecret start")
+            HushLog.d(TAG, "exportSecret start")
 
             cmdSet.cardSelect("seedkeeper").checkOK()
 
@@ -605,12 +605,12 @@ object NFCCardService {
             return exportedSecret
         } catch (e: CardMismatchException) {
             resultCodeLive.postValue(NfcResultCode.CARD_MISMATCH)
-            SatoLog.e(TAG, "card mismatch exception: $e")
-            SatoLog.e(TAG, Log.getStackTraceString(e))
+            HushLog.e(TAG, "card mismatch exception: $e")
+            HushLog.e(TAG, Log.getStackTraceString(e))
         } catch (e: Exception) {
             resultCodeLive.postValue(NfcResultCode.NFC_ERROR)
-            SatoLog.e(TAG, "getSecret exception: $e")
-            SatoLog.e(TAG, Log.getStackTraceString(e))
+            HushLog.e(TAG, "getSecret exception: $e")
+            HushLog.e(TAG, Log.getStackTraceString(e))
         }
         return null
     }
@@ -623,7 +623,7 @@ object NFCCardService {
      */
     private fun deleteSecret(sid: Int) {
         try {
-            SatoLog.d(TAG, "deleteSecret start")
+            HushLog.d(TAG, "deleteSecret start")
 
             cmdSet.cardSelect("seedkeeper").checkOK()
 
@@ -646,12 +646,12 @@ object NFCCardService {
             resultCodeLive.postValue(NfcResultCode.SECRET_DELETED)
         } catch (e: CardMismatchException) {
             resultCodeLive.postValue(NfcResultCode.CARD_MISMATCH)
-            SatoLog.e(TAG, "card mismatch exception: $e")
-            SatoLog.e(TAG, Log.getStackTraceString(e))
+            HushLog.e(TAG, "card mismatch exception: $e")
+            HushLog.e(TAG, Log.getStackTraceString(e))
         } catch (e: Exception) {
             resultCodeLive.postValue(NfcResultCode.NFC_ERROR)
-            SatoLog.e(TAG, "deleteSecret exception: $e")
-            SatoLog.e(TAG, Log.getStackTraceString(e))
+            HushLog.e(TAG, "deleteSecret exception: $e")
+            HushLog.e(TAG, Log.getStackTraceString(e))
         }
     }
 
@@ -662,7 +662,7 @@ object NFCCardService {
      */
     private fun editCardLabel(cardLabel: String) {
         try {
-            SatoLog.d(TAG, "editCardLabel start")
+            HushLog.d(TAG, "editCardLabel start")
 
             cmdSet.cardSelect("seedkeeper").checkOK()
 
@@ -675,15 +675,15 @@ object NFCCardService {
             // Change label
             cmdSet.setCardLabel(cardLabel)
             resultCodeLive.postValue(NfcResultCode.CARD_LABEL_CHANGED_SUCCESSFULLY)
-            SatoLog.e(TAG, "editCardLabel label set to: $cardLabel")
+            HushLog.e(TAG, "editCardLabel label set to: $cardLabel")
         } catch (e: CardMismatchException) {
             resultCodeLive.postValue(NfcResultCode.CARD_MISMATCH)
-            SatoLog.e(TAG, "card mismatch exception: $e")
-            SatoLog.e(TAG, Log.getStackTraceString(e))
+            HushLog.e(TAG, "card mismatch exception: $e")
+            HushLog.e(TAG, Log.getStackTraceString(e))
         } catch (e: Exception) {
             resultCodeLive.postValue(NfcResultCode.NFC_ERROR)
-            SatoLog.e(TAG, "editCardLabel exception: $e")
-            SatoLog.e(TAG, Log.getStackTraceString(e))
+            HushLog.e(TAG, "editCardLabel exception: $e")
+            HushLog.e(TAG, Log.getStackTraceString(e))
         }
     }
 
@@ -700,7 +700,7 @@ object NFCCardService {
      */
     private fun importSecretsToBackup() {
         try {
-            SatoLog.d(TAG, "importSecretsToBackup start")
+            HushLog.d(TAG, "importSecretsToBackup start")
 
             cmdSet.cardSelect("seedkeeper").checkOK()
 
@@ -725,32 +725,32 @@ object NFCCardService {
             masterAuthentikeySecretHeader?.sid?.let { masterSid ->
                 for ((index, item) in secretObjectsForBackup.withIndex()) {
 
-                    SatoLog.d(TAG, "importSecretsToBackup backupImportProgress: ${backupImportProgress.value}")
+                    HushLog.d(TAG, "importSecretsToBackup backupImportProgress: ${backupImportProgress.value}")
                     item.isEncrypted = true
                     item.secretEncryptedParams.sidPubkey = masterSid
                     try {
                         cmdSet.seedkeeperImportSecret(item)
                         backupImportProgress.postValue(index.toFloat() / secretObjectsForBackup.size)
                         backupNumberOfSecretsImported +=1
-                        SatoLog.d(TAG, "importSecretsToBackup imported secret with label ${item.secretHeader.label} and sid ${item.secretHeader.sid}")
+                        HushLog.d(TAG, "importSecretsToBackup imported secret with label ${item.secretHeader.label} and sid ${item.secretHeader.sid}")
                     } catch (e: APDUException) {
-                        SatoLog.d(TAG, "importSecretsToBackup failed to import secret with label ${item.secretHeader.label} and sid ${item.secretHeader.sid}")
+                        HushLog.d(TAG, "importSecretsToBackup failed to import secret with label ${item.secretHeader.label} and sid ${item.secretHeader.sid}")
                         var nfcResultCode = NfcResultCode.NONE
                         when (e.sw) {
                             0x9C01 -> {
                                 nfcResultCode = NfcResultCode.NO_MEMORY_LEFT
-                                SatoLog.e(TAG, "No memory available for import: $e")
-                                SatoLog.e(TAG, Log.getStackTraceString(e))
+                                HushLog.e(TAG, "No memory available for import: $e")
+                                HushLog.e(TAG, Log.getStackTraceString(e))
                             }
                             0x9C32 -> {
                                 nfcResultCode = NfcResultCode.SECRET_TOO_LONG
-                                SatoLog.e(TAG, "Secret too long for import: $e")
-                                SatoLog.e(TAG, Log.getStackTraceString(e))
+                                HushLog.e(TAG, "Secret too long for import: $e")
+                                HushLog.e(TAG, Log.getStackTraceString(e))
                             }
                             else -> {
                                 nfcResultCode = NfcResultCode.CARD_ERROR
-                                SatoLog.e(TAG, "importSecret exception: $e")
-                                SatoLog.e(TAG, Log.getStackTraceString(e))
+                                HushLog.e(TAG, "importSecret exception: $e")
+                                HushLog.e(TAG, Log.getStackTraceString(e))
                             }
                         }
                         // log error
@@ -767,31 +767,31 @@ object NFCCardService {
                 secretObjectsForBackup.clear()
             }
             resultCodeLive.postValue(NfcResultCode.CARD_SUCCESSFULLY_BACKED_UP)
-            SatoLog.d(TAG, "importSecretsToBackup finished successfully!")
+            HushLog.d(TAG, "importSecretsToBackup finished successfully!")
         } catch (e: CardMismatchException) {
             resultCodeLive.postValue(NfcResultCode.CARD_MISMATCH)
-            SatoLog.e(TAG, "importSecretsToBackup exception: $e")
-            SatoLog.e(TAG, Log.getStackTraceString(e))
+            HushLog.e(TAG, "importSecretsToBackup exception: $e")
+            HushLog.e(TAG, Log.getStackTraceString(e))
         }  catch (e: APDUException) {
             val sw = e.sw
             if (sw == 0x9C01){
                 resultCodeLive.postValue(NfcResultCode.NO_MEMORY_LEFT)
-                SatoLog.e(TAG, "No memory available for import: $e")
-                SatoLog.e(TAG, Log.getStackTraceString(e))
+                HushLog.e(TAG, "No memory available for import: $e")
+                HushLog.e(TAG, Log.getStackTraceString(e))
             } else if (sw == 0x9C32){
                 resultCodeLive.postValue(NfcResultCode.SECRET_TOO_LONG)
-                SatoLog.e(TAG, "Secret too long for import: $e")
-                SatoLog.e(TAG, Log.getStackTraceString(e))
+                HushLog.e(TAG, "Secret too long for import: $e")
+                HushLog.e(TAG, Log.getStackTraceString(e))
             }
             else {
                 resultCodeLive.postValue(NfcResultCode.CARD_ERROR)
-                SatoLog.e(TAG, "importSecret exception: $e")
-                SatoLog.e(TAG, Log.getStackTraceString(e))
+                HushLog.e(TAG, "importSecret exception: $e")
+                HushLog.e(TAG, Log.getStackTraceString(e))
             }
         } catch (e: Exception) {
             resultCodeLive.postValue(NfcResultCode.NFC_ERROR)
-            SatoLog.e(TAG, "importSecretsToBackup exception: $e")
-            SatoLog.e(TAG, Log.getStackTraceString(e))
+            HushLog.e(TAG, "importSecretsToBackup exception: $e")
+            HushLog.e(TAG, Log.getStackTraceString(e))
         }
 
     }
@@ -809,7 +809,7 @@ object NFCCardService {
      */
     private fun getImportedAuthentikey(authentikeyBytes: ByteArray, isMasterCard: Boolean = true): SeedkeeperSecretHeader? {
 
-        SatoLog.d(TAG, "getImportedAuthentikey Start")
+        HushLog.d(TAG, "getImportedAuthentikey Start")
 
         // compute fingerprint for authentikey
         val authentikeySecretBytes = ByteArray(authentikeyBytes.size + 1)
@@ -825,9 +825,9 @@ object NFCCardService {
                 it.fingerprintBytes.contentEquals(authentikeyFingerprintBytes)
             }
             authentikeyHeader?.let {
-                SatoLog.d(TAG, "getImportedAuthentikey found backup authentikey in master card")
+                HushLog.d(TAG, "getImportedAuthentikey found backup authentikey in master card")
             } ?: run {
-                SatoLog.d(TAG, "getImportedAuthentikey found no backup authentikey in master card")
+                HushLog.d(TAG, "getImportedAuthentikey found no backup authentikey in master card")
             }
 
         } else {
@@ -835,9 +835,9 @@ object NFCCardService {
                 it.fingerprintBytes.contentEquals(authentikeyFingerprintBytes)
             }
             authentikeyHeader?.let {
-                SatoLog.d(TAG, "getImportedAuthentikey found master authentikey in backup card")
+                HushLog.d(TAG, "getImportedAuthentikey found master authentikey in backup card")
             } ?: run {
-                SatoLog.d(TAG, "getImportedAuthentikey found no master authentikey in backup card")
+                HushLog.d(TAG, "getImportedAuthentikey found no master authentikey in backup card")
             }
         }
         return authentikeyHeader
@@ -855,7 +855,7 @@ object NFCCardService {
      */
     private fun importAuthentikey(authentikeyBytes: ByteArray): SeedkeeperSecretHeader? {
 
-        SatoLog.d(TAG, "importAuthentikey start")
+        HushLog.d(TAG, "importAuthentikey start")
         try {
             // create secret bytes
             val authentikeySecretBytes = ByteArray(authentikeyBytes.size + 1)
@@ -886,12 +886,12 @@ object NFCCardService {
             )
             // Import secret
             val seedkeeperSecretHeader = cmdSet.seedkeeperImportSecret(authentikeySecretObject)
-            SatoLog.d(TAG, "importAuthentikey import successful!")
+            HushLog.d(TAG, "importAuthentikey import successful!")
             return seedkeeperSecretHeader
         } catch (e: Exception) {
             resultCodeLive.postValue(NfcResultCode.NFC_ERROR)
-            SatoLog.e(TAG, "importAuthentikey exception: $e")
-            SatoLog.e(TAG, Log.getStackTraceString(e))
+            HushLog.e(TAG, "importAuthentikey exception: $e")
+            HushLog.e(TAG, Log.getStackTraceString(e))
         }
         return null
     }
@@ -903,7 +903,7 @@ object NFCCardService {
      */
     private fun exportSecretsFromMaster(){
         try {
-            SatoLog.d(TAG, "exportSecretsFromMaster start")
+            HushLog.d(TAG, "exportSecretsFromMaster start")
             cmdSet.cardSelect("seedkeeper").checkOK()
 
             // check authentikey
@@ -924,15 +924,15 @@ object NFCCardService {
 
             // return success code
             resultCodeLive.postValue(NfcResultCode.SECRETS_EXPORTED_SUCCESSFULLY_FROM_MASTER)
-            SatoLog.d(TAG, "exportSecretsFromMaster finished successfully!")
+            HushLog.d(TAG, "exportSecretsFromMaster finished successfully!")
         }catch (e: CardMismatchException) {
             resultCodeLive.postValue(NfcResultCode.CARD_MISMATCH)
-            SatoLog.e(TAG, "exportSecretsFromMaster card mismatch exception: $e")
-            SatoLog.e(TAG, Log.getStackTraceString(e))
+            HushLog.e(TAG, "exportSecretsFromMaster card mismatch exception: $e")
+            HushLog.e(TAG, Log.getStackTraceString(e))
         }catch (e: Exception) {
             resultCodeLive.postValue(NfcResultCode.NFC_ERROR)
-            SatoLog.e(TAG, "exportSecretsFromMaster exception: $e")
-            SatoLog.e(TAG, Log.getStackTraceString(e))
+            HushLog.e(TAG, "exportSecretsFromMaster exception: $e")
+            HushLog.e(TAG, Log.getStackTraceString(e))
         }
     }
 
@@ -945,20 +945,20 @@ object NFCCardService {
      */
     private fun exportSecrets(pubSid: Int? = null) {
         try {
-            SatoLog.d(TAG, "exportSecrets start")
+            HushLog.d(TAG, "exportSecrets start")
             secretObjectsForBackup.clear()
             for ((index, item) in secretHeadersForBackup.withIndex()) {
-                SatoLog.d(TAG, "exportSecrets backupExportProgress: ${backupExportProgress.value}")
+                HushLog.d(TAG, "exportSecrets backupExportProgress: ${backupExportProgress.value}")
                 val secretObject = cmdSet.seedkeeperExportSecret(item.sid, pubSid)
                 secretObjectsForBackup.add(secretObject)
                 backupExportProgress.postValue(index.toFloat() / secretHeadersForBackup.size)
-                SatoLog.d(TAG, "exportSecrets exported encrypted secret with label: ${secretObject.secretHeader.label} and sid: ${secretObject.secretHeader.sid}")
+                HushLog.d(TAG, "exportSecrets exported encrypted secret with label: ${secretObject.secretHeader.label} and sid: ${secretObject.secretHeader.sid}")
             }
-            SatoLog.d(TAG, "exportSecrets exported successfully!")
+            HushLog.d(TAG, "exportSecrets exported successfully!")
         } catch (e: Exception) {
             resultCodeLive.postValue(NfcResultCode.NFC_ERROR)
-            SatoLog.e(TAG, "exportSecrets exception: $e")
-            SatoLog.e(TAG, Log.getStackTraceString(e))
+            HushLog.e(TAG, "exportSecrets exception: $e")
+            HushLog.e(TAG, Log.getStackTraceString(e))
         }
     }
 
@@ -969,7 +969,7 @@ object NFCCardService {
      */
     private fun requestFactoryReset() {
         try {
-            SatoLog.d(TAG, "requestFactoryReset start")
+            HushLog.d(TAG, "requestFactoryReset start")
             isCardDataAvailable.postValue(false)
             val selectApdu = cmdSet.cardSelect("seedkeeper").checkOK()
             if (selectApdu.data.size >= 4){
@@ -990,14 +990,14 @@ object NFCCardService {
             }
 
             if (cardStatus.protocolVersion >= 2) {
-                SatoLog.d(TAG, "requestFactoryReset block pin")
+                HushLog.d(TAG, "requestFactoryReset block pin")
                 val allowedChars = ('0'..'9')
                 val randomString = (1..6).map { allowedChars.random() }.joinToString("")
                 val pinBytes = randomString.toByteArray(Charsets.UTF_8)
                 try {
                     cmdSet.setPin0(pinBytes)
                     val rapduReset = cmdSet.cardVerifyPIN() // should throw!
-                    SatoLog.e(TAG, "requestFactoryReset unexpected response to reset command: ${rapduReset.sw}")
+                    HushLog.e(TAG, "requestFactoryReset unexpected response to reset command: ${rapduReset.sw}")
                     resultCodeLive.postValue(NfcResultCode.CARD_RESET_SENT)
                 } catch (e: WrongPINException){
                     val triesLeft = e.retryAttempts
@@ -1043,7 +1043,7 @@ object NFCCardService {
                     nfcCode.triesLeft = lastDigit
                     resultCodeLive.postValue(nfcCode)
                 } else {
-                    SatoLog.e(TAG, "requestFactoryReset-v1 unexpected response to reset command: ${rapduReset.sw}")
+                    HushLog.e(TAG, "requestFactoryReset-v1 unexpected response to reset command: ${rapduReset.sw}")
                     resultCodeLive.postValue(NfcResultCode.CARD_RESET_SENT)
                 }
                 return
@@ -1051,8 +1051,8 @@ object NFCCardService {
 
         } catch (e: Exception) {
             resultCodeLive.postValue(NfcResultCode.NFC_ERROR)
-            SatoLog.e(TAG, "requestFactoryReset exception: $e")
-            SatoLog.e(TAG, Log.getStackTraceString(e))
+            HushLog.e(TAG, "requestFactoryReset exception: $e")
+            HushLog.e(TAG, Log.getStackTraceString(e))
         }
     }
 }

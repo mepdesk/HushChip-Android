@@ -3,7 +3,7 @@ package uk.co.hushchip.app.data
 import org.bitcoinj.crypto.MnemonicCode
 import org.satochip.client.seedkeeper.SeedkeeperExportRights
 import org.satochip.client.seedkeeper.SeedkeeperSecretType
-import uk.co.hushchip.app.services.SatoLog
+import uk.co.hushchip.app.services.HushLog
 import uk.co.hushchip.app.utils.toMnemonicList
 import java.nio.ByteBuffer
 
@@ -115,7 +115,7 @@ data class SecretData(
                 }
             }
             else -> {
-                SatoLog.e(TAG, "Unsupported secret type")
+                HushLog.e(TAG, "Unsupported secret type")
             }
         }
         return secretBytes.toByteArray()

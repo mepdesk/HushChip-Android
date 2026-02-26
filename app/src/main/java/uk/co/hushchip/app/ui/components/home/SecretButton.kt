@@ -26,7 +26,7 @@ import uk.co.hushchip.app.R
 import uk.co.hushchip.app.ui.components.shared.GifImage
 import uk.co.hushchip.app.ui.theme.SatoPurple
 import uk.co.hushchip.app.utils.getDrawableIdFromType
-import uk.co.hushchip.app.utils.satoClickEffect
+import uk.co.hushchip.app.utils.hushClickEffect
 
 @Composable
 fun SecretButton(
@@ -37,7 +37,7 @@ fun SecretButton(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .satoClickEffect(
+            .hushClickEffect(
                 onClick = {
                     onClick()
                 }

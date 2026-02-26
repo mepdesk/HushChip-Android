@@ -23,14 +23,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import uk.co.hushchip.app.ui.theme.SatoButtonPurple
+import uk.co.hushchip.app.ui.theme.HushButtonPurple
 
 @Composable
-fun SatoButton(
+fun HushButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     text: Int,
-    buttonColor: Color = SatoButtonPurple,
+    buttonColor: Color = HushButtonPurple,
     textColor: Color = Color.White,
     image: Int? = null,
     horizontalPadding: Dp = 16.dp,

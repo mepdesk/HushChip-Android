@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import uk.co.hushchip.app.R
 import uk.co.hushchip.app.ui.theme.SatoPurple
-import uk.co.hushchip.app.utils.satoClickEffect
+import uk.co.hushchip.app.utils.hushClickEffect
 
 @Composable
 fun SecretInfoField(
@@ -144,7 +144,7 @@ fun SecretInfoField(
                 modifier = Modifier
                     .padding(8.dp)
                     .size(16.dp)
-                    .satoClickEffect(
+                    .hushClickEffect(
                         onClick = {
                             clipboardManager.setText(AnnotatedString(text))
                             Toast.makeText(context, copyText, Toast.LENGTH_SHORT).show()

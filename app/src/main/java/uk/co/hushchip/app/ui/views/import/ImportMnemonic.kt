@@ -38,9 +38,9 @@ import uk.co.hushchip.app.ui.components.import.SecretTextField
 import uk.co.hushchip.app.ui.components.import.SelectField
 import uk.co.hushchip.app.ui.components.home.NfcDialog
 import uk.co.hushchip.app.ui.components.import.MnemonicImportField
-import uk.co.hushchip.app.ui.components.shared.SatoButton
+import uk.co.hushchip.app.ui.components.shared.HushButton
 import uk.co.hushchip.app.ui.components.shared.TitleTextField
-import uk.co.hushchip.app.ui.theme.SatoButtonPurple
+import uk.co.hushchip.app.ui.theme.HushButtonPurple
 import uk.co.hushchip.app.ui.theme.SatoPurple
 import uk.co.hushchip.app.utils.isClickable
 import uk.co.hushchip.app.viewmodels.SharedViewModel
@@ -194,7 +194,7 @@ fun ImportMnemonic(
         ) {
             // generate button
             if (importMode == ImportMode.GENERATE_A_SECRET) {
-                SatoButton(
+                HushButton(
                     modifier = Modifier
                         .weight(1f),
                     onClick = {
@@ -211,7 +211,7 @@ fun ImportMnemonic(
             }
 
             //Import
-            SatoButton(
+            HushButton(
                 modifier = Modifier,
                 onClick = {
 
@@ -219,37 +219,37 @@ fun ImportMnemonic(
                     if (curValueLabel.value.isEmpty()){
                         appError.value = AppErrorMsg.LABEL_EMPTY
                         showError.value = true
-                        return@SatoButton
+                        return@HushButton
                     }
                     if (curValueLabel.value.toByteArray(Charsets.UTF_8).size > 127){
                         appError.value = AppErrorMsg.LABEL_TOO_LONG
                         showError.value = true
-                        return@SatoButton
+                        return@HushButton
                     }
                     if (secret.value.isEmpty()){
                         appError.value = AppErrorMsg.MNEMONIC_EMPTY
                         showError.value = true
-                        return@SatoButton
+                        return@HushButton
                     }
                     if (secret.value.toByteArray(Charsets.UTF_8).size > 255){
                         appError.value = AppErrorMsg.MNEMONIC_TOO_LONG
                         showError.value = true
-                        return@SatoButton
+                        return@HushButton
                     }
                     if (!viewModel.isMnemonicValid(mnemonic = secret.value)){
                         appError.value = AppErrorMsg.MNEMONIC_WRONG_FORMAT
                         showError.value = true
-                        return@SatoButton
+                        return@HushButton
                     }
                     if (curValuePassphrase.value.toByteArray(Charsets.UTF_8).size > 255){
                         appError.value = AppErrorMsg.PASSPHRASE_TOO_LONG
                         showError.value = true
-                        return@SatoButton
+                        return@HushButton
                     }
                     if (curValueWalletDescriptor.value.toByteArray(Charsets.UTF_8).size > 65535){
                         appError.value = AppErrorMsg.DESCRIPTOR_TOO_LONG
                         showError.value = true
-                        return@SatoButton
+                        return@HushButton
                     }
 
                     val secretData = SecretData(
@@ -267,7 +267,7 @@ fun ImportMnemonic(
                         if (payloadBytes.size > 255){
                             appError.value = AppErrorMsg.SECRET_TOO_LONG_FOR_V1
                             showError.value = true
-                            return@SatoButton
+                            return@HushButton
                         }
                     }
 
@@ -286,7 +286,7 @@ fun ImportMnemonic(
                         secret,
                         curValueLabel
                     )
-                ) SatoButtonPurple else SatoButtonPurple.copy(alpha = 0.6f),
+                ) HushButtonPurple else HushButtonPurple.copy(alpha = 0.6f),
             )
         }
     }

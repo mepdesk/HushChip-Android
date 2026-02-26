@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.satochip.client.seedkeeper.SeedkeeperSecretType
 import uk.co.hushchip.app.R
-import uk.co.hushchip.app.utils.satoClickEffect
+import uk.co.hushchip.app.utils.hushClickEffect
 
 @Composable
 fun SecretsFilter(
@@ -66,7 +66,7 @@ fun SecretsFilter(
                 contentDescription = null,
                 modifier = Modifier
                     .size(24.dp)
-                    .satoClickEffect(
+                    .hushClickEffect(
                         onClick = {
                             isExpanded = !isExpanded
                         }

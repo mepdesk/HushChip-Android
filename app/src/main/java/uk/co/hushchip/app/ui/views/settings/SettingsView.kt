@@ -29,12 +29,12 @@ import uk.co.hushchip.app.FactoryResetView
 import uk.co.hushchip.app.R
 import uk.co.hushchip.app.ShowCardLogs
 import uk.co.hushchip.app.ShowLogsView
-import uk.co.hushchip.app.data.SeedkeeperPreferences
+import uk.co.hushchip.app.data.HushChipPreferences
 import uk.co.hushchip.app.ui.components.card.InfoField
 import uk.co.hushchip.app.ui.components.settings.*
 import uk.co.hushchip.app.ui.components.shared.HeaderAlternateRow
-import uk.co.hushchip.app.ui.components.shared.SatoButton
-import uk.co.hushchip.app.ui.theme.SatoButtonPurple
+import uk.co.hushchip.app.ui.components.shared.HushButton
+import uk.co.hushchip.app.ui.theme.HushButtonPurple
 import uk.co.hushchip.app.ui.theme.SatoDividerPurple
 import uk.co.hushchip.app.ui.theme.SatoLightPurple
 import uk.co.hushchip.app.viewmodels.SharedViewModel
@@ -49,11 +49,11 @@ fun SettingsView(
     val settings = context.getSharedPreferences("seedkeeper", Context.MODE_PRIVATE)
     val starterIntro = remember {
         mutableStateOf(
-            settings.getBoolean(SeedkeeperPreferences.FIRST_TIME_LAUNCH.name, true)
+            settings.getBoolean(HushChipPreferences.FIRST_TIME_LAUNCH.name, true)
         )
     }
     val debugMode = remember {
-        mutableStateOf(settings.getBoolean(SeedkeeperPreferences.DEBUG_MODE.name, false))
+        mutableStateOf(settings.getBoolean(HushChipPreferences.DEBUG_MODE.name, false))
     }
     val logsDisabledText = stringResource(id = R.string.logsDisabledText)
 
@@ -90,7 +90,7 @@ fun SettingsView(
                 isChecked = starterIntro,
                 onClick = {
                     settings.edit().putBoolean(
-                        SeedkeeperPreferences.FIRST_TIME_LAUNCH.name,
+                        HushChipPreferences.FIRST_TIME_LAUNCH.name,
                         starterIntro.value
                     ).apply()
                 }
@@ -106,13 +106,13 @@ fun SettingsView(
                 isChecked = debugMode,
                 onClick = {
                     settings.edit().putBoolean(
-                        SeedkeeperPreferences.DEBUG_MODE.name,
+                        HushChipPreferences.DEBUG_MODE.name,
                         debugMode.value
                     ).apply()
                 }
             )
             Spacer(modifier = Modifier.height(20.dp))
-            SatoButton(
+            HushButton(
                 modifier = Modifier
                     .padding(
                         horizontal = 6.dp
@@ -125,7 +125,7 @@ fun SettingsView(
                     }
                 },
                 text = R.string.showLogs,
-                buttonColor = if (debugMode.value) SatoButtonPurple else SatoButtonPurple.copy(0.6f),
+                buttonColor = if (debugMode.value) HushButtonPurple else HushButtonPurple.copy(0.6f),
             )
             Spacer(
                 modifier = Modifier

@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import uk.co.hushchip.app.ui.theme.SeedkeeperTheme
+import uk.co.hushchip.app.ui.theme.HushChipTheme
 import uk.co.hushchip.app.viewmodels.SharedViewModel
 
 class MainActivity : ComponentActivity() {
@@ -29,7 +29,7 @@ class MainActivity : ComponentActivity() {
             val context = LocalContext.current as Activity
             //Lock screen orientation to portrait
             context.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-            SeedkeeperTheme {
+            HushChipTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background

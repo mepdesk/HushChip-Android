@@ -24,11 +24,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import uk.co.hushchip.app.R
 import uk.co.hushchip.app.ui.components.shared.NextButton
-import uk.co.hushchip.app.ui.components.shared.SatoButton
+import uk.co.hushchip.app.ui.components.shared.HushButton
 import uk.co.hushchip.app.ui.components.shared.StepCircles
 import uk.co.hushchip.app.ui.components.shared.WelcomeViewTitle
-import uk.co.hushchip.app.ui.theme.SatoButtonBlue
-import uk.co.hushchip.app.ui.theme.SatoButtonPurple
+import uk.co.hushchip.app.ui.theme.HushButtonBlue
+import uk.co.hushchip.app.ui.theme.HushButtonPurple
 
 @Composable
 fun WelcomeView(
@@ -108,13 +108,13 @@ fun WelcomeView(
                         )
                         StepCircles(colors)
                     } ?: run {
-                        SatoButton(
+                        HushButton(
                             modifier = Modifier
                                 .padding(
                                     horizontal = 20.dp
                                 ),
                             onClick = onNext,
-                            buttonColor = SatoButtonBlue,
+                            buttonColor = HushButtonBlue,
                             text = R.string.start
                         )
                     }

@@ -29,13 +29,13 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import uk.co.hushchip.app.R
-import uk.co.hushchip.app.ui.components.shared.SatoButton
+import uk.co.hushchip.app.ui.components.shared.HushButton
 import uk.co.hushchip.app.ui.theme.SatoInactiveTracer
 import uk.co.hushchip.app.ui.theme.SatoPurple
-import uk.co.hushchip.app.utils.satoClickEffect
+import uk.co.hushchip.app.utils.hushClickEffect
 
 @Composable
-fun NewSeedkeeperPopUpDialog(
+fun NewCardPopUpDialog(
     isOpen: MutableState<Boolean>,
     title: Int,
     onClick: () -> Unit
@@ -79,7 +79,7 @@ fun NewSeedkeeperPopUpDialog(
                 Image(
                     modifier = Modifier
                         .background(Color.Transparent, shape = CircleShape)
-                        .satoClickEffect(
+                        .hushClickEffect(
                             onClick = {
                                 isOpen.value = !isOpen.value
                             }
@@ -112,7 +112,7 @@ fun NewSeedkeeperPopUpDialog(
                 horizontalArrangement = Arrangement.Center
             ) {
 
-                SatoButton(
+                HushButton(
                     modifier = Modifier,
                     onClick = {
                         onClick()

@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import uk.co.hushchip.app.R
 import uk.co.hushchip.app.ui.components.shared.GifImage
-import uk.co.hushchip.app.ui.components.shared.SatoButton
+import uk.co.hushchip.app.ui.components.shared.HushButton
 import uk.co.hushchip.app.ui.theme.SatoLightGrey
 import uk.co.hushchip.app.ui.theme.SatoNfcBlue
 
@@ -94,7 +94,7 @@ fun DrawerScreen(
         }
         Spacer(modifier = Modifier.height(16.dp))
         if (closeDrawerButton) {
-            SatoButton(
+            HushButton(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = closeSheet,
                 text = R.string.cancel,

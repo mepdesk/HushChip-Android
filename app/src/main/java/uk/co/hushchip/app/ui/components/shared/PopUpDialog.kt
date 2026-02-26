@@ -43,7 +43,7 @@ import kotlinx.coroutines.launch
 import uk.co.hushchip.app.R
 import uk.co.hushchip.app.ui.components.import.InputField
 import uk.co.hushchip.app.ui.theme.SatoPurple
-import uk.co.hushchip.app.utils.satoClickEffect
+import uk.co.hushchip.app.utils.hushClickEffect
 
 @Composable
 fun PopUpDialog(
@@ -97,7 +97,7 @@ fun PopUpDialog(
                 Image(
                     modifier = Modifier
                         .background(Color.Transparent, shape = CircleShape)
-                        .satoClickEffect(
+                        .hushClickEffect(
                             onClick = {
                                 isOpen.value = !isOpen.value
                             }
@@ -188,7 +188,7 @@ fun PopUpDialog(
                             Image(
                                 modifier = Modifier
                                     .background(Color.Transparent, shape = CircleShape)
-                                    .satoClickEffect(
+                                    .hushClickEffect(
                                         onClick = {
                                             onClick(email)
                                             filteredList = filteredList.toMutableList().apply {

@@ -11,9 +11,9 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
 //todo: generalise naming.
-val SatoButtonBlue = Color(0xFF525684)
+val HushButtonBlue = Color(0xFF525684)
 val SatoGradientPurple = Color(0xFF513C68)
-val SatoButtonPurple = Color(0xFF3B2055)
+val HushButtonPurple = Color(0xFF3B2055)
 val SatoGradientPurpleLight = Color(0xFF8C42CF)
 val SatoGray = Color(0xFFD9C7EB)
 val SatoLightGrey = Color(0xFFC6C6C6)

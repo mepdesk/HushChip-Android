@@ -1,19 +1,19 @@
 <resources>
     <!--General-->
-    <string name="app_name">Seedkeeper</string>
+    <string name="app_name">HushChip</string>
     <string name="welcome">Welcome</string>
-    <string name="welcomeInfo">Seedkeeper lets you easily generate, import and export a variety of crypto related secrets.</string>
-    <string name="seedphraseManager">Your seedphrases manager</string>
-    <string name="seedphraseManagerInfo">Don’t write your seedphrases on a piece of paper anymore! We offer you an advanced hardware solution to store them properly.</string>
+    <string name="welcomeInfo">HushChip lets you securely store and manage your crypto secrets.</string>
+    <string name="seedphraseManager">Your secrets. On a chip.</string>
+    <string name="seedphraseManagerInfo">Stop writing seed phrases on paper. HushChip stores them on a PIN-protected NFC smart card.</string>
     <string name="usingNfc">Using NFC</string>
-    <string name="usingNfcInfo">To use it, put the card on top of your phone when prompted and keep it on the reader throughout the operation.</string>
+    <string name="usingNfcInfo">Hold your HushChip against the back of your phone when prompted and keep it still throughout the operation.</string>
     <string name="start">Start</string>
-    <string name="seedkeeper">Seedkeeper</string>
-    <string name="noSeedkeeper">No Seedkeeper card yet? \nClick here to buy one.</string>
+    <string name="seedkeeper">HushChip</string>
+    <string name="noSeedkeeper">No HushChip card yet?\nVisit hushchip.co.uk to get one.</string>
     <string name="scan">Click\n&amp;\nScan</string>
     <string name="cancel">Cancel</string>
     <string name="readyToScan">Ready to Scan</string>
-    <string name="nfcHoldSeedkeeper">Hold your Seedkeeper near your phone</string>
+    <string name="nfcHoldSeedkeeper">Hold your HushChip near your phone</string>
     <string name="done">Done</string>
     <string name="cardNeedToBeScannedTitle">No scanned card</string>
     <string name="cardNeedToBeScannedMessage">You need to scan a card to display its information</string>
@@ -52,7 +52,7 @@
     <string name="nfcResultCodeNone">None</string>
     <string name="nfcResultCodeBusy">Busy</string>
     <string name="nfcResultCodeNfcError">Error during card scan</string>
-    <string name="nfcSeedkeeperNeedsSetup">Your Seedkeeper needs to be setup!</string>
+    <string name="nfcSeedkeeperNeedsSetup">Your card needs to be set up.</string>
     <string name="nfcWrongPin">Wrong PIN, tries left: </string>
     <string name="nfcCardBlocked">Too many incorrect PIN attempts! Your card has been blocked.</string>
     <string name="nfcSecretDeleted">Secret successfully deleted.</string>
@@ -77,7 +77,7 @@
     <string name="generateExplanation">Allows you to quickly generate and import a new secret.</string>
     <string name="generateAMnemonicPhraseExplanation">Allows you to quickly generate a mnemonic phrase.</string>
     <string name="generateAPasswordExplanation">Allows you to quickly generate a password.</string>
-    <string name="generateSuccessful">The following secret has been successfully imported into your Seedkeeper</string>
+    <string name="generateSuccessful">The following secret has been successfully saved to your HushChip card</string>
     <string name="importButton">Import</string>
     <string name="memorablePassword">Easy to read</string>
 
@@ -106,13 +106,13 @@
     <!--Import View-->
     <string name="importHeader">Import</string>
     <string name="importAMnemonicPhrase">Import a mnemonic phrase</string>
-    <string name="importAMnemonicPhraseMessage">Allows you to import an existing mnemonic phrase into your Seedkeeper.</string>
+    <string name="importAMnemonicPhraseMessage">Allows you to import an existing mnemonic phrase to your HushChip card.</string>
     <string name="importAPassword">Import a password</string>
-    <string name="importAPasswordMessage">Allows you to import an existing password into your Seedkeeper.</string>
+    <string name="importAPasswordMessage">Allows you to import an existing password to your HushChip card.</string>
     <string name="importAWalletDescriptor">Import a wallet descriptor</string>
-    <string name="importAWalletDescriptorMessage">Allows you to import an existing wallet descriptor into your Seedkeeper.</string>
+    <string name="importAWalletDescriptorMessage">Allows you to import an existing wallet descriptor to your HushChip card.</string>
     <string name="importFreeField">Import what you want</string>
-    <string name="importFreeFieldMessage">Allows you to import any data into your Seedkeeper</string>
+    <string name="importFreeFieldMessage">Allows you to import any data to your HushChip card</string>
     <string name="enterYourMnemonic">Enter your mnemonic here</string>
     <string name="enterYourPassword">Enter your password here</string>
     <string name="enterYourWalletDescriptor">Enter your wallet descriptor here</string>
@@ -127,10 +127,10 @@
     <!--Menu View-->
     <string name="cardInfo">Card Information</string>
     <string name="makeBackup">Make a backup</string>
-    <string name="useSeedkeeper">How to use Seedkeeper</string>
+    <string name="useSeedkeeper">How to use HushChip</string>
     <string name="tos">Terms of service</string>
     <string name="privacyPolicy">Privacy policy</string>
-    <string name="allOurProducs">All our \nproducts</string>
+    <string name="allOurProducs">All our\nproducts</string>
 
     <!--Settings View-->
     <string name="settings">Settings</string>
@@ -166,7 +166,7 @@
     <string name="changePinCode">Change PIN code</string>
     <string name="cardAuthenticity">Card authenticity</string>
     <string name="cardAuthentikey">Card authentikey</string>
-    <string name="seedkeeperStatus">Seedkeeper status</string>
+    <string name="seedkeeperStatus">Card status</string>
     <string name="cardIsGenuine">this card is genuine</string>
     <string name="cardIsNotGenuine">this card is not genuine</string>
     <string name="memoryAvailable">Available memory</string>
@@ -181,10 +181,10 @@
 
     <!--Card Authenticity View-->
     <string name="cardAuthFailed">Card authentication failed!</string>
-    <string name="cardAuthFailedText">Impossible to authenticate the issuer of this card. It was not issued by Satochip S.R.L.</string>
+    <string name="cardAuthFailedText">Impossible to authenticate the issuer of this card. It was not issued by the original manufacturer.</string>
     <string name="cardAuthFailedUsage">If you didn\'t load the card yourself, be extremely careful!</string>
     <string name="cardAuthSuccessful">Card authenticated successfully!</string>
-    <string name="cardAuthSuccessfulText">This card was issued by Satochip S.R.L.</string>
+    <string name="cardAuthSuccessfulText">This card was issued by the original manufacturer.</string>
     <string name="cardAuthSuccessfulUsage">You can safely use it.</string>
     <string name="showCardCertificate">Show card certificates</string>
     <string name="hideCardCertificate">Hide card certificates</string>
@@ -200,7 +200,7 @@
     <string name="editPinCode">Change your PIN code</string>
     <string name="editPinCodeEnterCurrentPin">To modify the card PIN code, first enter the current PIN code.</string>
     <string name="editPinCodeEnterNewPin">Enter the new PIN code</string>
-    <string name="editPinCodeMessage">Edit the PIN code to secure access to your Seedkeeper smart card.</string>
+    <string name="editPinCodeMessage">Edit the PIN code to secure access to your HushChip card.</string>
     <string name="enterPinCodeTitle">Enter PIN</string>
     <string name="enterMasterPinCode">Enter your PIN code</string>
     <string name="enterBackupPinCode">Enter the PIN code for your backup card</string>
@@ -208,7 +208,7 @@
     <string name="enterPinCode">Enter PIN (4–16 chars)</string>
     <string name="createPinCode">Create a PIN code for your card</string>
     <string name="createBackupPinCode">Create a PIN code for your backup card</string>
-    <string name="createPinCodeMessage">Create a PIN code to secure access to your Seedkeeper smart card.</string>
+    <string name="createPinCodeMessage">Create a PIN code to secure access to your HushChip card.</string>
     <string name="wrongPinCode">Wrong PIN code!</string>
     <string name="wrongPinCodeMessage">The PIN code value does not match! \n please try again</string>
     <string name="confirmPinCode">Confirm PIN code</string>
@@ -227,32 +227,32 @@
     <string name="home">Home</string>
     <string name="back">Back</string>
     <string name="restart">Restart</string>
-    <string name="scanMySeedkeeper">Scan my seedkeeper</string>
+    <string name="scanMySeedkeeper">Scan my card</string>
     <string name="makeTheBackup">Make the backup</string>
-    <string name="backupDescription">In order to make a backup of your Seedkeeper (master card) to another one, you’ll first need to pair the backup card.</string>
+    <string name="backupDescription">In order to make a backup of your HushChip card to another one, you’ll first need to pair the backup card.</string>
     <string name="pairingStartProcess">Start the backup process and follow the wizard.</string>
-    <string name="pairingFirstStep">Please prepare your Seedkeeper backup card and click next to pair the card.</string>
-    <string name="pairingSecondStep">Now that your backup card has been paired, please rescan your Seedkeeper card.</string>
+    <string name="pairingFirstStep">Please prepare your HushChip backup card and click next to pair the card.</string>
+    <string name="pairingSecondStep">Now that your backup card has been paired, please rescan your HushChip card.</string>
     <string name="pairingThirdStepDoneTitle">Perfect!</string>
     <string name="pairingThirdStepDoneText">You are now ready to copy the content of this card to your backup card using an encrypted communication.</string>
-    <string name="pairingFourthStep">Please prepare your Seedkeeper backup card and click next to copy your backup.</string>
+    <string name="pairingFourthStep">Please prepare your HushChip backup card and click next to copy your backup.</string>
     <string name="congratulations">Congratulations!</string>
     <string name="numberSecretsSaved">secrets saved in backup card</string>
-    <string name="backupFifthText">You have successfully made a backup of your Seedkeeper card.</string>
+    <string name="backupFifthText">You have successfully made a backup of your HushChip card.</string>
     <string name="backupWarning">Warning!</string>
     <string name="backupFailedText">There were some issues during backup. Some secrets may not have been backed up.</string>
 
     <!--Home View-->
-    <string name="homeAuthenticatedText">Manage your crypto-related secrets at your fingertips with Seedkeeper.</string>
+    <string name="homeAuthenticatedText">Manage your secrets at your fingertips with HushChip.</string>
     <string name="search">Search:</string>
     <string name="mySecretList">My secrets list</string>
 
     <!--Add Secret View-->
     <string name="addSecret">Add secret</string>
-    <string name="addSecretMessage">Generate and save a new secret or simply import an existing one to your Seedkeeper.</string>
+    <string name="addSecretMessage">Generate and save a new secret or simply import an existing one to your HushChip card.</string>
     <string name="generateASecretMessage">Allows you to quickly generate and import a new secret.</string>
     <string name="importASecret">Import a secret</string>
-    <string name="importASecretMessage">Allows you to import an existing secret into your Seedkeeper.</string>
+    <string name="importASecretMessage">Allows you to import an existing secret to your HushChip card.</string>
 
     <!--My Secret View-->
     <string name="mySecret">My secret</string>
@@ -266,8 +266,8 @@
     <string name="xpub">Xpub</string>
     <string name="login">Login</string>
     <string name="url">URL</string>
-    <string name="oldSeedkeeper">This option is only available for the latest Seedkeeper card - buy yours at https://satochip.io/product/seedkeeper</string>
-    <string name="buySeedkeeper">Buy Seedkeeper</string>
+    <string name="oldSeedkeeper">This feature requires a newer card. Visit hushchip.co.uk for more information.</string>
+    <string name="buySeedkeeper">Get HushChip</string>
     <string name="encryptedOnlySecret">Encrypted secret</string>
     <string name="encryptedOnlySecretText">Can\'t export this secret due to specific export policy</string>
     <string name="secretResetWarningText">"You are about to reset a secret. \nThis process is irreversible!"</string>
@@ -287,12 +287,12 @@
     <string name="cardLogs">Card logs</string>
 
     <!-- Links -->
-    <string name="howToUseSeedkeeper">https://satochip.io/setup-use-seedkeeper-on-mobile/</string>
-    <string name="termsOfServiceUrl">https://satochip.io/terms-of-service/</string>
-    <string name="privacyPolicyUrl">https://satochip.io/privacy-policy/</string>
-    <string name="allOurProducsUrl">https://satochip.io/shop/</string>
-    <string name="buySeedkeeperUrl">https://satochip.io/product/seedkeeper/</string>
-    <string name="moreInfoUrl">https://www.youtube.com/watch?v=lVrKgzak2Bc</string>
+    <string name="howToUseSeedkeeper">https://hushchip.co.uk/help</string>
+    <string name="termsOfServiceUrl">https://hushchip.co.uk/terms</string>
+    <string name="privacyPolicyUrl">https://hushchip.co.uk/privacy</string>
+    <string name="allOurProducsUrl">https://hushchip.co.uk</string>
+    <string name="buySeedkeeperUrl">https://hushchip.co.uk</string>
+    <string name="moreInfoUrl">https://hushchip.co.uk/help</string>
 
     <!-- AppErrorMsg -->
     <string name="errorLabelEmpty">Label field is required!</string>
@@ -310,7 +310,7 @@
     <string name="errorUrlTooLong">URL is too long (max 255 bytes)!</string>
     <string name="errorPassphraseTooLong">Passphrase is too long (max 255 bytes)!</string>
     <string name="errorMnemonicWrongFormat">Mnemonic is in the wrong format!</string>
-    <string name="errorSecretTooLongForV1">Payload is too long for Seedkeeper v1 (max 255 bytes)!</string>
+    <string name="errorSecretTooLongForV1">Payload is too long for this card version (max 255 bytes)!</string>
     <string name="errorNoCharSelected">"Please select at least one character set"</string>
     <string name="errorPlaintextExportNotAllowed">This secret policy does not allow export in plaintext!</string>
     <string name="errorPinWrongFormat">PIN should be between 4 and 16 characters!</string>

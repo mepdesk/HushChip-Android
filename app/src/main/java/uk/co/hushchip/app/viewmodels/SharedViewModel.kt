@@ -24,7 +24,7 @@ import uk.co.hushchip.app.data.PasswordOptions
 import uk.co.hushchip.app.data.SecretData
 import uk.co.hushchip.app.data.StringConstants
 import uk.co.hushchip.app.services.NFCCardService
-import uk.co.hushchip.app.services.SatoLog
+import uk.co.hushchip.app.services.HushLog
 import uk.co.hushchip.app.utils.bytesToHex
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -172,12 +172,12 @@ class SharedViewModel : ViewModel() {
     }
 
     fun scanCardForAction(activity: Activity, nfcActionType: NfcActionType) {
-        SatoLog.d(TAG, "scanCardForAction START action: ${nfcActionType.name}")
+        HushLog.d(TAG, "scanCardForAction START action: ${nfcActionType.name}")
         //NFCCardService.resultCodeLive.postValue(NfcResultCode.BUSY)
         NFCCardService.actionType = nfcActionType
         viewModelScope.launch {
             NFCCardService.scanCardForAction(activity)
-            SatoLog.d(TAG, "scanCardForAction END")
+            HushLog.d(TAG, "scanCardForAction END")
         }
     }
 

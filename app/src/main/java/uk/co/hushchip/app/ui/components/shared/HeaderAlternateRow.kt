@@ -21,7 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import uk.co.hushchip.app.R
-import uk.co.hushchip.app.utils.satoClickEffect
+import uk.co.hushchip.app.utils.hushClickEffect
 
 @Composable
 fun HeaderAlternateRow(
@@ -41,7 +41,7 @@ fun HeaderAlternateRow(
         Icon(
             modifier = Modifier
                 .size(32.dp)
-                .satoClickEffect(
+                .hushClickEffect(
                     onClick = {
                         onClick()
                     }

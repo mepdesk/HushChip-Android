@@ -23,7 +23,7 @@ import uk.co.hushchip.app.HomeView
 import uk.co.hushchip.app.R
 import uk.co.hushchip.app.ui.components.settings.ResetCardTextField
 import uk.co.hushchip.app.ui.components.shared.GifImage
-import uk.co.hushchip.app.ui.components.shared.SatoButton
+import uk.co.hushchip.app.ui.components.shared.HushButton
 import uk.co.hushchip.app.viewmodels.SharedViewModel
 
 @Composable
@@ -74,7 +74,7 @@ fun FactoryResetCancel(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        SatoButton(
+        HushButton(
             modifier = Modifier
                 .padding(
                     horizontal = 6.dp

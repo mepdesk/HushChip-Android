@@ -14,8 +14,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import uk.co.hushchip.app.R
-import uk.co.hushchip.app.ui.components.shared.SatoButton
-import uk.co.hushchip.app.ui.theme.SatoButtonBlue
+import uk.co.hushchip.app.ui.components.shared.HushButton
+import uk.co.hushchip.app.ui.theme.HushButtonBlue
 
 @Composable
 fun WelcomeViewContent(
@@ -47,14 +47,14 @@ fun WelcomeViewContent(
         ),
     )
     urlString?.let{
-        SatoButton(
+        HushButton(
             modifier = Modifier,
             onClick = {
                 onClick()
             },
             text = R.string.moreInfo,
             textColor = Color.White,
-            buttonColor = SatoButtonBlue
+            buttonColor = HushButtonBlue
         )
     }
 }

@@ -40,7 +40,7 @@ import uk.co.hushchip.app.ui.components.home.NfcDialog
 import uk.co.hushchip.app.ui.components.shared.GifImage
 import uk.co.hushchip.app.ui.components.shared.HeaderAlternateRow
 import uk.co.hushchip.app.utils.instructionsMap
-import uk.co.hushchip.app.utils.satoClickEffect
+import uk.co.hushchip.app.utils.hushClickEffect
 import uk.co.hushchip.app.viewmodels.SharedViewModel
 
 @OptIn(ExperimentalStdlibApi::class)
@@ -120,7 +120,7 @@ fun ShowCardLogsView(
                 GifImage(
                     modifier = Modifier
                         .size(16.dp)
-                        .satoClickEffect(
+                        .hushClickEffect(
                             onClick = {
                                 var logsText = ""
                                 for (log in filteredLogs) {

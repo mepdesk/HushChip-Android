@@ -31,7 +31,7 @@ import uk.co.hushchip.app.data.NfcActionType
 import uk.co.hushchip.app.ui.components.home.NfcDialog
 import uk.co.hushchip.app.ui.components.settings.CardResetButton
 import uk.co.hushchip.app.ui.components.settings.ResetCardTextField
-import uk.co.hushchip.app.ui.components.shared.SatoButton
+import uk.co.hushchip.app.ui.components.shared.HushButton
 import uk.co.hushchip.app.viewmodels.SharedViewModel
 
 @Composable
@@ -99,7 +99,7 @@ fun FactoryResetDefault(
             containerColor = if (isChecked.value) Color.Red else Color.Red.copy(0.6f),
         )
         Spacer(modifier = Modifier.height(12.dp))
-        SatoButton(
+        HushButton(
             modifier = Modifier
                 .padding(
                     horizontal = 6.dp

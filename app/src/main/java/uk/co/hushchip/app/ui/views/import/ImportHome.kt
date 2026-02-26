@@ -19,7 +19,7 @@ import androidx.navigation.NavHostController
 import uk.co.hushchip.app.R
 import uk.co.hushchip.app.ui.components.import.InputField
 import uk.co.hushchip.app.ui.components.shared.GifImage
-import uk.co.hushchip.app.ui.components.shared.SatoButton
+import uk.co.hushchip.app.ui.components.shared.HushButton
 import uk.co.hushchip.app.ui.components.shared.TitleTextField
 import uk.co.hushchip.app.ui.theme.SatoPurple
 import uk.co.hushchip.app.viewmodels.SharedViewModel
@@ -65,7 +65,7 @@ fun ImportHome(
             horizontalArrangement = Arrangement.Center
         ) {
             //Home
-            SatoButton(
+            HushButton(
                 onClick = {
                     //onClick(ImportViewItems.HOME, null)
                     navController.popBackStack()

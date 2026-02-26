@@ -29,7 +29,7 @@ import uk.co.hushchip.app.ui.theme.SatoGradientPurple
 import uk.co.hushchip.app.ui.theme.SatoGradientPurpleLight
 
 @Composable
-fun SatoRoundButton(
+fun HushRoundButton(
     modifier: Modifier = Modifier,
     text: Int,
     onClick: () -> Unit,

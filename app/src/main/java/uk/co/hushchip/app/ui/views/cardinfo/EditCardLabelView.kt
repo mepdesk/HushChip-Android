@@ -30,13 +30,13 @@ import uk.co.hushchip.app.R
 import uk.co.hushchip.app.data.AppErrorMsg
 import uk.co.hushchip.app.data.NfcActionType
 import uk.co.hushchip.app.data.NfcResultCode
-import uk.co.hushchip.app.services.SatoLog
+import uk.co.hushchip.app.services.HushLog
 import uk.co.hushchip.app.ui.components.import.InputField
 import uk.co.hushchip.app.ui.components.home.NfcDialog
 import uk.co.hushchip.app.ui.components.shared.HeaderAlternateRow
-import uk.co.hushchip.app.ui.components.shared.SatoButton
+import uk.co.hushchip.app.ui.components.shared.HushButton
 import uk.co.hushchip.app.ui.components.shared.TitleTextField
-import uk.co.hushchip.app.ui.theme.SatoButtonPurple
+import uk.co.hushchip.app.ui.theme.HushButtonPurple
 import uk.co.hushchip.app.ui.theme.SatoPurple
 import uk.co.hushchip.app.viewmodels.SharedViewModel
 
@@ -64,7 +64,7 @@ fun EditCardLabelView(
         }
     }
     LaunchedEffect(Unit) {
-        SatoLog.d("EditCardLabelView", "EditCardLabelView DEBUG DEBUG")
+        HushLog.d("EditCardLabelView", "EditCardLabelView DEBUG DEBUG")
     }
 
     // error mgmt
@@ -150,7 +150,7 @@ fun EditCardLabelView(
                     horizontalArrangement = Arrangement.Center
                 ) {
                     // Edit button
-                    SatoButton(
+                    HushButton(
                         modifier = Modifier,
                         text = R.string.importButton,
                         onClick = {
@@ -158,7 +158,7 @@ fun EditCardLabelView(
                             if (curValueLabel.value.toByteArray(Charsets.UTF_8).size > 64) {
                                 appError.value = AppErrorMsg.CARD_LABEL_TOO_LONG
                                 showError.value = true
-                                return@SatoButton
+                                return@HushButton
                             }
 
                             // send command to card
@@ -171,7 +171,7 @@ fun EditCardLabelView(
 
                         },
                         buttonColor = if (curValueLabel.value.isNotEmpty())
-                            SatoButtonPurple else SatoButtonPurple.copy(alpha = 0.6f),
+                            HushButtonPurple else HushButtonPurple.copy(alpha = 0.6f),
                     ) // import button
                 } // Row
             }
