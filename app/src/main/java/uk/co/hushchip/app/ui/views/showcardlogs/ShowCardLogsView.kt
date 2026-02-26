@@ -23,8 +23,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import uk.co.hushchip.app.ui.theme.HushColors
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -36,7 +36,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import uk.co.hushchip.app.R
 import uk.co.hushchip.app.data.NfcActionType
-import uk.co.hushchip.app.ui.components.home.NfcDialog
 import uk.co.hushchip.app.ui.components.shared.GifImage
 import uk.co.hushchip.app.ui.components.shared.HeaderAlternateRow
 import uk.co.hushchip.app.utils.instructionsMap
@@ -51,18 +50,8 @@ fun ShowCardLogsView(
     viewModel: SharedViewModel,
 ) {
 
-    // NFC dialog
-    val showNfcDialog = remember { mutableStateOf(false) } // for NfcDialog
-    if (showNfcDialog.value) {
-        NfcDialog(
-            openDialogCustom = showNfcDialog,
-            resultCodeLive = viewModel.resultCodeLive,
-            isConnected = viewModel.isCardConnected
-        )
-    }
-
     LaunchedEffect(Unit) {
-        showNfcDialog.value = true // NfcDialog
+        viewModel.showNfcOverlayForScan()
         viewModel.scanCardForAction(
             activity = context as Activity,
             nfcActionType = NfcActionType.CARD_LOGS,
@@ -94,7 +83,7 @@ fun ShowCardLogsView(
                 .padding(bottom = 32.dp, top = 16.dp)
                 .verticalScroll(state = scrollState)
                 .border(
-                    color = Color.Black,
+                    color = HushColors.border,
                     width = 2.dp,
                     shape = RoundedCornerShape(8.dp)
                 )
@@ -110,7 +99,7 @@ fun ShowCardLogsView(
                 Text(
                     text = stringResource(id = R.string.logsEntriesnumber) + " ${filteredLogs.size} ",
                     style = TextStyle(
-                        color = Color.Black,
+                        color = HushColors.textBody,
                         fontSize = 16.sp,
                         lineHeight = 21.sp,
                         fontWeight = FontWeight.Bold,
@@ -132,7 +121,7 @@ fun ShowCardLogsView(
                                 Toast.makeText(context, copyText, Toast.LENGTH_SHORT).show()
                             }
                         ),
-                    colorFilter = ColorFilter.tint(Color.Black),
+                    colorFilter = ColorFilter.tint(HushColors.textMuted),
                     image = R.drawable.copy_icon
                 )
             }
@@ -148,21 +137,21 @@ fun ShowCardLogsView(
                         textAlign = TextAlign.Center,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.W600,
-                        color = Color.Black,
+                        color = HushColors.textBody,
                         text = "${instructionsMap[log.ins]}"
                     )
                     Text(
                         textAlign = TextAlign.Center,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium,
-                        color = Color.Black,
+                        color = HushColors.textBody,
                         text = "sw: ${log.sw.toHexString()}"
                     )
                     Text(
                         textAlign = TextAlign.Center,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium,
-                        color = Color.Black,
+                        color = HushColors.textBody,
                         text = "sid1: ${log.sid1} \n sid2: ${log.sid2}"
                     )
                 }

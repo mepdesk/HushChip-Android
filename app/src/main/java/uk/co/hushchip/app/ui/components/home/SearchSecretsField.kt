@@ -20,6 +20,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import uk.co.hushchip.app.ui.theme.HushColors
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -34,8 +35,8 @@ fun SearchSecretsField(
     modifier: Modifier = Modifier,
     curValue: MutableState<String>,
     placeHolder: Int? = null,
-    containerColor: Color = Color.White,
-    textColor: Color = Color.Black,
+    containerColor: Color = HushColors.bgRaised,
+    textColor: Color = HushColors.textBody,
     onClick: (() -> Unit)? = null,
     onValueChange: (() -> Unit)? = null
 ) {

@@ -1,6 +1,7 @@
 package uk.co.hushchip.app.ui.views.menu
 
 import android.content.Context
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -17,12 +18,15 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -86,7 +90,7 @@ fun MenuView(
                 SectionHeader(text = "CARD")
                 SettingsGroup {
                     SettingsRow(
-                        icon = "\uD83D\uDCB3",
+                        iconRes = R.drawable.ic_hush_cardmark,
                         title = "Card Info",
                         onClick = {
                             if (viewModel.isCardDataAvailable) {
@@ -98,7 +102,7 @@ fun MenuView(
                     )
                     GroupDivider()
                     SettingsRow(
-                        icon = "\uD83D\uDD12",
+                        iconRes = R.drawable.ic_lock_outline,
                         title = "Change PIN",
                         onClick = {
                             if (viewModel.isCardDataAvailable) {
@@ -115,7 +119,7 @@ fun MenuView(
                     )
                     GroupDivider()
                     SettingsRow(
-                        icon = "\uD83D\uDD04",
+                        iconRes = R.drawable.ic_sync,
                         title = "Backup",
                         onClick = {
                             if (viewModel.isCardDataAvailable) {
@@ -127,7 +131,7 @@ fun MenuView(
                     )
                     GroupDivider()
                     SettingsRow(
-                        icon = "\uD83D\uDCCB",
+                        iconRes = R.drawable.ic_list,
                         title = "View Logs",
                         onClick = {
                             if (viewModel.isCardDataAvailable) {
@@ -145,7 +149,7 @@ fun MenuView(
                 SectionHeader(text = "APP")
                 SettingsGroup {
                     SettingsRow(
-                        icon = "\u21BA",
+                        iconRes = R.drawable.ic_replay,
                         title = "Replay Onboarding",
                         onClick = {
                             navController.navigate(FirstWelcomeView) {
@@ -155,7 +159,7 @@ fun MenuView(
                     )
                     GroupDivider()
                     SettingsRow(
-                        icon = "\uD83D\uDC46",
+                        iconRes = R.drawable.ic_fingerprint,
                         title = "Biometric Unlock",
                         trailingText = "SOON",
                         onClick = {}
@@ -168,7 +172,7 @@ fun MenuView(
                 SectionHeader(text = "ABOUT")
                 SettingsGroup {
                     SettingsRow(
-                        icon = "</>",
+                        iconRes = R.drawable.ic_code_brackets,
                         title = "Open Source",
                         onClick = {
                             navController.navigate(SettingsView)
@@ -176,7 +180,7 @@ fun MenuView(
                     )
                     GroupDivider()
                     SettingsRow(
-                        icon = "\u24D8",
+                        iconRes = R.drawable.ic_info_outline,
                         title = "Version",
                         subtitle = "App v1.0 (1)",
                         onClick = {}
@@ -198,10 +202,10 @@ fun MenuView(
                         )
                 ) {
                     SettingsRow(
-                        icon = "\u26A0",
+                        iconRes = R.drawable.ic_warning_outline,
                         title = "Factory Reset",
                         titleColor = HushColors.danger,
-                        iconColor = HushColors.danger,
+                        iconTint = HushColors.danger,
                         onClick = {
                             navController.navigate(FactoryResetView)
                         }
@@ -252,12 +256,12 @@ private fun GroupDivider() {
 
 @Composable
 private fun SettingsRow(
-    icon: String,
+    iconRes: Int,
     title: String,
     subtitle: String? = null,
     trailingText: String? = null,
     titleColor: androidx.compose.ui.graphics.Color = HushColors.textBody,
-    iconColor: androidx.compose.ui.graphics.Color = HushColors.textMuted,
+    iconTint: androidx.compose.ui.graphics.Color = HushColors.textMuted,
     onClick: () -> Unit,
 ) {
     Row(
@@ -268,13 +272,11 @@ private fun SettingsRow(
             .padding(horizontal = 14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = icon,
+        Image(
+            painter = painterResource(id = iconRes),
+            contentDescription = title,
             modifier = Modifier.size(20.dp),
-            style = TextStyle(
-                fontSize = 14.sp,
-                color = iconColor
-            )
+            colorFilter = ColorFilter.tint(iconTint)
         )
         Spacer(modifier = Modifier.width(12.dp))
         Column(modifier = Modifier.weight(1f)) {
@@ -311,12 +313,11 @@ private fun SettingsRow(
                 )
             )
         } else {
-            Text(
-                text = "\u203A",
-                style = TextStyle(
-                    fontSize = 18.sp,
-                    color = HushColors.textFaint
-                )
+            Image(
+                painter = painterResource(id = R.drawable.ic_chevron_right),
+                contentDescription = null,
+                modifier = Modifier.size(14.dp),
+                colorFilter = ColorFilter.tint(HushColors.textFaint)
             )
         }
     }

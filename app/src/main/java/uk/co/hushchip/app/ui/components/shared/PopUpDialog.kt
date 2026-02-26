@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import uk.co.hushchip.app.ui.theme.HushColors
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -42,7 +43,6 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import uk.co.hushchip.app.R
 import uk.co.hushchip.app.ui.components.import.InputField
-import uk.co.hushchip.app.ui.theme.SatoPurple
 import uk.co.hushchip.app.utils.hushClickEffect
 
 @Composable
@@ -71,7 +71,7 @@ fun PopUpDialog(
                 .width(350.dp)
                 .height(350.dp)
                 .background(
-                    color = Color.White,
+                    color = HushColors.bgRaised,
                     shape = RoundedCornerShape(8.dp)
                 )
                 .clip(
@@ -82,7 +82,7 @@ fun PopUpDialog(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(
-                        SatoPurple.copy(alpha = 0.5f)
+                        HushColors.bgSurface
                     ),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
@@ -91,7 +91,7 @@ fun PopUpDialog(
                     modifier = Modifier.padding(16.dp),
                     text = stringResource(id = title),
                     fontSize = 18.sp,
-                    color = Color.White,
+                    color = HushColors.textWhite,
                     fontWeight = FontWeight.Bold,
                 )
                 Image(
@@ -106,7 +106,7 @@ fun PopUpDialog(
                         .width(24.dp),
                     painter = painterResource(R.drawable.cancel),
                     contentDescription =  null,
-                    colorFilter = ColorFilter.tint(Color.White),
+                    colorFilter = ColorFilter.tint(HushColors.textWhite),
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))
@@ -115,7 +115,7 @@ fun PopUpDialog(
                     .padding(horizontal = 8.dp),
                 text = stringResource(id = R.string.emailListWriteNewOne),
                 fontSize = 14.sp,
-                color = Color.Black,
+                color = HushColors.textBody,
                 fontWeight = FontWeight.Medium,
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -124,7 +124,7 @@ fun PopUpDialog(
                 modifier = Modifier.padding(horizontal = 8.dp),
                 curValue = curValueLogin,
                 placeHolder = R.string.loginOptional,
-                containerColor = SatoPurple.copy(alpha = 0.5f),
+                containerColor = HushColors.bgSurface,
                 onValueChange = {
                     coroutineScope.launch {
                         val searchQueryFlow = MutableStateFlow(searchQueryState.value)
@@ -147,7 +147,7 @@ fun PopUpDialog(
                     .padding(horizontal = 8.dp),
                 text = stringResource(id = R.string.emailListUseExisting),
                 fontSize = 14.sp,
-                color = Color.Black,
+                color = HushColors.textBody,
                 fontWeight = FontWeight.Medium,
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -156,12 +156,12 @@ fun PopUpDialog(
                 modifier = Modifier
                     .height(1.dp)
                     .fillMaxWidth()
-                    .background(color = Color.LightGray)
+                    .background(color = HushColors.border)
             )
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(color = Color.White),
+                    .background(color = HushColors.bgRaised),
                 horizontalAlignment = Alignment.Start
             ) {
                 filteredList.forEach { email ->
@@ -181,7 +181,7 @@ fun PopUpDialog(
                                 modifier = Modifier,
                                 text = email,
                                 fontSize = 16.sp,
-                                color = Color.Black,
+                                color = HushColors.textBody,
                                 fontWeight = FontWeight.Bold,
                             )
 
@@ -205,14 +205,14 @@ fun PopUpDialog(
                                     .width(16.dp),
                                 painter = painterResource(R.drawable.cancel),
                                 contentDescription =  null,
-                                colorFilter = ColorFilter.tint(Color.Black),
+                                colorFilter = ColorFilter.tint(HushColors.textMuted),
                             )
                         }
                         Spacer(
                             modifier = Modifier
                                 .height(1.dp)
                                 .fillMaxWidth()
-                                .background(color = Color.LightGray)
+                                .background(color = HushColors.border)
                         )
                     }
                 }

@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.graphics.Color
 import uk.co.hushchip.app.R
+import uk.co.hushchip.app.ui.theme.HushColors
 import uk.co.hushchip.app.data.BackupStatus
 import uk.co.hushchip.app.ui.components.shared.HushButton
 
@@ -17,7 +18,7 @@ fun SecondaryBackupButton(
             goBack()
         },
         buttonColor = Color.Transparent,
-        textColor = Color.Black,
+        textColor = HushColors.textBody,
         text = when (backupStatus.value) {
             BackupStatus.FIRST_STEP -> {
                 R.string.back

@@ -20,8 +20,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import uk.co.hushchip.app.ui.theme.HushColors
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -70,7 +70,7 @@ fun ShowLogsView(
                 .padding(bottom = 32.dp, top = 16.dp)
                 .verticalScroll(state = scrollState)
                 .border(
-                    color = Color.Black,
+                    color = HushColors.border,
                     width = 2.dp,
                     shape = RoundedCornerShape(8.dp)
                 )
@@ -86,7 +86,7 @@ fun ShowLogsView(
                 Text(
                     text = stringResource(id = R.string.logsEntriesnumber) + " ${HushLog.logList.size} ",
                     style = TextStyle(
-                        color = Color.Black,
+                        color = HushColors.textBody,
                         fontSize = 16.sp,
                         lineHeight = 21.sp,
                         fontWeight = FontWeight.Bold,
@@ -108,7 +108,7 @@ fun ShowLogsView(
                                 Toast.makeText(context, copyText, Toast.LENGTH_SHORT).show()
                             }
                         ),
-                    colorFilter = ColorFilter.tint(Color.Black),
+                    colorFilter = ColorFilter.tint(HushColors.textMuted),
                     image = R.drawable.copy_icon
                 )
             }
@@ -124,21 +124,21 @@ fun ShowLogsView(
                         textAlign = TextAlign.Center,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.W600,
-                        color = Color.Black,
+                        color = HushColors.textBody,
                         text = "${log.date} - ${log.level}"
                     )
                     Text(
                         textAlign = TextAlign.Center,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium,
-                        color = Color.Black,
+                        color = HushColors.textBody,
                         text = log.tag
                     )
                     Text(
                         textAlign = TextAlign.Center,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium,
-                        color = Color.Black,
+                        color = HushColors.textBody,
                         text = log.msg
                     )
                 }

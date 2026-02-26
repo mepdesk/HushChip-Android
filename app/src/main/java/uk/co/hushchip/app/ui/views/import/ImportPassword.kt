@@ -36,7 +36,6 @@ import uk.co.hushchip.app.data.HushChipPreferences
 import uk.co.hushchip.app.ui.components.import.InputField
 import uk.co.hushchip.app.ui.components.import.PasswordOptionsBox
 import uk.co.hushchip.app.ui.components.import.SecretTextField
-import uk.co.hushchip.app.ui.components.home.NfcDialog
 import uk.co.hushchip.app.ui.components.shared.PopUpDialog
 import uk.co.hushchip.app.ui.components.shared.HushButton
 import uk.co.hushchip.app.ui.components.shared.TitleTextField
@@ -54,16 +53,6 @@ fun ImportPassword(
     importMode: ImportMode,
     curValueLabel: MutableState<String>,
 ) {
-    // NFC dialog
-    val showNfcDialog = remember { mutableStateOf(false) } // for NfcDialog
-    if (showNfcDialog.value) {
-        NfcDialog(
-            openDialogCustom = showNfcDialog,
-            resultCodeLive = viewModel.resultCodeLive,
-            isConnected = viewModel.isCardConnected
-        )
-    }
-
     // error mgmt
     val showError = remember {
         mutableStateOf(false)
@@ -325,7 +314,7 @@ fun ImportPassword(
                     }
 
                     viewModel.setSecretData(secretData)
-                    showNfcDialog.value = true
+                    viewModel.showNfcOverlayForScan()
                     viewModel.scanCardForAction(
                         activity = context as Activity,
                         nfcActionType = NfcActionType.IMPORT_SECRET

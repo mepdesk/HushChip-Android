@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import uk.co.hushchip.app.ui.theme.HushColors
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
@@ -97,7 +98,7 @@ fun SecretInfoField(
                 append(":")
             },
             style = TextStyle(
-                color = Color.Black,
+                color = HushColors.textBody,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.ExtraLight,
                 textAlign = TextAlign.Center
@@ -119,7 +120,7 @@ fun SecretInfoField(
                 Text(
                     text = annotatedLinkString,
                     style = TextStyle(
-                        color = Color.White,
+                        color = HushColors.textWhite,
                         fontSize = 16.sp,
                         lineHeight = 21.sp,
                         fontWeight = FontWeight.Bold,
@@ -130,7 +131,7 @@ fun SecretInfoField(
                 Text(
                     text = text,
                     style = TextStyle(
-                        color = Color.White,
+                        color = HushColors.textWhite,
                         fontSize = 16.sp,
                         lineHeight = 21.sp,
                         fontWeight = FontWeight.Bold,
@@ -153,7 +154,7 @@ fun SecretInfoField(
                 painter = painterResource(id = R.drawable.copy_icon),
                 contentDescription = null,
                 contentScale = ContentScale.Fit,
-                colorFilter = ColorFilter.tint(Color.White)
+                colorFilter = ColorFilter.tint(HushColors.textWhite)
             )
 
         }

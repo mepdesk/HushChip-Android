@@ -5,15 +5,15 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -23,9 +23,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -42,10 +44,11 @@ import uk.co.hushchip.app.data.NfcResultCode
 import uk.co.hushchip.app.data.PinCodeAction
 import uk.co.hushchip.app.data.HushChipPreferences
 import uk.co.hushchip.app.services.HushLog
-import uk.co.hushchip.app.ui.components.home.NfcDialog
+import uk.co.hushchip.app.ui.components.NfcScanOverlay
 import uk.co.hushchip.app.ui.theme.HushColors
 import uk.co.hushchip.app.ui.views.addsecret.AddSecretView
 import uk.co.hushchip.app.ui.views.backup.BackupView
+import uk.co.hushchip.app.ui.views.home.CardIllustration
 import uk.co.hushchip.app.ui.views.cardinfo.CardInformation
 import uk.co.hushchip.app.ui.views.factoryreset.FactoryResetView
 import uk.co.hushchip.app.ui.views.home.HomeView
@@ -82,35 +85,29 @@ fun Navigation(
             HomeView
         }
 
-    // NFC DIALOG
-    val showNfcDialog = remember { mutableStateOf(false) } // for NfcDialog
-    if (showNfcDialog.value) {
-        NfcDialog(
-            openDialogCustom = showNfcDialog,
-            resultCodeLive = viewModel.resultCodeLive,
-            isConnected = viewModel.isCardConnected
-        )
-    }
-
     // FIRST TIME SETUP
-    if (viewModel.resultCodeLive == NfcResultCode.REQUIRE_SETUP) {
-        HushLog.d(TAG, "Navigation: Card needs to be setup!")
-        navController.navigate(
-            PinEntryView(
-                pinCodeAction = PinCodeAction.SETUP_PIN_CODE.name,
-                isBackupCard = false,
+    LaunchedEffect(viewModel.resultCodeLive) {
+        if (viewModel.resultCodeLive == NfcResultCode.REQUIRE_SETUP) {
+            HushLog.d(TAG, "Navigation: Card needs to be setup!")
+            navController.navigate(
+                PinEntryView(
+                    pinCodeAction = PinCodeAction.SETUP_PIN_CODE.name,
+                    isBackupCard = false,
+                )
             )
-        )
-    } else if (viewModel.resultCodeLive == NfcResultCode.REQUIRE_SETUP_FOR_BACKUP) {
-        HushLog.d(TAG, "Navigation: Card needs to be setup!")
-        navController.navigate(
-            PinEntryView(
-                pinCodeAction = PinCodeAction.SETUP_PIN_CODE.name,
-                isBackupCard = true,
+        } else if (viewModel.resultCodeLive == NfcResultCode.REQUIRE_SETUP_FOR_BACKUP) {
+            HushLog.d(TAG, "Navigation: Card needs to be setup!")
+            navController.navigate(
+                PinEntryView(
+                    pinCodeAction = PinCodeAction.SETUP_PIN_CODE.name,
+                    isBackupCard = true,
+                )
             )
-        )
+        }
     }
 
+    // Main content + NFC overlay layered on top
+    Box {
     NavHost(
         navController = navController,
         startDestination = SplashView
@@ -132,30 +129,7 @@ fun Navigation(
                 body = stringResource(R.string.onboarding1Body),
                 buttonText = stringResource(R.string.onboardingNext),
                 topContent = {
-                    // Card with gold EMV chip
-                    Box(
-                        modifier = Modifier
-                            .width(220.dp)
-                            .height(150.dp)
-                            .background(HushColors.bgRaised, RoundedCornerShape(16.dp))
-                            .border(1.dp, HushColors.border, RoundedCornerShape(16.dp))
-                    ) {
-                        Canvas(
-                            modifier = Modifier
-                                .padding(start = 20.dp, top = 20.dp)
-                                .size(width = 40.dp, height = 28.dp)
-                                .align(Alignment.TopStart)
-                        ) {
-                            val goldColor = Color(0xFFB8A04A)
-                            drawRoundRect(color = goldColor, cornerRadius = CornerRadius(4f, 4f))
-                            val lineColor = goldColor.copy(alpha = 0.4f)
-                            for (i in 1..3) {
-                                val y = size.height * i / 4f
-                                drawLine(lineColor, Offset(2f, y), Offset(size.width - 2f, y), 1f)
-                            }
-                            drawLine(lineColor, Offset(size.width / 2f, 2f), Offset(size.width / 2f, size.height - 2f), 1f)
-                        }
-                    }
+                    CardIllustration(cardWidth = 220, cardHeight = 140)
                 },
                 onNext = {
                     navController.navigate(SecondWelcomeView) {
@@ -173,12 +147,41 @@ fun Navigation(
                 body = stringResource(R.string.onboarding2Body),
                 buttonText = stringResource(R.string.onboardingNext),
                 topContent = {
-                    Image(
-                        painter = painterResource(R.drawable.contactless_24px),
-                        contentDescription = null,
-                        modifier = Modifier.size(64.dp),
-                        colorFilter = ColorFilter.tint(HushColors.textFaint)
-                    )
+                    // Card + NFC waves + Phone illustration
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        // Tilted card
+                        Box(
+                            modifier = Modifier.graphicsLayer { rotationZ = -10f }
+                        ) {
+                            CardIllustration(cardWidth = 160, cardHeight = 100)
+                        }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        // NFC waves
+                        Image(
+                            painter = painterResource(R.drawable.contactless_24px),
+                            contentDescription = null,
+                            modifier = Modifier.size(32.dp),
+                            colorFilter = ColorFilter.tint(HushColors.textFaint)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        // Phone outline
+                        Canvas(modifier = Modifier.size(width = 50.dp, height = 90.dp)) {
+                            drawRoundRect(
+                                color = HushColors.border,
+                                cornerRadius = CornerRadius(12f, 12f),
+                                style = Stroke(width = 2f)
+                            )
+                            // Notch/camera dot
+                            drawCircle(
+                                color = HushColors.border,
+                                radius = 3f,
+                                center = Offset(size.width / 2f, 12f)
+                            )
+                        }
+                    }
                 },
                 onNext = {
                     navController.navigate(ThirdWelcomeView) {
@@ -202,11 +205,11 @@ fun Navigation(
                 buttonText = stringResource(R.string.onboardingUnderstand),
                 warningText = stringResource(R.string.onboarding3Warning),
                 topContent = {
-                    Icon(
-                        Icons.Default.Lock,
+                    Image(
+                        painter = painterResource(R.drawable.ic_lock_outline),
                         contentDescription = "Lock",
                         modifier = Modifier.size(64.dp),
-                        tint = HushColors.textFaint
+                        colorFilter = ColorFilter.tint(HushColors.textFaint)
                     )
                 },
                 onNext = {
@@ -319,6 +322,22 @@ fun Navigation(
             )
         }
     }
+
+    // NFC Scan Overlay — layered over all screens
+    NfcScanOverlay(
+        isVisible = viewModel.showNfcOverlay,
+        status = viewModel.nfcScanStatus,
+        onCancel = { viewModel.dismissNfcOverlay() },
+        onSuccessDismiss = {
+            viewModel.showNfcOverlay = false
+        },
+        progress = when {
+            viewModel.backupExportProgress > 0f -> viewModel.backupExportProgress
+            viewModel.backupImportProgress > 0f -> viewModel.backupImportProgress
+            else -> null
+        }
+    )
+    } // end Box
 }
 
 @Serializable

@@ -22,7 +22,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import uk.co.hushchip.app.ui.theme.HushColors
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -39,7 +39,6 @@ import uk.co.hushchip.app.data.NfcActionType
 import uk.co.hushchip.app.data.SecretData
 import uk.co.hushchip.app.parsers.SecretDataParser
 import uk.co.hushchip.app.ui.components.import.SecretTextField
-import uk.co.hushchip.app.ui.components.home.NfcDialog
 import uk.co.hushchip.app.ui.components.mysecret.GetSpecificSecretInfoFields
 import uk.co.hushchip.app.ui.components.mysecret.NewCardPopUpDialog
 import uk.co.hushchip.app.ui.components.mysecret.SecretInfoField
@@ -58,15 +57,6 @@ fun ShowSecretView(
     val scrollState = rememberScrollState()
     val secretText = remember {
         mutableStateOf("")
-    }
-    // NFC dialog
-    val showNfcDialog = remember { mutableStateOf(false) } // for NfcDialog
-    if (showNfcDialog.value) {
-        NfcDialog(
-            openDialogCustom = showNfcDialog,
-            resultCodeLive = viewModel.resultCodeLive,
-            isConnected = viewModel.isCardConnected
-        )
     }
     // buy card popup
     val buySeedkeeperUrl = stringResource(id = R.string.buySeedkeeperUrl)
@@ -240,7 +230,7 @@ fun ShowSecretView(
                     Text(
                         text = stringResource(id = R.string.manageSecretMessage),
                         style = TextStyle(
-                            color = Color.Black,
+                            color = HushColors.textBody,
                             fontSize = 16.sp,
                             lineHeight = 24.sp,
                             fontWeight = FontWeight.ExtraLight,
@@ -280,7 +270,7 @@ fun ShowSecretView(
                     Text(
                         text = stringResource(R.string.secretResetWarningText),
                         style = TextStyle(
-                            color = Color.Red,
+                            color = HushColors.danger,
                             fontSize = 16.sp,
                             lineHeight = 24.sp,
                             fontWeight = FontWeight.SemiBold,
@@ -293,7 +283,7 @@ fun ShowSecretView(
                         Text(
                             text = stringResource(R.string.checkThisBoxToContinue),
                             style = TextStyle(
-                                color = Color.Red,
+                                color = HushColors.danger,
                                 fontSize = 16.sp,
                                 lineHeight = 24.sp,
                                 fontWeight = FontWeight.Normal,
@@ -312,7 +302,7 @@ fun ShowSecretView(
                     Text(
                         text = stringResource(appError.value.msg),
                         style = TextStyle(
-                            color = Color.Red,
+                            color = HushColors.danger,
                             fontSize = 16.sp,
                             lineHeight = 24.sp,
                             fontWeight = FontWeight.SemiBold,
@@ -340,7 +330,7 @@ fun ShowSecretView(
                                     showConfirmDeleteMsg.value = true
                                 } else if (hasUserConfirmedTerms.value == true) {
                                     // delete secret
-                                    showNfcDialog.value = true // NfcDialog
+                                    viewModel.showNfcOverlayForScan()
                                     viewModel.scanCardForAction(
                                         activity = context as Activity,
                                         nfcActionType = NfcActionType.DELETE_SECRET
@@ -361,7 +351,7 @@ fun ShowSecretView(
                                 appError.value = AppErrorMsg.PLAINTEXT_EXPORT_NOT_ALLOWED
                                 showError.value = true
                             } else {
-                                showNfcDialog.value = true // NfcDialog
+                                viewModel.showNfcOverlayForScan()
                                 viewModel.scanCardForAction(
                                     activity = context as Activity,
                                     nfcActionType = NfcActionType.EXPORT_SECRET

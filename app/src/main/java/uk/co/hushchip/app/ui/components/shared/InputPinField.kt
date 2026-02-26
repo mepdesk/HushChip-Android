@@ -26,6 +26,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import uk.co.hushchip.app.ui.theme.HushColors
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -68,7 +69,7 @@ fun InputPinField(
             painter = painterResource(id = if (passwordVisibility.value) R.drawable.show_password else R.drawable.hide_password),
             contentDescription = null,
             contentScale = ContentScale.Fit,
-            colorFilter = ColorFilter.tint(Color.Black)
+            colorFilter = ColorFilter.tint(HushColors.textMuted)
         )
     }
 
@@ -79,7 +80,7 @@ fun InputPinField(
         TextField(
             modifier = modifier
                 .fillMaxWidth()
-                .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
+                .border(1.dp, HushColors.border, shape = RoundedCornerShape(8.dp))
                 .clip(
                     RoundedCornerShape(8.dp)
                 )
@@ -101,7 +102,7 @@ fun InputPinField(
             ),
             visualTransformation = if (passwordVisibility.value) VisualTransformation.None else visualTransformation,
             textStyle = TextStyle(
-                color = Color.Black,
+                color = HushColors.textBright,
                 fontSize = 18.sp,
                 lineHeight = 22.sp,
                 fontWeight = FontWeight.Bold,
@@ -112,7 +113,7 @@ fun InputPinField(
                         modifier = Modifier.fillMaxWidth(),
                         text = stringResource(id = placeHolder),
                         style = TextStyle(
-                            color = Color.Gray,
+                            color = HushColors.textGhost,
                             fontSize = 18.sp,
                             lineHeight = 22.sp,
                             fontWeight = FontWeight.ExtraLight
@@ -123,15 +124,15 @@ fun InputPinField(
             colors = TextFieldDefaults.colors(
                 unfocusedContainerColor = Color.Transparent,
                 focusedContainerColor = Color.Transparent,
-                focusedTextColor = Color.Black,
-                unfocusedTextColor = Color.Black,
-                cursorColor = Color.Black,
-                focusedLabelColor = Color.Black,
+                focusedTextColor = HushColors.textBright,
+                unfocusedTextColor = HushColors.textBright,
+                cursorColor = HushColors.textBright,
+                focusedLabelColor = HushColors.textBright,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent,
                 disabledContainerColor = Color.Transparent,
-                disabledTextColor = Color.Black,
+                disabledTextColor = HushColors.textBright,
             ),
             minLines = 1,
             maxLines = 1,

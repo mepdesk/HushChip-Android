@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import uk.co.hushchip.app.ui.theme.HushColors
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -27,8 +28,8 @@ fun CardResetButton(
     text: String,
     containerColor: Color = SatoLightPurple,
     onClick: () -> Unit,
-    textColor: Color = Color.White,
-    titleColor: Color = Color.Black
+    textColor: Color = HushColors.textWhite,
+    titleColor: Color = HushColors.textBody
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -62,7 +63,7 @@ fun CardResetButton(
                 contentColor = textColor,
                 containerColor = containerColor,
                 disabledContainerColor = Color.Transparent,
-                disabledContentColor = Color.White
+                disabledContentColor = HushColors.textWhite
             )
         )
         {

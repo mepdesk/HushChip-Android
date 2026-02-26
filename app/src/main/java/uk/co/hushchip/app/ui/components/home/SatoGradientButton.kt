@@ -17,8 +17,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import uk.co.hushchip.app.ui.theme.HushColors
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -63,7 +63,7 @@ fun SatoGradientButton(
             Text(
                 modifier = Modifier,
                 text = stringResource(text),
-                color = Color.White,
+                color = HushColors.textWhite,
                 textAlign = TextAlign.Start,
                 style = TextStyle(
                     fontWeight = FontWeight.Medium,
@@ -73,7 +73,7 @@ fun SatoGradientButton(
             GifImage(
                 modifier = Modifier
                     .size(48.dp),
-                colorFilter = ColorFilter.tint(Color.White),
+                colorFilter = ColorFilter.tint(HushColors.textWhite),
                 image = R.drawable.cart
             )
         }

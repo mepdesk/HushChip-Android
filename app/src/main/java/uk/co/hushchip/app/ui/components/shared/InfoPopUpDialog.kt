@@ -16,8 +16,8 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import uk.co.hushchip.app.ui.theme.HushColors
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -25,8 +25,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import uk.co.hushchip.app.R
-import uk.co.hushchip.app.ui.theme.SatoPurple
-
 @Composable
 fun InfoPopUpDialog(
     isOpen: MutableState<Boolean>,
@@ -44,47 +42,48 @@ fun InfoPopUpDialog(
         Column(
             modifier = Modifier
                 .width(350.dp)
-                .height(200.dp)
                 .background(
-                    color = Color.White,
-                    shape = RoundedCornerShape(8.dp)
+                    color = HushColors.bgRaised,
+                    shape = RoundedCornerShape(12.dp)
                 )
                 .clip(
-                    shape = RoundedCornerShape(8.dp)
+                    shape = RoundedCornerShape(12.dp)
                 ),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(
-                        SatoPurple.copy(alpha = 0.5f)
-                    ),
+                    .background(HushColors.bgSurface),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     modifier = Modifier.padding(16.dp),
                     text = stringResource(id = title),
-                    fontSize = 24.sp,
-                    color = Color.White,
-                    fontWeight = FontWeight.ExtraBold,
+                    fontSize = 14.sp,
+                    color = HushColors.textBright,
+                    fontWeight = FontWeight.Normal,
+                    letterSpacing = 3.sp
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
                 text = stringResource(id = message),
-                fontSize = 16.sp,
-                color = Color.Black,
-                fontWeight = FontWeight.Bold,
+                fontSize = 12.sp,
+                color = HushColors.textMuted,
+                fontWeight = FontWeight.Light,
                 textAlign = TextAlign.Center
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             HushButton(
                 onClick = { isOpen.value = !isOpen.value },
                 text = R.string.close
             )
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }

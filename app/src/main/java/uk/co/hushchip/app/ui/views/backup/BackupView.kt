@@ -23,7 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import uk.co.hushchip.app.ui.theme.HushColors
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -42,7 +42,6 @@ import uk.co.hushchip.app.ui.components.backup.BackupErrorCard
 import uk.co.hushchip.app.ui.components.backup.BackupText
 import uk.co.hushchip.app.ui.components.backup.BackupTransferImages
 import uk.co.hushchip.app.ui.components.backup.MainBackupButton
-import uk.co.hushchip.app.ui.components.home.NfcDialog
 import uk.co.hushchip.app.ui.components.shared.HeaderAlternateRow
 import uk.co.hushchip.app.viewmodels.SharedViewModel
 
@@ -55,20 +54,6 @@ fun BackupView(
     // backup flow state
     val backupStatus = remember { //rememberSaveable {
         mutableStateOf(BackupStatus.DEFAULT)
-    }
-
-    // NFC dialog
-    val showNfcDialog = remember { mutableStateOf(false) } // for NfcDialog
-    if (showNfcDialog.value) {
-        NfcDialog(
-            openDialogCustom = showNfcDialog,
-            resultCodeLive = viewModel.resultCodeLive,
-            isConnected = viewModel.isCardConnected,
-            progress = if (backupStatus.value == BackupStatus.SECOND_STEP)
-                    viewModel.backupExportProgress
-                else
-                    viewModel.backupImportProgress,
-        )
     }
 
     LaunchedEffect(viewModel.resultCodeLive) {
@@ -156,7 +141,7 @@ fun BackupView(
                                 ) {
                                     Text("details",
                                         style = TextStyle(
-                                            color = Color.Black,
+                                            color = HushColors.textBody,
                                             fontSize = 18.sp,
                                             lineHeight = 22.sp,
                                             fontWeight = FontWeight.Bold
@@ -173,7 +158,7 @@ fun BackupView(
                         if (backupStatus.value == BackupStatus.SUCCESS){
                             Text("${NFCCardService.backupNumberOfSecretsImported} " + stringResource(R.string.numberSecretsSaved),
                                 style = TextStyle(
-                                    color = Color.Black,
+                                    color = HushColors.textBody,
                                     fontSize = 18.sp,
                                     lineHeight = 22.sp,
                                     fontWeight = FontWeight.Bold
@@ -226,7 +211,7 @@ fun BackupView(
                                 }
                                 BackupStatus.SECOND_STEP -> {
                                     // export secrets from master card
-                                    showNfcDialog.value = true // NfcDialog
+                                    viewModel.showNfcOverlayForScan()
                                     viewModel.scanCardForAction(
                                         activity = context as Activity,
                                         nfcActionType = NfcActionType.EXPORT_SECRETS_FROM_MASTER
@@ -238,7 +223,7 @@ fun BackupView(
                                 }
                                 BackupStatus.FOURTH_STEP -> {
                                     // scan backup card to import secrets from master
-                                    showNfcDialog.value = true // NfcDialog
+                                    viewModel.showNfcOverlayForScan()
                                     viewModel.scanCardForAction(
                                         activity = context as Activity,
                                         nfcActionType = NfcActionType.IMPORT_SECRETS_TO_BACKUP

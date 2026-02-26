@@ -16,7 +16,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import uk.co.hushchip.app.ui.theme.HushColors
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -28,7 +28,6 @@ import uk.co.hushchip.app.data.FactoryResetStatus
 import uk.co.hushchip.app.data.NfcActionType
 import uk.co.hushchip.app.data.NfcResultCode
 import uk.co.hushchip.app.services.HushLog
-import uk.co.hushchip.app.ui.components.home.NfcDialog
 import uk.co.hushchip.app.ui.components.settings.CardResetButton
 import uk.co.hushchip.app.ui.components.settings.ResetCardTextField
 import uk.co.hushchip.app.ui.components.shared.HushButton
@@ -41,16 +40,6 @@ fun FactoryResetReady(
     viewModel: SharedViewModel,
     factoryResetStatus: MutableState<FactoryResetStatus>,
 ) {
-    // NFC dialog
-    val showNfcDialog = remember { mutableStateOf(false) } // for NfcDialog
-    if (showNfcDialog.value) {
-        NfcDialog(
-            openDialogCustom = showNfcDialog,
-            resultCodeLive = viewModel.resultCodeLive,
-            isConnected = viewModel.isCardConnected
-        )
-    }
-
     val steps = remember {
         mutableIntStateOf(0)
     }
@@ -83,7 +72,7 @@ fun FactoryResetReady(
         Text(
             text = stringResource(id = R.string.stepsRemaining) + " ${steps.value}",
             style = TextStyle(
-                color = Color.Black,
+                color = HushColors.textBody,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.ExtraBold
             )
@@ -100,13 +89,13 @@ fun FactoryResetReady(
             text = stringResource(id = R.string.sendResetCommand),
             onClick = {
                 //onClick()
-                showNfcDialog.value = true // NfcDialog
+                viewModel.showNfcOverlayForScan()
                 viewModel.scanCardForAction(
                     activity = context as Activity,
                     nfcActionType = NfcActionType.RESET_CARD
                 )
             },
-            containerColor = Color.Red,
+            containerColor = HushColors.danger,
         )
         Spacer(modifier = Modifier.height(12.dp))
         HushButton(

@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import uk.co.hushchip.app.ui.theme.HushColors
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -53,7 +54,7 @@ fun NewCardPopUpDialog(
                 .width(350.dp)
                 .heightIn(min = 250.dp)
                 .background(
-                    color = Color.White,
+                    color = HushColors.bgRaised,
                     shape = RoundedCornerShape(8.dp)
                 )
                 .clip(
@@ -73,7 +74,7 @@ fun NewCardPopUpDialog(
                     modifier = Modifier.padding(16.dp),
                     text = stringResource(id = title),
                     fontSize = 18.sp,
-                    color = Color.White,
+                    color = HushColors.textWhite,
                     fontWeight = FontWeight.Bold,
                 )
                 Image(
@@ -88,7 +89,7 @@ fun NewCardPopUpDialog(
                         .width(24.dp),
                     painter = painterResource(R.drawable.cancel),
                     contentDescription = null,
-                    colorFilter = ColorFilter.tint(Color.White),
+                    colorFilter = ColorFilter.tint(HushColors.textWhite),
                 )
             }
             Column(
@@ -101,7 +102,7 @@ fun NewCardPopUpDialog(
                         .padding(horizontal = 12.dp),
                     text = stringResource(id = R.string.oldSeedkeeper),
                     fontSize = 14.sp,
-                    color = Color.Black,
+                    color = HushColors.textBody,
                     fontWeight = FontWeight.Medium,
                 )
                 Spacer(modifier = Modifier.height(16.dp))

@@ -10,8 +10,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import uk.co.hushchip.app.ui.theme.HushColors
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -33,7 +33,7 @@ fun CardInformationField(
         Text(
             text = stringResource(id = R.string.memoryAvailable) + ": ${status.freeMemory}/${status.totalMemory} ",
             style = TextStyle(
-                color = Color.Black,
+                color = HushColors.textBody,
                 fontSize = 16.sp,
                 lineHeight = 22.sp,
                 fontWeight = FontWeight.Medium,
@@ -43,7 +43,7 @@ fun CardInformationField(
         Text(
             text = stringResource(id = R.string.secretsStored) + ": ${status.nbSecrets}",
             style = TextStyle(
-                color = Color.Black,
+                color = HushColors.textBody,
                 fontSize = 16.sp,
                 lineHeight = 22.sp,
                 fontWeight = FontWeight.Medium,

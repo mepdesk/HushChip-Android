@@ -18,7 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import uk.co.hushchip.app.ui.theme.HushColors
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -32,7 +32,6 @@ import uk.co.hushchip.app.data.NfcActionType
 import uk.co.hushchip.app.data.NfcResultCode
 import uk.co.hushchip.app.services.HushLog
 import uk.co.hushchip.app.ui.components.import.InputField
-import uk.co.hushchip.app.ui.components.home.NfcDialog
 import uk.co.hushchip.app.ui.components.shared.HeaderAlternateRow
 import uk.co.hushchip.app.ui.components.shared.HushButton
 import uk.co.hushchip.app.ui.components.shared.TitleTextField
@@ -46,16 +45,6 @@ fun EditCardLabelView(
     navController: NavHostController,
     viewModel: SharedViewModel,
 ) {
-    // NFC dialog
-    val showNfcDialog = remember { mutableStateOf(false) } // for NfcDialog
-    if (showNfcDialog.value) {
-        NfcDialog(
-            openDialogCustom = showNfcDialog,
-            resultCodeLive = viewModel.resultCodeLive,
-            isConnected = viewModel.isCardConnected
-        )
-    }
-
     val cardLabelToast = stringResource(id = R.string.cardLabelToast)
     LaunchedEffect(viewModel.resultCodeLive) {
         if (viewModel.resultCodeLive == NfcResultCode.CARD_LABEL_CHANGED_SUCCESSFULLY) {
@@ -136,7 +125,7 @@ fun EditCardLabelView(
                     Text(
                         text = stringResource(appError.value.msg),
                         style = TextStyle(
-                            color = Color.Red,
+                            color = HushColors.danger,
                             fontSize = 16.sp,
                             lineHeight = 24.sp,
                             fontWeight = FontWeight.SemiBold,
@@ -162,7 +151,7 @@ fun EditCardLabelView(
                             }
 
                             // send command to card
-                            showNfcDialog.value = true
+                            viewModel.showNfcOverlayForScan()
                             viewModel.setNewCardLabel(curValueLabel.value)
                             viewModel.scanCardForAction(
                                 activity = context as Activity,

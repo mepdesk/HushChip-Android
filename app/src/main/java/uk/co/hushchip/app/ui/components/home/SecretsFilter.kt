@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import uk.co.hushchip.app.ui.theme.HushColors
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -72,14 +73,14 @@ fun SecretsFilter(
                         }
                     ),
                 contentScale = ContentScale.Fit,
-                colorFilter = ColorFilter.tint(Color.Black)
+                colorFilter = ColorFilter.tint(HushColors.textMuted)
             )
         }
 
         DropdownMenu(
             modifier = Modifier
                 .background(
-                    color = Color.White,
+                    color = HushColors.bgRaised,
                 ),
             expanded = isExpanded,
             onDismissRequest = { isExpanded = false }
@@ -87,9 +88,9 @@ fun SecretsFilter(
             DropdownMenuItem(
                 modifier = Modifier
                     .background(
-                        color = if (selectedLogType == SeedkeeperSecretType.DEFAULT_TYPE) Color.Gray.copy(
+                        color = if (selectedLogType == SeedkeeperSecretType.DEFAULT_TYPE) HushColors.textFaint.copy(
                             alpha = 0.2f
-                        ) else Color.White,
+                        ) else HushColors.bgRaised,
                     ),
                 onClick = {
                     selectedLogType = SeedkeeperSecretType.DEFAULT_TYPE
@@ -101,7 +102,7 @@ fun SecretsFilter(
                         textAlign = TextAlign.Start,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium,
-                        color = Color.Black,
+                        color = HushColors.textBody,
                         text = seedkeeperSecretTypeMap.getValue(SeedkeeperSecretType.DEFAULT_TYPE)
                     )
                 }
@@ -109,9 +110,9 @@ fun SecretsFilter(
             DropdownMenuItem(
                 modifier = Modifier
                     .background(
-                        color = if (selectedLogType == SeedkeeperSecretType.BIP39_MNEMONIC) Color.Gray.copy(
+                        color = if (selectedLogType == SeedkeeperSecretType.BIP39_MNEMONIC) HushColors.textFaint.copy(
                             alpha = 0.2f
-                        ) else Color.White,
+                        ) else HushColors.bgRaised,
                     ),
                 onClick = {
                     selectedLogType = SeedkeeperSecretType.BIP39_MNEMONIC
@@ -123,7 +124,7 @@ fun SecretsFilter(
                         textAlign = TextAlign.Start,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium,
-                        color = Color.Black,
+                        color = HushColors.textBody,
                         text = seedkeeperSecretTypeMap.getValue(SeedkeeperSecretType.BIP39_MNEMONIC)
                     )
                 }
@@ -131,9 +132,9 @@ fun SecretsFilter(
             DropdownMenuItem(
                 modifier = Modifier
                     .background(
-                        color = if (selectedLogType == SeedkeeperSecretType.PASSWORD) Color.Gray.copy(
+                        color = if (selectedLogType == SeedkeeperSecretType.PASSWORD) HushColors.textFaint.copy(
                             alpha = 0.2f
-                        ) else Color.White,
+                        ) else HushColors.bgRaised,
                     ),
                 onClick = {
                     selectedLogType = SeedkeeperSecretType.PASSWORD
@@ -145,7 +146,7 @@ fun SecretsFilter(
                         textAlign = TextAlign.Start,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium,
-                        color = Color.Black,
+                        color = HushColors.textBody,
                         text = seedkeeperSecretTypeMap.getValue(SeedkeeperSecretType.PASSWORD)
                     )
                 }
@@ -153,9 +154,9 @@ fun SecretsFilter(
             DropdownMenuItem(
                 modifier = Modifier
                     .background(
-                        color = if (selectedLogType == SeedkeeperSecretType.WALLET_DESCRIPTOR) Color.Gray.copy(
+                        color = if (selectedLogType == SeedkeeperSecretType.WALLET_DESCRIPTOR) HushColors.textFaint.copy(
                             alpha = 0.2f
-                        ) else Color.White,
+                        ) else HushColors.bgRaised,
                     ),
                 onClick = {
                     selectedLogType = SeedkeeperSecretType.WALLET_DESCRIPTOR
@@ -167,7 +168,7 @@ fun SecretsFilter(
                         textAlign = TextAlign.Start,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium,
-                        color = Color.Black,
+                        color = HushColors.textBody,
                         text = seedkeeperSecretTypeMap.getValue(SeedkeeperSecretType.WALLET_DESCRIPTOR)
                     )
                 }
@@ -175,9 +176,9 @@ fun SecretsFilter(
             DropdownMenuItem(
                 modifier = Modifier
                     .background(
-                        color = if (selectedLogType == SeedkeeperSecretType.DATA) Color.Gray.copy(
+                        color = if (selectedLogType == SeedkeeperSecretType.DATA) HushColors.textFaint.copy(
                             alpha = 0.2f
-                        ) else Color.White,
+                        ) else HushColors.bgRaised,
                     ),
                 onClick = {
                     selectedLogType = SeedkeeperSecretType.DATA
@@ -189,7 +190,7 @@ fun SecretsFilter(
                         textAlign = TextAlign.Start,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Medium,
-                        color = Color.Black,
+                        color = HushColors.textBody,
                         text = seedkeeperSecretTypeMap.getValue(SeedkeeperSecretType.DATA)
                     )
                 }

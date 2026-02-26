@@ -32,7 +32,6 @@ import uk.co.hushchip.app.data.NfcActionType
 import uk.co.hushchip.app.data.SecretData
 import uk.co.hushchip.app.ui.components.import.InputField
 import uk.co.hushchip.app.ui.components.import.SecretTextField
-import uk.co.hushchip.app.ui.components.home.NfcDialog
 import uk.co.hushchip.app.ui.components.shared.HushButton
 import uk.co.hushchip.app.ui.components.shared.TitleTextField
 import uk.co.hushchip.app.ui.theme.HushButtonPurple
@@ -47,16 +46,6 @@ fun ImportFreeField(
     viewModel: SharedViewModel,
     curValueLabel: MutableState<String>,
 ) {
-    // NFC dialog
-    val showNfcDialog = remember { mutableStateOf(false) } // for NfcDialog
-    if (showNfcDialog.value) {
-        NfcDialog(
-            openDialogCustom = showNfcDialog,
-            resultCodeLive = viewModel.resultCodeLive,
-            isConnected = viewModel.isCardConnected
-        )
-    }
-
     // error mgmt
     val showError = remember {
         mutableStateOf(false)
@@ -151,7 +140,7 @@ fun ImportFreeField(
                 }
 
                 viewModel.setSecretData(secretData)
-                showNfcDialog.value = true
+                viewModel.showNfcOverlayForScan()
                 viewModel.scanCardForAction(
                     activity = context as Activity,
                     nfcActionType = NfcActionType.IMPORT_SECRET

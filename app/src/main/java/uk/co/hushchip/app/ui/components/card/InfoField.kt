@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import uk.co.hushchip.app.ui.theme.HushColors
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -37,8 +38,8 @@ fun InfoField(
     containerColor: Color = SatoLightPurple,
     isClickable: Boolean = false,
     onClick: () -> Unit,
-    textColor: Color = Color.White,
-    titleColor: Color = Color.Black,
+    textColor: Color = HushColors.textWhite,
+    titleColor: Color = HushColors.textBody,
     icon: Int? = null,
     isPadded: Boolean = true
 ) {

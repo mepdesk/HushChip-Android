@@ -11,8 +11,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import uk.co.hushchip.app.ui.theme.HushColors
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -38,7 +38,7 @@ fun CardStatusField(
         Text(
             text = stringResource(id = title),
             style = TextStyle(
-                color = Color.Black,
+                color = HushColors.textBright,
                 fontSize = 18.sp,
                 lineHeight = 22.sp,
                 fontWeight = FontWeight.Bold
@@ -50,7 +50,7 @@ fun CardStatusField(
                 .padding(horizontal = 32.dp)
                 .padding(bottom = 32.dp, top = 16.dp)
                 .border(
-                    color = Color.Black,
+                    color = HushColors.border,
                     width = 2.dp,
                     shape = RoundedCornerShape(8.dp)
                 )
@@ -64,7 +64,7 @@ fun CardStatusField(
                 Text(
                     text = cardAppletVersion,
                     style = TextStyle(
-                        color = Color.Black,
+                        color = HushColors.textBody,
                         fontSize = 16.sp,
                         lineHeight = 22.sp,
                         fontWeight = FontWeight.Medium,
@@ -75,7 +75,7 @@ fun CardStatusField(
                     Text(
                         text = stringResource(id = R.string.secretsStored) + ": ${status.nbSecrets}",
                         style = TextStyle(
-                            color = Color.Black,
+                            color = HushColors.textBody,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Medium,
                             fontStyle = FontStyle.Italic
@@ -84,7 +84,7 @@ fun CardStatusField(
                     Text(
                         text = stringResource(id = R.string.memoryAvailable) + ": ${status.freeMemory} bytes",
                         style = TextStyle(
-                            color = Color.Black,
+                            color = HushColors.textBody,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Medium,
                             fontStyle = FontStyle.Italic
@@ -93,7 +93,7 @@ fun CardStatusField(
                     Text(
                         text = stringResource(id = R.string.memoryTotal) + ": ${status.totalMemory} bytes",
                         style = TextStyle(
-                            color = Color.Black,
+                            color = HushColors.textBody,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Medium,
                             fontStyle = FontStyle.Italic
@@ -109,7 +109,7 @@ fun CardStatusField(
                 Text(
                     text = stringResource(id = R.string.cardAuthentikey) + ":",
                     style = TextStyle(
-                        color = Color.Black,
+                        color = HushColors.textBody,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
                         fontStyle = FontStyle.Italic
@@ -118,7 +118,7 @@ fun CardStatusField(
                 Text(
                     text = cardAuthentikey,
                     style = TextStyle(
-                        color = Color.Black,
+                        color = HushColors.textBody,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
                         fontStyle = FontStyle.Italic,

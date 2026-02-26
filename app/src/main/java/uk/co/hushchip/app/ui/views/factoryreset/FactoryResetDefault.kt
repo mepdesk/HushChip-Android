@@ -18,7 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import uk.co.hushchip.app.ui.theme.HushColors
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -28,7 +28,6 @@ import androidx.navigation.NavHostController
 import uk.co.hushchip.app.R
 import uk.co.hushchip.app.data.FactoryResetStatus
 import uk.co.hushchip.app.data.NfcActionType
-import uk.co.hushchip.app.ui.components.home.NfcDialog
 import uk.co.hushchip.app.ui.components.settings.CardResetButton
 import uk.co.hushchip.app.ui.components.settings.ResetCardTextField
 import uk.co.hushchip.app.ui.components.shared.HushButton
@@ -41,16 +40,6 @@ fun FactoryResetDefault(
     viewModel: SharedViewModel,
     factoryResetStatus: MutableState<FactoryResetStatus>,
 ) {
-    // NFC dialog
-    val showNfcDialog = remember { mutableStateOf(false) } // for NfcDialog
-    if (showNfcDialog.value) {
-        NfcDialog(
-            openDialogCustom = showNfcDialog,
-            resultCodeLive = viewModel.resultCodeLive,
-            isConnected = viewModel.isCardConnected
-        )
-    }
-
     val isChecked = remember {
         mutableStateOf(false)
     }
@@ -78,7 +67,7 @@ fun FactoryResetDefault(
                 .clickable { isChecked.value = !isChecked.value },
             text = stringResource(id = R.string.checkToProceed),
             style = TextStyle(
-                color = Color.Black,
+                color = HushColors.textBody,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.ExtraLight
             )
@@ -96,7 +85,7 @@ fun FactoryResetDefault(
                     factoryResetStatus.value = FactoryResetStatus.RESET_READY
                 }
             },
-            containerColor = if (isChecked.value) Color.Red else Color.Red.copy(0.6f),
+            containerColor = if (isChecked.value) HushColors.danger else HushColors.danger.copy(0.6f),
         )
         Spacer(modifier = Modifier.height(12.dp))
         HushButton(

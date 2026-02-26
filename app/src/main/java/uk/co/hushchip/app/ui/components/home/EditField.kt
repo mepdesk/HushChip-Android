@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import uk.co.hushchip.app.ui.theme.HushColors
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -32,7 +33,7 @@ fun EditField(
     curValue: MutableState<String>,
     drawableId: Int = R.drawable.edit,
     onClick: () -> Unit,
-    textColor: Color = Color.Black
+    textColor: Color = HushColors.textBody
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     Row(
@@ -69,7 +70,7 @@ fun EditField(
                 focusedTextColor = textColor,
                 unfocusedTextColor = textColor,
                 cursorColor = textColor,
-                focusedLabelColor = Color.White,
+                focusedLabelColor = HushColors.textWhite,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
             ),

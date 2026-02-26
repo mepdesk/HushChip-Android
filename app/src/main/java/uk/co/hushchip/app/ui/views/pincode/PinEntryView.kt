@@ -2,6 +2,7 @@ package uk.co.hushchip.app.ui.views.pincode
 
 import android.app.Activity
 import android.content.Context
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -17,9 +18,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -29,6 +27,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -42,7 +42,6 @@ import uk.co.hushchip.app.data.NfcActionType
 import uk.co.hushchip.app.data.NfcResultCode
 import uk.co.hushchip.app.data.PinCodeAction
 import uk.co.hushchip.app.services.HushLog
-import uk.co.hushchip.app.ui.components.home.NfcDialog
 import uk.co.hushchip.app.ui.components.shared.HeaderAlternateRow
 import uk.co.hushchip.app.ui.theme.HushColors
 import uk.co.hushchip.app.ui.theme.outfitFamily
@@ -82,15 +81,6 @@ fun PinEntryView(
             }
             else -> {}
         }
-    }
-
-    val showNfcDialog = remember { mutableStateOf(false) }
-    if (showNfcDialog.value) {
-        NfcDialog(
-            openDialogCustom = showNfcDialog,
-            resultCodeLive = viewModel.resultCodeLive,
-            isConnected = viewModel.isCardConnected
-        )
     }
 
     val showError = remember { mutableStateOf(false) }
@@ -188,11 +178,11 @@ fun PinEntryView(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Lock icon
-                Icon(
-                    Icons.Default.Lock,
+                Image(
+                    painter = painterResource(id = R.drawable.ic_lock_outline),
                     contentDescription = "Lock",
                     modifier = Modifier.size(64.dp),
-                    tint = HushColors.textFaint
+                    colorFilter = ColorFilter.tint(HushColors.textFaint)
                 )
                 Spacer(modifier = Modifier.height(20.dp))
 
@@ -282,7 +272,7 @@ fun PinEntryView(
                     listOf("1", "2", "3"),
                     listOf("4", "5", "6"),
                     listOf("7", "8", "9"),
-                    listOf("", "0", "\u232B")
+                    listOf("", "0", "DEL")
                 )
 
                 numbers.forEach { row ->
@@ -302,7 +292,7 @@ fun PinEntryView(
                                         .hushClickEffect(
                                             onClick = {
                                                 showError.value = false
-                                                if (key == "\u232B") {
+                                                if (key == "DEL") {
                                                     if (activePinValue.value.isNotEmpty()) {
                                                         activePinValue.value =
                                                             activePinValue.value.dropLast(1)
@@ -316,15 +306,24 @@ fun PinEntryView(
                                         ),
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    Text(
-                                        text = key,
-                                        style = TextStyle(
-                                            fontFamily = outfitFamily,
-                                            fontWeight = FontWeight.Light,
-                                            fontSize = if (key == "\u232B") 20.sp else 28.sp,
-                                            color = if (key == "\u232B") HushColors.textMuted else HushColors.textBody
+                                    if (key == "DEL") {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.ic_backspace),
+                                            contentDescription = "Delete",
+                                            modifier = Modifier.size(24.dp),
+                                            colorFilter = ColorFilter.tint(HushColors.textMuted)
                                         )
-                                    )
+                                    } else {
+                                        Text(
+                                            text = key,
+                                            style = TextStyle(
+                                                fontFamily = outfitFamily,
+                                                fontWeight = FontWeight.Light,
+                                                fontSize = 28.sp,
+                                                color = HushColors.textBody
+                                            )
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -349,7 +348,7 @@ fun PinEntryView(
                                     PinCodeAction.ENTER_PIN_CODE -> {
                                         if (!checkPinFormat(pin = curPinValue.value)) return@hushClickEffect
                                         viewModel.setPinStringForCard(pinString = curPinValue.value, isBackupCard = isBackupCard)
-                                        showNfcDialog.value = true
+                                        viewModel.showNfcOverlayForScan()
                                         viewModel.scanCardForAction(
                                             activity = context as Activity,
                                             nfcActionType = if (isBackupCard) NfcActionType.SCAN_BACKUP_CARD else NfcActionType.SCAN_CARD
@@ -369,7 +368,7 @@ fun PinEntryView(
                                                     return@hushClickEffect
                                                 }
                                                 viewModel.setPinStringForCard(curSetupPinValue.value, isBackupCard = isBackupCard)
-                                                showNfcDialog.value = true
+                                                viewModel.showNfcOverlayForScan()
                                                 viewModel.scanCardForAction(
                                                     activity = context as Activity,
                                                     nfcActionType = if (isBackupCard) NfcActionType.SETUP_CARD_FOR_BACKUP else NfcActionType.SETUP_CARD
@@ -397,7 +396,7 @@ fun PinEntryView(
                                                 }
                                                 viewModel.setPinStringForCard(curPinValue.value, isBackupCard = false)
                                                 viewModel.changePinStringForCard(curChangePinValue.value)
-                                                showNfcDialog.value = true
+                                                viewModel.showNfcOverlayForScan()
                                                 viewModel.scanCardForAction(
                                                     activity = context as Activity,
                                                     nfcActionType = NfcActionType.CHANGE_PIN
@@ -420,6 +419,21 @@ fun PinEntryView(
                             fontSize = 12.sp,
                             letterSpacing = 3.sp,
                             color = HushColors.textMuted
+                        )
+                    )
+                }
+
+                // Card reminder for PIN entry
+                if (pinCodeAction == PinCodeAction.ENTER_PIN_CODE) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Keep your card held to the back of your phone",
+                        style = TextStyle(
+                            fontFamily = outfitFamily,
+                            fontWeight = FontWeight.Light,
+                            fontSize = 11.sp,
+                            color = HushColors.textGhost,
+                            textAlign = TextAlign.Center
                         )
                     )
                 }

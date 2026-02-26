@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import uk.co.hushchip.app.ui.theme.HushColors
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -56,7 +57,7 @@ fun SatoToggleButton(
         Text(
             text = stringResource(id = text),
             style = TextStyle(
-                color = Color.White,
+                color = HushColors.textWhite,
                 fontSize = 16.sp,
                 lineHeight = 22.sp,
                 fontWeight = FontWeight.Bold
@@ -72,9 +73,9 @@ fun SatoToggleButton(
             },
             colors = SwitchDefaults.colors(
                 checkedThumbColor = SatoChecked,
-                checkedTrackColor = Color.White,
+                checkedTrackColor = HushColors.bgRaised,
                 uncheckedThumbColor = SatoChecker,
-                uncheckedTrackColor = Color.White,
+                uncheckedTrackColor = HushColors.bgRaised,
                 checkedBorderColor = Color.Transparent,
                 disabledUncheckedBorderColor = Color.Transparent,
                 disabledCheckedBorderColor = Color.Transparent,

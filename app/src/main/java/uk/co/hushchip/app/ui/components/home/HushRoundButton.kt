@@ -18,8 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import uk.co.hushchip.app.ui.theme.HushColors
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -66,7 +66,7 @@ fun HushRoundButton(
             Text(
                 modifier = Modifier,
                 text = stringResource(text),
-                color = Color.White,
+                color = HushColors.textWhite,
                 textAlign = TextAlign.Center,
                 style = TextStyle(
                     fontWeight = FontWeight.Bold,

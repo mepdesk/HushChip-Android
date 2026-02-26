@@ -1,5 +1,6 @@
 package uk.co.hushchip.app.ui.components.home
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -16,6 +17,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -23,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.satochip.client.seedkeeper.SeedkeeperSecretHeader
 import org.satochip.client.seedkeeper.SeedkeeperSecretType
+import uk.co.hushchip.app.R
 import uk.co.hushchip.app.ui.theme.HushColors
 import uk.co.hushchip.app.ui.theme.outfitFamily
 import uk.co.hushchip.app.utils.hushClickEffect
@@ -76,12 +80,11 @@ fun SecretButton(
                 )
             }
 
-            Text(
-                text = "\u203A",
-                style = TextStyle(
-                    fontSize = 20.sp,
-                    color = HushColors.textFaint
-                )
+            Image(
+                painter = painterResource(id = R.drawable.ic_chevron_right),
+                contentDescription = null,
+                modifier = Modifier.size(14.dp),
+                colorFilter = ColorFilter.tint(HushColors.textFaint)
             )
         } ?: run {
             Spacer(modifier = Modifier.weight(1f))
@@ -102,7 +105,7 @@ fun SecretButton(
 @Composable
 fun SecretTypeIcon(type: SeedkeeperSecretType) {
     val iconText = when (type) {
-        SeedkeeperSecretType.PASSWORD -> "\u25CF"
+        SeedkeeperSecretType.PASSWORD -> "*"
         SeedkeeperSecretType.MASTERSEED, SeedkeeperSecretType.BIP39_MNEMONIC, SeedkeeperSecretType.ELECTRUM_MNEMONIC -> "Aa"
         SeedkeeperSecretType.WALLET_DESCRIPTOR -> "{ }"
         SeedkeeperSecretType.DATA -> "T"

@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import uk.co.hushchip.app.ui.theme.HushColors
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -47,7 +48,7 @@ fun MenuCard(
         ) {
             Text(
                 modifier = Modifier,
-                color = Color.White,
+                color = HushColors.textBright,
                 fontSize = 16.sp,
                 text = text,
                 fontWeight = FontWeight.ExtraBold,
@@ -55,7 +56,7 @@ fun MenuCard(
             textMessage?.let {
                 Text(
                     modifier = Modifier,
-                    color = Color.White,
+                    color = HushColors.textBright,
                     fontSize = 14.sp,
                     text = textMessage,
                     fontWeight =  FontWeight.ExtraLight
@@ -74,7 +75,7 @@ fun MenuCard(
                     painter = painterResource(id = drawableId),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
-                    colorFilter = ColorFilter.tint(Color.White)
+                    colorFilter = ColorFilter.tint(HushColors.textBright)
                 )
             }
         }
