@@ -1,45 +1,61 @@
+// Copyright (c) 2026 Gridmark Technologies Ltd (HushChip)
+// https://github.com/hushchip/HushChip-Android
+//
+// Based on Seedkeeper-Android by Toporin / Satochip S.R.L.
+// https://github.com/Toporin/Seedkeeper-Android
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Affero General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+
 package uk.co.hushchip.app.ui.views.welcome
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import uk.co.hushchip.app.R
-import uk.co.hushchip.app.ui.components.shared.IllustrationPlaceholder
-import uk.co.hushchip.app.ui.components.shared.NextButton
-import uk.co.hushchip.app.ui.components.shared.HushButton
-import uk.co.hushchip.app.ui.components.shared.StepCircles
-import uk.co.hushchip.app.ui.components.shared.WelcomeViewTitle
-import uk.co.hushchip.app.ui.theme.HushButtonBlue
+import androidx.compose.ui.unit.sp
 import uk.co.hushchip.app.ui.theme.HushColors
+import uk.co.hushchip.app.ui.theme.outfitFamily
 
 @Composable
 fun WelcomeView(
-    title: Int,
-    text: Int,
-    link: String? = null,
-    colors: List<Color>? = null,
-    @Suppress("UNUSED_PARAMETER") backgroundImage: Int = 0,
-    isFullWidth: Boolean = false,
+    screenIndex: Int,
+    heading: String,
+    body: String,
+    bodyColor: Color = HushColors.textFaint,
+    buttonText: String,
+    warningText: String? = null,
+    topContent: @Composable () -> Unit,
     onNext: () -> Unit,
     onBack: () -> Unit,
-    onClick: () -> Unit
 ) {
-    val scrollState = rememberScrollState()
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -47,13 +63,8 @@ fun WelcomeView(
             .pointerInput(Unit) {
                 detectHorizontalDragGestures { change, dragAmount ->
                     when {
-                        dragAmount > 0 -> {
-                            onBack()
-                        }
-
-                        dragAmount < 0 -> {
-                            onNext()
-                        }
+                        dragAmount > 0 -> onBack()
+                        dragAmount < 0 -> onNext()
                     }
                     change.consume()
                 }
@@ -63,47 +74,130 @@ fun WelcomeView(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(state = scrollState),
+                .padding(horizontal = 24.dp)
         ) {
-            WelcomeViewTitle()
-            Spacer(modifier = Modifier.height(16.dp))
-            WelcomeViewContent(
-                title = title,
-                text = text,
-                urlString = link,
-                onClick = onClick
-            )
-            Spacer(modifier = Modifier.height(30.dp))
-            IllustrationPlaceholder(
-                modifier = if (isFullWidth) Modifier.fillMaxWidth().height(200.dp) else Modifier
-                    .size(200.dp),
-            )
-            Spacer(modifier = Modifier.weight(1f))
+            // Top 40% area with icon
             Box(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .weight(0.4f)
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
             ) {
-                Column(
+                topContent()
+            }
+
+            // Heading
+            Spacer(modifier = Modifier.height(24.dp))
+            Text(
+                text = heading,
+                style = TextStyle(
+                    fontFamily = outfitFamily,
+                    fontWeight = FontWeight.Light,
+                    fontSize = 20.sp,
+                    color = HushColors.textBright,
+                    textAlign = TextAlign.Center
+                )
+            )
+
+            // Body
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text = body,
+                modifier = Modifier.widthIn(max = 280.dp),
+                style = TextStyle(
+                    fontFamily = outfitFamily,
+                    fontWeight = FontWeight.Light,
+                    fontSize = 13.sp,
+                    color = bodyColor,
+                    textAlign = TextAlign.Center,
+                    lineHeight = 18.sp
+                )
+            )
+
+            // Warning box (screen 3 only)
+            warningText?.let {
+                Spacer(modifier = Modifier.height(16.dp))
+                Box(
                     modifier = Modifier
-                        .padding(bottom = 55.dp)
-                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth()
+                        .border(
+                            width = 1.dp,
+                            color = HushColors.dangerBorder,
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .background(
+                            color = HushColors.dangerBg,
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .padding(12.dp),
+                    contentAlignment = Alignment.Center
                 ) {
-                    colors?.let {
-                        NextButton(
-                            onClick = onNext
+                    Text(
+                        text = it,
+                        style = TextStyle(
+                            fontFamily = outfitFamily,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 11.sp,
+                            color = HushColors.danger,
+                            textAlign = TextAlign.Center,
+                            letterSpacing = 0.sp
                         )
-                        StepCircles(colors)
-                    } ?: run {
-                        HushButton(
-                            modifier = Modifier
-                                .padding(
-                                    horizontal = 20.dp
-                                ),
-                            onClick = onNext,
-                            buttonColor = HushButtonBlue,
-                            text = R.string.start
-                        )
-                    }
+                    )
                 }
+            }
+
+            Spacer(modifier = Modifier.weight(0.6f))
+
+            // Button
+            Spacer(modifier = Modifier.height(32.dp))
+            Button(
+                onClick = onNext,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+                shape = RoundedCornerShape(10.dp),
+                colors = ButtonColors(
+                    containerColor = HushColors.border,
+                    contentColor = HushColors.textBright,
+                    disabledContainerColor = HushColors.border,
+                    disabledContentColor = HushColors.textBright
+                )
+            ) {
+                Text(
+                    text = buttonText.uppercase(),
+                    style = TextStyle(
+                        fontFamily = outfitFamily,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 11.sp,
+                        letterSpacing = 4.sp,
+                        color = HushColors.textBright
+                    )
+                )
+            }
+
+            // Dot indicator
+            Spacer(modifier = Modifier.height(24.dp))
+            DotIndicator(currentIndex = screenIndex)
+
+            Spacer(modifier = Modifier.height(48.dp))
+        }
+    }
+}
+
+@Composable
+private fun DotIndicator(currentIndex: Int) {
+    Row(
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        for (i in 0..2) {
+            Canvas(modifier = Modifier.size(6.dp)) {
+                drawCircle(
+                    color = if (i == currentIndex) HushColors.textMuted else HushColors.border
+                )
+            }
+            if (i < 2) {
+                Spacer(modifier = Modifier.width(8.dp))
             }
         }
     }

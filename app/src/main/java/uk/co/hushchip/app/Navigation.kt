@@ -1,14 +1,21 @@
 package uk.co.hushchip.app
 
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -21,7 +28,7 @@ import uk.co.hushchip.app.data.PinCodeAction
 import uk.co.hushchip.app.data.HushChipPreferences
 import uk.co.hushchip.app.services.HushLog
 import uk.co.hushchip.app.ui.components.home.NfcDialog
-import uk.co.hushchip.app.ui.theme.SatoGray
+import uk.co.hushchip.app.ui.theme.HushColors
 import uk.co.hushchip.app.ui.views.addsecret.AddSecretView
 import uk.co.hushchip.app.ui.views.backup.BackupView
 import uk.co.hushchip.app.ui.views.cardinfo.CardInformation
@@ -37,7 +44,6 @@ import uk.co.hushchip.app.ui.views.showcardlogs.ShowCardLogsView
 import uk.co.hushchip.app.ui.views.showlogs.ShowLogsView
 import uk.co.hushchip.app.ui.views.splash.SplashView
 import uk.co.hushchip.app.ui.views.welcome.WelcomeView
-import uk.co.hushchip.app.utils.webviewActivityIntent
 import uk.co.hushchip.app.viewmodels.SharedViewModel
 
 private const val TAG = "Navigation"
@@ -103,25 +109,44 @@ fun Navigation(
                 }
             }
         }
+        // Screen 1 — "Your secrets. On a chip."
         composable<FirstWelcomeView> {
             WelcomeView(
-                title = R.string.welcome,
-                text = R.string.welcomeInfo,
-                colors = listOf(Color.White, SatoGray, SatoGray),
+                screenIndex = 0,
+                heading = stringResource(R.string.onboarding1Heading),
+                body = stringResource(R.string.onboarding1Body),
+                buttonText = stringResource(R.string.onboardingNext),
+                topContent = {
+                    Image(
+                        painter = painterResource(R.drawable.ic_launcher_foreground),
+                        contentDescription = null,
+                        modifier = Modifier.size(100.dp),
+                        contentScale = ContentScale.Fit
+                    )
+                },
                 onNext = {
                     navController.navigate(SecondWelcomeView) {
                         popUpTo(0)
                     }
                 },
-                onBack = {},
-                onClick = {}
+                onBack = {}
             )
         }
+        // Screen 2 — "Tap. Store. Done."
         composable<SecondWelcomeView> {
             WelcomeView(
-                title = R.string.seedphraseManager,
-                text = R.string.seedphraseManagerInfo,
-                colors = listOf(SatoGray, Color.White, SatoGray),
+                screenIndex = 1,
+                heading = stringResource(R.string.onboarding2Heading),
+                body = stringResource(R.string.onboarding2Body),
+                buttonText = stringResource(R.string.onboardingNext),
+                topContent = {
+                    Image(
+                        painter = painterResource(R.drawable.contactless_24px),
+                        contentDescription = null,
+                        modifier = Modifier.size(64.dp),
+                        colorFilter = ColorFilter.tint(HushColors.textFaint)
+                    )
+                },
                 onNext = {
                     navController.navigate(ThirdWelcomeView) {
                         popUpTo(0)
@@ -131,17 +156,24 @@ fun Navigation(
                     navController.navigate(FirstWelcomeView) {
                         popUpTo(0)
                     }
-                },
-                onClick = {}
+                }
             )
         }
+        // Screen 3 — "Your PIN is everything."
         composable<ThirdWelcomeView> {
-            val linkUrl = stringResource(id = R.string.moreInfoUrl)
             WelcomeView(
-                title = R.string.usingNfc,
-                text = R.string.usingNfcInfo,
-                isFullWidth = true,
-                link = linkUrl,
+                screenIndex = 2,
+                heading = stringResource(R.string.onboarding3Heading),
+                body = stringResource(R.string.onboarding3Body),
+                bodyColor = HushColors.textMuted,
+                buttonText = stringResource(R.string.onboardingUnderstand),
+                warningText = stringResource(R.string.onboarding3Warning),
+                topContent = {
+                    Text(
+                        text = "\uD83D\uDD12",
+                        style = TextStyle(fontSize = 48.sp)
+                    )
+                },
                 onNext = {
                     navController.navigate(HomeView) {
                         popUpTo(0)
@@ -150,23 +182,6 @@ fun Navigation(
                 onBack = {
                     navController.navigate(SecondWelcomeView) {
                         popUpTo(0)
-                    }
-                },
-                onClick = {
-                    val intent = Intent(
-                        Intent.ACTION_VIEW,
-                        Uri.parse(linkUrl)
-                    )
-                    val packageManager = context.packageManager
-                    val chooserIntent = Intent.createChooser(intent, "Open with")
-
-                    if (chooserIntent.resolveActivity(packageManager) != null) {
-                        context.startActivity(chooserIntent)
-                    } else {
-                        webviewActivityIntent(
-                            url = linkUrl,
-                            context = context
-                        )
                     }
                 }
             )
