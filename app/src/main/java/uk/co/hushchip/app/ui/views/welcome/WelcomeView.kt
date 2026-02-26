@@ -11,7 +11,6 @@
 
 package uk.co.hushchip.app.ui.views.welcome
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
@@ -27,13 +26,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.TextStyle
@@ -43,13 +42,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import uk.co.hushchip.app.ui.theme.HushColors
 import uk.co.hushchip.app.ui.theme.outfitFamily
+import uk.co.hushchip.app.utils.hushClickEffect
 
 @Composable
 fun WelcomeView(
     screenIndex: Int,
     heading: String,
     body: String,
-    bodyColor: Color = HushColors.textFaint,
+    bodyColor: Color = HushColors.textMuted,
     buttonText: String,
     warningText: String? = null,
     topContent: @Composable () -> Unit,
@@ -74,12 +74,12 @@ fun WelcomeView(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 24.dp)
+                .padding(horizontal = 20.dp)
         ) {
-            // Top 40% area with icon
+            // Top area with illustration - vertically centred
             Box(
                 modifier = Modifier
-                    .weight(0.4f)
+                    .weight(0.45f)
                     .fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
@@ -87,30 +87,29 @@ fun WelcomeView(
             }
 
             // Heading
-            Spacer(modifier = Modifier.height(24.dp))
             Text(
                 text = heading,
                 style = TextStyle(
                     fontFamily = outfitFamily,
-                    fontWeight = FontWeight.Light,
-                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 22.sp,
                     color = HushColors.textBright,
                     textAlign = TextAlign.Center
                 )
             )
 
             // Body
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = body,
                 modifier = Modifier.widthIn(max = 280.dp),
                 style = TextStyle(
                     fontFamily = outfitFamily,
                     fontWeight = FontWeight.Light,
-                    fontSize = 13.sp,
+                    fontSize = 14.sp,
                     color = bodyColor,
                     textAlign = TextAlign.Center,
-                    lineHeight = 18.sp
+                    lineHeight = 20.sp
                 )
             )
 
@@ -122,14 +121,14 @@ fun WelcomeView(
                         .fillMaxWidth()
                         .border(
                             width = 1.dp,
-                            color = HushColors.dangerBorder,
-                            shape = RoundedCornerShape(8.dp)
+                            color = HushColors.danger,
+                            shape = RoundedCornerShape(12.dp)
                         )
                         .background(
                             color = HushColors.dangerBg,
-                            shape = RoundedCornerShape(8.dp)
+                            shape = RoundedCornerShape(12.dp)
                         )
-                        .padding(12.dp),
+                        .padding(16.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -137,49 +136,52 @@ fun WelcomeView(
                         style = TextStyle(
                             fontFamily = outfitFamily,
                             fontWeight = FontWeight.Normal,
-                            fontSize = 11.sp,
+                            fontSize = 14.sp,
                             color = HushColors.danger,
                             textAlign = TextAlign.Center,
-                            letterSpacing = 0.sp
+                            lineHeight = 20.sp
                         )
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.weight(0.6f))
+            Spacer(modifier = Modifier.weight(0.55f))
+
+            // Dot indicator
+            DotIndicator(currentIndex = screenIndex)
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             // Button
-            Spacer(modifier = Modifier.height(32.dp))
-            Button(
-                onClick = onNext,
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(48.dp),
-                shape = RoundedCornerShape(10.dp),
-                colors = ButtonColors(
-                    containerColor = HushColors.border,
-                    contentColor = HushColors.textBright,
-                    disabledContainerColor = HushColors.border,
-                    disabledContentColor = HushColors.textBright
-                )
+                    .height(52.dp)
+                    .background(
+                        color = HushColors.bgRaised,
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    .border(
+                        width = 1.dp,
+                        color = HushColors.border,
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    .hushClickEffect(onClick = onNext),
+                contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = buttonText.uppercase(),
                     style = TextStyle(
                         fontFamily = outfitFamily,
                         fontWeight = FontWeight.Normal,
-                        fontSize = 11.sp,
-                        letterSpacing = 4.sp,
-                        color = HushColors.textBright
+                        fontSize = 12.sp,
+                        letterSpacing = 3.sp,
+                        color = HushColors.textMuted
                     )
                 )
             }
 
-            // Dot indicator
-            Spacer(modifier = Modifier.height(24.dp))
-            DotIndicator(currentIndex = screenIndex)
-
-            Spacer(modifier = Modifier.height(48.dp))
+            Spacer(modifier = Modifier.height(40.dp))
         }
     }
 }
@@ -191,9 +193,20 @@ private fun DotIndicator(currentIndex: Int) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         for (i in 0..2) {
-            Canvas(modifier = Modifier.size(6.dp)) {
-                drawCircle(
-                    color = if (i == currentIndex) HushColors.textMuted else HushColors.border
+            if (i == currentIndex) {
+                Box(
+                    modifier = Modifier
+                        .width(16.dp)
+                        .height(6.dp)
+                        .clip(RoundedCornerShape(3.dp))
+                        .background(HushColors.textMuted)
+                )
+            } else {
+                Box(
+                    modifier = Modifier
+                        .size(6.dp)
+                        .clip(CircleShape)
+                        .background(HushColors.border)
                 )
             }
             if (i < 2) {

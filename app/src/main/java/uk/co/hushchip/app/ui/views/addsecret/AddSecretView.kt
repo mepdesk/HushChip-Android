@@ -1,19 +1,26 @@
 package uk.co.hushchip.app.ui.views.addsecret
 
 import android.content.Context
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -24,12 +31,13 @@ import androidx.navigation.NavHostController
 import uk.co.hushchip.app.ImportSecretView
 import uk.co.hushchip.app.R
 import uk.co.hushchip.app.data.ImportMode
+import uk.co.hushchip.app.ui.components.home.SecretTypeIcon
 import uk.co.hushchip.app.ui.components.shared.HeaderAlternateRow
-import uk.co.hushchip.app.ui.theme.SatoDarkPurple
-import uk.co.hushchip.app.ui.theme.SatoLightPurple
-import uk.co.hushchip.app.ui.views.menu.MenuCard
-import uk.co.hushchip.app.utils.webviewActivityIntent
+import uk.co.hushchip.app.ui.theme.HushColors
+import uk.co.hushchip.app.ui.theme.outfitFamily
+import uk.co.hushchip.app.utils.hushClickEffect
 import uk.co.hushchip.app.viewmodels.SharedViewModel
+import org.satochip.client.seedkeeper.SeedkeeperSecretType
 
 @Composable
 fun AddSecretView(
@@ -37,112 +45,209 @@ fun AddSecretView(
     viewModel: SharedViewModel,
     navController: NavHostController,
 ) {
+    val scrollState = rememberScrollState()
+
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .background(HushColors.bg)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier.fillMaxSize()
         ) {
             HeaderAlternateRow(
-                titleText = stringResource(R.string.blankTextField),
-                onClick = {
-                    navController.popBackStack()
-                }
+                titleText = "New Secret",
+                onClick = { navController.popBackStack() }
             )
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.SpaceBetween
+                    .padding(horizontal = 20.dp)
+                    .verticalScroll(scrollState)
             ) {
-                Spacer(modifier = Modifier.height(32.dp))
-                Column(
-                     modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = stringResource(id = R.string.addSecret),
-                        style = TextStyle(
-                            color = Color.Black,
-                            fontSize = 21.sp,
-                            fontWeight = FontWeight.ExtraBold,
-                            textAlign = TextAlign.Center
-                        )
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
-                    Text(
-                        text = stringResource(id = R.string.addSecretMessage),
-                        style = TextStyle(
-                            color = Color.Black,
-                            fontSize = 16.sp,
-                            lineHeight = 24.sp,
-                            fontWeight = FontWeight.ExtraLight,
-                            textAlign = TextAlign.Center
-                        )
+                // Section header
+                Text(
+                    text = "ADD SECRET",
+                    style = TextStyle(
+                        fontFamily = outfitFamily,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 13.sp,
+                        letterSpacing = 3.sp,
+                        color = HushColors.textBody
                     )
-                }
-                Column {
-                    // GENERATE A SECRET
-                    MenuCard(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(110.dp),
-                        text = stringResource(R.string.generateASecret),
-                        textMessage = stringResource(R.string.generateASecretMessage),
-                        textAlign = Alignment.TopStart,
-                        color = SatoDarkPurple,
-                        drawableId = R.drawable.generate_icon,
-                        onClick = {
-                            navController.navigate(
-                                ImportSecretView(
-                                    importMode = ImportMode.GENERATE_A_SECRET.name
-                                )
-                            )
-                        }
-                    )
-                    Spacer(modifier = Modifier.height(32.dp))
-                    // IMPORT A SECRET
-                    MenuCard(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(110.dp),
-                        text = stringResource(R.string.importASecret),
-                        textMessage = stringResource(R.string.importASecretMessage),
-                        textAlign = Alignment.TopStart,
-                        color = SatoLightPurple,
-                        drawableId = R.drawable.import_icon,
-                        onClick = {
-                            navController.navigate(
-                                ImportSecretView(
-                                    importMode = ImportMode.IMPORT_A_SECRET.name
-                                )
-                            )
-                        }
-                    )
-                }
+                )
+                Spacer(modifier = Modifier.height(12.dp))
 
-                // HOW TO USE SEEDKEEPER
-                val howToUseSeedkeeperUri = stringResource(id = R.string.howToUseSeedkeeper)
-                MenuCard(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(60.dp),
-                    text = stringResource(R.string.useSeedkeeper),
-                    textAlign = Alignment.TopStart,
-                    color = SatoLightPurple,
-                    drawableId = R.drawable.how_to
-                ) {
-                    webviewActivityIntent(
-                        url = howToUseSeedkeeperUri,
-                        context = context
+                // Mnemonic
+                SecretTypeCard(
+                    iconType = SeedkeeperSecretType.BIP39_MNEMONIC,
+                    title = "Mnemonic",
+                    description = "BIP39 seed phrase (12, 18, or 24 words)",
+                    onClick = {
+                        navController.navigate(
+                            ImportSecretView(importMode = ImportMode.IMPORT_A_SECRET.name)
+                        )
+                    }
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Password
+                SecretTypeCard(
+                    iconType = SeedkeeperSecretType.PASSWORD,
+                    title = "Password",
+                    description = "Login credentials with URL",
+                    onClick = {
+                        navController.navigate(
+                            ImportSecretView(importMode = ImportMode.IMPORT_A_SECRET.name)
+                        )
+                    }
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Wallet Descriptor (SOON)
+                SecretTypeCard(
+                    iconType = SeedkeeperSecretType.WALLET_DESCRIPTOR,
+                    title = "Wallet Descriptor",
+                    description = "Bitcoin output descriptor",
+                    isDisabled = true,
+                    onClick = {}
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Free Text
+                SecretTypeCard(
+                    iconType = SeedkeeperSecretType.DATA,
+                    title = "Free Text",
+                    description = "Any text data you want to store",
+                    onClick = {
+                        navController.navigate(
+                            ImportSecretView(importMode = ImportMode.IMPORT_A_SECRET.name)
+                        )
+                    }
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Master Seed (SOON)
+                SecretTypeCard(
+                    iconType = SeedkeeperSecretType.PUBKEY,
+                    title = "Master Seed",
+                    description = "Raw master seed bytes",
+                    isDisabled = true,
+                    onClick = {}
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // Generate section
+                Text(
+                    text = "GENERATE",
+                    style = TextStyle(
+                        fontFamily = outfitFamily,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 13.sp,
+                        letterSpacing = 3.sp,
+                        color = HushColors.textBody
                     )
-                }
-                Spacer(modifier = Modifier)
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+
+                SecretTypeCard(
+                    iconType = SeedkeeperSecretType.BIP39_MNEMONIC,
+                    title = "Generate Mnemonic",
+                    description = "Create a new random seed phrase",
+                    onClick = {
+                        navController.navigate(
+                            ImportSecretView(importMode = ImportMode.GENERATE_A_SECRET.name)
+                        )
+                    }
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+
+                SecretTypeCard(
+                    iconType = SeedkeeperSecretType.PASSWORD,
+                    title = "Generate Password",
+                    description = "Create a new random password",
+                    onClick = {
+                        navController.navigate(
+                            ImportSecretView(importMode = ImportMode.GENERATE_A_SECRET.name)
+                        )
+                    }
+                )
+
+                Spacer(modifier = Modifier.height(40.dp))
             }
+        }
+    }
+}
+
+@Composable
+private fun SecretTypeCard(
+    iconType: SeedkeeperSecretType,
+    title: String,
+    description: String,
+    isDisabled: Boolean = false,
+    onClick: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .alpha(if (isDisabled) 0.5f else 1f)
+            .then(
+                if (!isDisabled) {
+                    Modifier.hushClickEffect(onClick = onClick)
+                } else {
+                    Modifier
+                }
+            )
+            .background(HushColors.bgRaised, RoundedCornerShape(12.dp))
+            .border(1.dp, HushColors.border, RoundedCornerShape(12.dp))
+            .padding(14.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        SecretTypeIcon(type = iconType)
+        Spacer(modifier = Modifier.width(12.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = title,
+                style = TextStyle(
+                    fontFamily = outfitFamily,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 15.sp,
+                    color = HushColors.textBody
+                )
+            )
+            Text(
+                text = description,
+                style = TextStyle(
+                    fontFamily = outfitFamily,
+                    fontWeight = FontWeight.Light,
+                    fontSize = 12.sp,
+                    color = HushColors.textMuted
+                )
+            )
+        }
+        if (isDisabled) {
+            Text(
+                text = "SOON",
+                style = TextStyle(
+                    fontFamily = outfitFamily,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 10.sp,
+                    letterSpacing = 2.sp,
+                    color = HushColors.textFaint
+                )
+            )
+        } else {
+            Text(
+                text = "\u203A",
+                style = TextStyle(
+                    fontSize = 20.sp,
+                    color = HushColors.textFaint
+                )
+            )
         }
     }
 }

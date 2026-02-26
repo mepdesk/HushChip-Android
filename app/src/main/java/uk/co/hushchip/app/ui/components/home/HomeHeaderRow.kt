@@ -4,12 +4,13 @@ import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -18,11 +19,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -35,6 +34,8 @@ import uk.co.hushchip.app.R
 import uk.co.hushchip.app.data.NfcResultCode
 import uk.co.hushchip.app.data.PinCodeAction
 import uk.co.hushchip.app.ui.components.shared.InfoPopUpDialog
+import uk.co.hushchip.app.ui.theme.HushColors
+import uk.co.hushchip.app.ui.theme.outfitFamily
 import uk.co.hushchip.app.viewmodels.SharedViewModel
 
 @Composable
@@ -43,8 +44,7 @@ fun HomeHeaderRow(
     navController: NavHostController,
     viewModel: SharedViewModel,
 ) {
-    // INFO DIALOG
-    val showInfoDialog = remember { mutableStateOf(false) } // for infoDialog
+    val showInfoDialog = remember { mutableStateOf(false) }
     if (showInfoDialog.value) {
         InfoPopUpDialog(
             isOpen = showInfoDialog,
@@ -56,10 +56,10 @@ fun HomeHeaderRow(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 20.dp, bottom = 5.dp, start = 20.dp, end = 5.dp)
-            .height(50.dp)
+            .padding(horizontal = 20.dp)
+            .padding(top = 12.dp, bottom = 8.dp)
     ) {
-        // LOGO
+        // LEFT: Card-mark logo
         IconButton(
             modifier = Modifier.align(Alignment.CenterStart),
             onClick = {
@@ -71,29 +71,33 @@ fun HomeHeaderRow(
             },
         ) {
             Image(
-                painter = painterResource(R.drawable.ic_launcher_foreground),
-                contentDescription = "logo",
-                modifier = Modifier
-                    .size(45.dp),
-                contentScale = ContentScale.Crop,
+                painter = painterResource(R.drawable.ic_hush_cardmark),
+                contentDescription = "Card info",
+                modifier = Modifier.size(28.dp),
+                contentScale = ContentScale.Fit,
+                colorFilter = ColorFilter.tint(HushColors.textFaint)
             )
         }
-        // TITLE
+
+        // CENTRE: "HUSHCHIP" title
         Text(
             modifier = Modifier.align(Alignment.Center),
-            text = stringResource(id = R.string.seedkeeper),
+            text = "HUSHCHIP",
             style = TextStyle(
-                color = Color.Black,
-                fontWeight = FontWeight.ExtraBold,
-                fontSize = 26.sp,
-                lineHeight = 34.sp,
-            ),
+                fontFamily = outfitFamily,
+                fontWeight = FontWeight.Normal,
+                fontSize = 11.sp,
+                letterSpacing = 5.sp,
+                color = HushColors.textFaint
+            )
         )
+
+        // RIGHT: Refresh + Settings icons
         Row(
             modifier = Modifier.align(Alignment.CenterEnd),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             if (viewModel.isCardDataAvailable) {
-                // RESCAN BUTTON
                 IconButton(
                     onClick = {
                         viewModel.setResultCodeLiveTo(NfcResultCode.NONE)
@@ -107,19 +111,23 @@ fun HomeHeaderRow(
                 ) {
                     Image(
                         painter = painterResource(R.drawable.refresh_button),
-                        contentDescription = "logo",
-                        modifier = Modifier
-                            .size(24.dp),
+                        contentDescription = "Refresh",
+                        modifier = Modifier.size(20.dp),
                         contentScale = ContentScale.Fit,
-                        colorFilter = ColorFilter.tint(Color.Black)
+                        colorFilter = ColorFilter.tint(HushColors.textFaint)
                     )
                 }
+                Spacer(modifier = Modifier.width(4.dp))
             }
-            // MENU BUTTON
             IconButton(onClick = {
                 navController.navigate(MenuView)
             }) {
-                Icon(Icons.Default.MoreVert, "", tint = Color.Black)
+                Icon(
+                    Icons.Default.Settings,
+                    contentDescription = "Settings",
+                    modifier = Modifier.size(20.dp),
+                    tint = HushColors.textFaint
+                )
             }
         }
     }

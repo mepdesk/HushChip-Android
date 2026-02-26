@@ -1,14 +1,29 @@
 package uk.co.hushchip.app
 
 import android.content.Context
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -117,12 +132,30 @@ fun Navigation(
                 body = stringResource(R.string.onboarding1Body),
                 buttonText = stringResource(R.string.onboardingNext),
                 topContent = {
-                    Image(
-                        painter = painterResource(R.drawable.ic_launcher_foreground),
-                        contentDescription = null,
-                        modifier = Modifier.size(100.dp),
-                        contentScale = ContentScale.Fit
-                    )
+                    // Card with gold EMV chip
+                    Box(
+                        modifier = Modifier
+                            .width(220.dp)
+                            .height(150.dp)
+                            .background(HushColors.bgRaised, RoundedCornerShape(16.dp))
+                            .border(1.dp, HushColors.border, RoundedCornerShape(16.dp))
+                    ) {
+                        Canvas(
+                            modifier = Modifier
+                                .padding(start = 20.dp, top = 20.dp)
+                                .size(width = 40.dp, height = 28.dp)
+                                .align(Alignment.TopStart)
+                        ) {
+                            val goldColor = Color(0xFFB8A04A)
+                            drawRoundRect(color = goldColor, cornerRadius = CornerRadius(4f, 4f))
+                            val lineColor = goldColor.copy(alpha = 0.4f)
+                            for (i in 1..3) {
+                                val y = size.height * i / 4f
+                                drawLine(lineColor, Offset(2f, y), Offset(size.width - 2f, y), 1f)
+                            }
+                            drawLine(lineColor, Offset(size.width / 2f, 2f), Offset(size.width / 2f, size.height - 2f), 1f)
+                        }
+                    }
                 },
                 onNext = {
                     navController.navigate(SecondWelcomeView) {
@@ -169,9 +202,11 @@ fun Navigation(
                 buttonText = stringResource(R.string.onboardingUnderstand),
                 warningText = stringResource(R.string.onboarding3Warning),
                 topContent = {
-                    Text(
-                        text = "\uD83D\uDD12",
-                        style = TextStyle(fontSize = 48.sp)
+                    Icon(
+                        Icons.Default.Lock,
+                        contentDescription = "Lock",
+                        modifier = Modifier.size(64.dp),
+                        tint = HushColors.textFaint
                     )
                 },
                 onNext = {

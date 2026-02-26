@@ -1,5 +1,6 @@
 package uk.co.hushchip.app.ui.components.shared
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,57 +24,58 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import uk.co.hushchip.app.ui.theme.HushButtonPurple
+import uk.co.hushchip.app.ui.theme.HushColors
+import uk.co.hushchip.app.ui.theme.outfitFamily
 
 @Composable
 fun HushButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     text: Int,
-    buttonColor: Color = HushButtonPurple,
-    textColor: Color = Color.White,
+    buttonColor: Color = HushColors.bgRaised,
+    textColor: Color = HushColors.textMuted,
     image: Int? = null,
-    horizontalPadding: Dp = 16.dp,
-    shape: RoundedCornerShape = RoundedCornerShape(50)
+    horizontalPadding: Dp = 0.dp,
+    shape: RoundedCornerShape = RoundedCornerShape(12.dp)
 ) {
     Button(
-        onClick = {
-            onClick()
-        },
+        onClick = { onClick() },
         modifier = modifier
-            .padding(
-                vertical = 10.dp,
-                horizontal = horizontalPadding
-            )
-            .height(40.dp),
+            .fillMaxWidth()
+            .padding(horizontal = horizontalPadding)
+            .height(52.dp)
+            .border(
+                width = 1.dp,
+                color = HushColors.border,
+                shape = shape
+            ),
         shape = shape,
         colors = ButtonColors(
             contentColor = textColor,
             containerColor = buttonColor,
-            disabledContainerColor = Color.Transparent,
-            disabledContentColor = Color.White
+            disabledContainerColor = buttonColor.copy(alpha = 0.4f),
+            disabledContentColor = textColor.copy(alpha = 0.4f)
         )
     ) {
         Row(
-            modifier = Modifier,
-            horizontalArrangement = Arrangement.SpaceBetween,
+            horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = stringResource(text),
+                text = stringResource(text).uppercase(),
                 style = TextStyle(
-                    color = textColor,
-                    fontSize = 16.sp,
-                    lineHeight = 22.sp,
-                    fontWeight = FontWeight.Bold
+                    fontFamily = outfitFamily,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 12.sp,
+                    letterSpacing = 3.sp,
+                    color = textColor
                 )
             )
             image?.let {
-                Spacer(modifier = Modifier.width(4.dp))
+                Spacer(modifier = Modifier.width(8.dp))
                 GifImage(
-                    modifier = Modifier
-                        .size(16.dp),
-                    colorFilter = ColorFilter.tint(Color.White),
+                    modifier = Modifier.size(16.dp),
+                    colorFilter = ColorFilter.tint(textColor),
                     image = image
                 )
             }

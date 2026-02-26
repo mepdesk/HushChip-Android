@@ -1,6 +1,8 @@
 package uk.co.hushchip.app.ui.views.home
 
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -8,39 +10,41 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.unit.times
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.launch
 import org.satochip.client.seedkeeper.SeedkeeperSecretHeader
-import org.satochip.client.seedkeeper.SeedkeeperSecretType
-import uk.co.hushchip.app.R
-import uk.co.hushchip.app.ui.components.home.EditField
-import uk.co.hushchip.app.ui.components.home.SearchSecretsField
 import uk.co.hushchip.app.ui.components.home.SecretButton
-import uk.co.hushchip.app.ui.components.home.SecretsFilter
+import uk.co.hushchip.app.ui.theme.HushColors
+import uk.co.hushchip.app.ui.theme.outfitFamily
 
 @Composable
 fun SecretsList(
@@ -49,171 +53,184 @@ fun SecretsList(
     addNewSecret: () -> Unit,
     onSecretClick: (SeedkeeperSecretHeader) -> Unit,
 ) {
-    val curValue = remember {
-        mutableStateOf("")
-    }
-    val coroutineScope = rememberCoroutineScope()
-    val searchQueryState = rememberUpdatedState(curValue.value)
-    var filteredList by remember {
-        mutableStateOf(secretHeaders.toList())
-    }
+    var searchQuery by remember { mutableStateOf("") }
     val scrollState = rememberScrollState()
+    val keyboardController = LocalSoftwareKeyboardController.current
 
-    var isFilterFieldNeeded by remember {
-        mutableStateOf(false)
+    val filteredList = if (searchQuery.isEmpty()) {
+        secretHeaders.toList()
+    } else {
+        secretHeaders.toList().filter {
+            it?.label?.contains(searchQuery, ignoreCase = true) == true
+        }
     }
-    val itemHeight = 50.dp
-    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
-    val totalHeight = (secretHeaders.size * (itemHeight + 10.dp)) + itemHeight
-    isFilterFieldNeeded = totalHeight >= (screenHeight / 2)
-    
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp)
-    ) {
-        Spacer(modifier = Modifier.height(8.dp))
 
-        // Card Label
-        if (!cardLabel.isEmpty()) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = cardLabel,
-                    style = TextStyle(
-                        color = Color.Black,
-                        fontSize = 24.sp,
-                        lineHeight = 22.sp,
-                        fontWeight = FontWeight.ExtraLight,
-                        textAlign = TextAlign.Center
-                    )
-                )
-            }
-        }
+    val secretCount = secretHeaders.filterNotNull().size
+    val memoryPercent = if (secretCount > 0) (secretCount * 8).coerceAtMost(100) else 0
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = stringResource(id = R.string.homeAuthenticatedText),
-            style = TextStyle(
-                color = Color.Black,
-                fontSize = 16.sp,
-                lineHeight = 24.sp,
-                fontWeight = FontWeight.ExtraLight,
-                textAlign = TextAlign.Center
-            )
-        )
-        Spacer(modifier = Modifier.height(24.dp))
-
-        if (isFilterFieldNeeded) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    modifier = Modifier,
-                    text = stringResource(id = R.string.search),
-                    style = TextStyle(
-                        color = Color.Black,
-                        fontSize = 16.sp,
-                        lineHeight = 24.sp,
-                        fontWeight = FontWeight.ExtraLight,
-                        textAlign = TextAlign.Center
-                    )
-                )
-                SearchSecretsField(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(horizontal = 8.dp),
-                    curValue = curValue,
-                    onValueChange = {
-                        coroutineScope.launch {
-                            val searchQueryFlow = MutableStateFlow(searchQueryState.value)
-                            searchQueryFlow
-                                .debounce(500)
-                                .distinctUntilChanged()
-                                .collect { query ->
-                                    filteredList = if (curValue.value.isEmpty()) {
-                                        secretHeaders.toList()
-                                    } else {
-                                        secretHeaders.toList().filter {
-                                            it?.label?.contains(
-                                                curValue.value,
-                                                ignoreCase = true
-                                            ) == true
-                                        }
-                                    }
-                                }
-                        }
-                    }
-                )
-                SecretsFilter(
-                    onClick = { filter ->
-                        when (filter) {
-                            SeedkeeperSecretType.DEFAULT_TYPE -> {
-                                filteredList = secretHeaders.toList()
-                            }
-                            SeedkeeperSecretType.BIP39_MNEMONIC -> {
-                                filteredList = secretHeaders.toList()
-                                filteredList = secretHeaders.toList().filter {
-                                    it?.type == filter || it?.type == SeedkeeperSecretType.MASTERSEED || it?.type == SeedkeeperSecretType.ELECTRUM_MNEMONIC
-                                }
-                            }
-                            SeedkeeperSecretType.DATA, SeedkeeperSecretType.WALLET_DESCRIPTOR, SeedkeeperSecretType.PASSWORD -> {
-                                filteredList = secretHeaders.toList()
-                                filteredList = secretHeaders.toList().filter {
-                                    it?.type == filter
-                                }
-                            }
-                            else -> {}
-                        }
-                    }
-                )
-            }
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp, vertical = 12.dp),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = stringResource(id = R.string.mySecretList),
-                style = TextStyle(
-                    color = Color.Black,
-                    fontSize = 16.sp,
-                    lineHeight = 24.sp,
-                    fontWeight = FontWeight.ExtraLight,
-                    textAlign = TextAlign.Center
-                )
-            )
-        }
+    Box(modifier = Modifier.fillMaxSize()) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(state = scrollState)
+                .padding(horizontal = 20.dp)
         ) {
-            SecretButton(
-                onClick = {
-                    addNewSecret()
-                }
+            // Memory usage bar
+            LinearProgressIndicator(
+                progress = { memoryPercent / 100f },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(2.dp)
+                    .clip(RoundedCornerShape(1.dp)),
+                color = HushColors.textFaint,
+                trackColor = HushColors.border,
             )
-            Spacer(modifier = Modifier.height(10.dp))
-            filteredList.forEach { secret ->
-                SecretButton(
-                    secretHeader = secret,
-                    onClick = {
-                        secret?.let {
-                            onSecretClick(secret)
+            Spacer(modifier = Modifier.height(6.dp))
+
+            // Stats text
+            Text(
+                text = "$secretCount SECRETS \u00B7 ${memoryPercent}% MEMORY USED",
+                style = TextStyle(
+                    fontFamily = outfitFamily,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 10.sp,
+                    letterSpacing = 3.sp,
+                    color = HushColors.textFaint,
+                    textAlign = TextAlign.Center
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Search field
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(44.dp)
+                    .background(
+                        color = HushColors.bgRaised,
+                        shape = RoundedCornerShape(10.dp)
+                    )
+                    .border(
+                        width = 1.dp,
+                        color = HushColors.border,
+                        shape = RoundedCornerShape(10.dp)
+                    )
+                    .padding(horizontal = 14.dp),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        Icons.Default.Search,
+                        contentDescription = "Search",
+                        modifier = Modifier.size(18.dp),
+                        tint = HushColors.textFaint
+                    )
+                    Spacer(modifier = Modifier.padding(start = 8.dp))
+                    BasicTextField(
+                        value = searchQuery,
+                        onValueChange = { searchQuery = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        textStyle = TextStyle(
+                            fontFamily = outfitFamily,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 14.sp,
+                            color = HushColors.textBody
+                        ),
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                        keyboardActions = KeyboardActions(onDone = { keyboardController?.hide() }),
+                        decorationBox = { innerTextField ->
+                            if (searchQuery.isEmpty()) {
+                                Text(
+                                    text = "Search secrets",
+                                    style = TextStyle(
+                                        fontFamily = outfitFamily,
+                                        fontWeight = FontWeight.Normal,
+                                        fontSize = 14.sp,
+                                        color = HushColors.textFaint
+                                    )
+                                )
+                            }
+                            innerTextField()
                         }
-                    }
-                )
-                Spacer(modifier = Modifier.height(10.dp))
+                    )
+                }
             }
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Secret list or empty state
+            if (filteredList.isEmpty() && searchQuery.isEmpty()) {
+                Spacer(modifier = Modifier.weight(1f))
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "No secrets stored",
+                        style = TextStyle(
+                            fontFamily = outfitFamily,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 15.sp,
+                            color = HushColors.textMuted
+                        )
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "Tap + to add your first secret",
+                        style = TextStyle(
+                            fontFamily = outfitFamily,
+                            fontWeight = FontWeight.Light,
+                            fontSize = 12.sp,
+                            color = HushColors.textFaint
+                        )
+                    )
+                }
+                Spacer(modifier = Modifier.weight(1f))
+            } else {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .verticalScroll(state = scrollState)
+                        .padding(bottom = 80.dp)
+                ) {
+                    filteredList.forEach { secret ->
+                        SecretButton(
+                            secretHeader = secret,
+                            onClick = {
+                                secret?.let { onSecretClick(secret) }
+                            }
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+                }
+            }
+        }
+
+        // FAB
+        FloatingActionButton(
+            onClick = { addNewSecret() },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(end = 20.dp, bottom = 20.dp)
+                .size(56.dp)
+                .border(
+                    width = 1.dp,
+                    color = HushColors.border,
+                    shape = CircleShape
+                ),
+            containerColor = HushColors.bg,
+            elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp),
+            shape = CircleShape
+        ) {
+            Text(
+                text = "+",
+                style = TextStyle(
+                    fontFamily = outfitFamily,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 24.sp,
+                    color = HushColors.textBody
+                )
+            )
         }
     }
 }

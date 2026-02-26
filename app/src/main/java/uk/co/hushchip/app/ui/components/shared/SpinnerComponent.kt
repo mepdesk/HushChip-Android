@@ -25,7 +25,7 @@ import uk.co.hushchip.app.R
 
 @Composable
 fun SpinnerComponent(
-    image: Int = R.drawable.ic_launcher_foreground,
+    image: Int = R.drawable.ic_hush_cardmark,
 ) {
     var rotationAngle by remember { mutableStateOf(0f) }
     val rotationSpeedFactor = 2f
