@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import uk.co.hushchip.app.R
 import uk.co.hushchip.app.ui.components.import.InputField
-import uk.co.hushchip.app.ui.components.shared.GifImage
+import uk.co.hushchip.app.ui.components.shared.IllustrationPlaceholder
 import uk.co.hushchip.app.ui.components.shared.HushButton
 import uk.co.hushchip.app.ui.components.shared.TitleTextField
 import uk.co.hushchip.app.ui.theme.SatoPurple
@@ -46,13 +46,12 @@ fun ImportHome(
         )
         Spacer(modifier = Modifier.height(20.dp))
         Box(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center
         ) {
-            GifImage(
-                modifier = Modifier
-                    .size(300.dp)
-                    .align(Alignment.Center),
-                image = R.drawable.vault
+            IllustrationPlaceholder(
+                modifier = Modifier.size(200.dp),
+                label = "Secret saved"
             )
         }
     }

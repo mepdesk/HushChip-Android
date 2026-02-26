@@ -66,9 +66,10 @@ class SharedViewModel : ViewModel() {
         NFCCardService.cardLabel.observeForever {
             cardLabel = it
         }
-        NFCCardService.authenticityStatus.observeForever {
-            authenticityStatus = it
-        }
+        // HushChip: Authenticity check disabled — always UNKNOWN
+        // NFCCardService.authenticityStatus.observeForever {
+        //     authenticityStatus = it
+        // }
         NFCCardService.secretHeaders.observeForever{
             updateSecretsJob?.cancel()
             updateSecretsJob = viewModelScope.launch {

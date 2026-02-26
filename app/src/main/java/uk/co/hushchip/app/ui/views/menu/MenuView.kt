@@ -1,7 +1,6 @@
 package uk.co.hushchip.app.ui.views.menu
 
 import android.content.Context
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,8 +24,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -256,19 +253,11 @@ fun MenuView(
         ) {
             Text(
                 modifier = Modifier
-                    .padding(top = 20.dp, start = 15.dp, bottom = 15.dp, end = 225.dp)
+                    .padding(top = 20.dp, start = 15.dp, bottom = 15.dp)
                     .align(Alignment.TopStart),
                 color = Color.White,
                 fontSize = 22.sp,
                 text = stringResource(R.string.allOurProducs)
-            )
-            Image(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .align(Alignment.BottomEnd),
-                painter = painterResource(id = R.drawable.all_our_products),
-                contentDescription = null,
-                contentScale = ContentScale.FillBounds
             )
         }
     }

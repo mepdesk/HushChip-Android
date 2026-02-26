@@ -164,11 +164,8 @@
     <string name="cardLabel">Card label</string>
     <string name="pinCode">PIN code</string>
     <string name="changePinCode">Change PIN code</string>
-    <string name="cardAuthenticity">Card authenticity</string>
     <string name="cardAuthentikey">Card authentikey</string>
     <string name="seedkeeperStatus">Card status</string>
-    <string name="cardIsGenuine">this card is genuine</string>
-    <string name="cardIsNotGenuine">this card is not genuine</string>
     <string name="memoryAvailable">Available memory</string>
     <string name="memoryTotal">Total memory</string>
     <string name="secretsStored">Secrets stored</string>
@@ -178,20 +175,6 @@
     <string name="cardLabelTitle">Edit card label</string>
     <string name="cardLabelMsg">Allows you to change the label of the card (max 64 characters)</string>
     <string name="cardLabelToast">Card label changed successfully!</string>
-
-    <!--Card Authenticity View-->
-    <string name="cardAuthFailed">Card authentication failed!</string>
-    <string name="cardAuthFailedText">Impossible to authenticate the issuer of this card. It was not issued by the original manufacturer.</string>
-    <string name="cardAuthFailedUsage">If you didn\'t load the card yourself, be extremely careful!</string>
-    <string name="cardAuthSuccessful">Card authenticated successfully!</string>
-    <string name="cardAuthSuccessfulText">This card was issued by the original manufacturer.</string>
-    <string name="cardAuthSuccessfulUsage">You can safely use it.</string>
-    <string name="showCardCertificate">Show card certificates</string>
-    <string name="hideCardCertificate">Hide card certificates</string>
-    <string name="cardInfoCert">Card certificate</string>
-    <string name="subcaInfo">Sub-CA certificate</string>
-    <string name="rootCaInfo">Root CA certificate</string>
-    <string name="copyToClipboard">Copy to clipboard</string>
 
     <!--Pin Code View-->
     <string name="setup">Setup</string>

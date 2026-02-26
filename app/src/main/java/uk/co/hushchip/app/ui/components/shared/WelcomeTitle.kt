@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -17,14 +15,13 @@ import uk.co.hushchip.app.R
 fun WelcomeViewTitle(
     modifier: Modifier = Modifier
         .padding(horizontal = 20.dp)
-        .width(200.dp)
+        .width(100.dp)
         .height(100.dp)
 ) {
     Image(
-        painter = painterResource(R.drawable.top_welcome_logo),
+        painter = painterResource(R.drawable.ic_launcher_foreground),
         contentDescription = null,
         modifier = modifier,
         contentScale = ContentScale.Fit,
-        colorFilter = ColorFilter.tint(Color.Black)
     )
 }

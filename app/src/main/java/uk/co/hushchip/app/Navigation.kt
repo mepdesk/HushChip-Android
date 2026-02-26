@@ -24,7 +24,6 @@ import uk.co.hushchip.app.ui.components.home.NfcDialog
 import uk.co.hushchip.app.ui.theme.SatoGray
 import uk.co.hushchip.app.ui.views.addsecret.AddSecretView
 import uk.co.hushchip.app.ui.views.backup.BackupView
-import uk.co.hushchip.app.ui.views.cardinfo.CardAuthenticity
 import uk.co.hushchip.app.ui.views.cardinfo.CardInformation
 import uk.co.hushchip.app.ui.views.factoryreset.FactoryResetView
 import uk.co.hushchip.app.ui.views.home.HomeView
@@ -98,7 +97,7 @@ fun Navigation(
         composable<SplashView> {
             SplashView()
             LaunchedEffect(Unit) {
-                delay(500)
+                delay(1500)
                 navController.navigate(startDestination) {
                     popUpTo(0)
                 }
@@ -109,7 +108,6 @@ fun Navigation(
                 title = R.string.welcome,
                 text = R.string.welcomeInfo,
                 colors = listOf(Color.White, SatoGray, SatoGray),
-                backgroundImage = R.drawable.first_welcome_card,
                 onNext = {
                     navController.navigate(SecondWelcomeView) {
                         popUpTo(0)
@@ -124,7 +122,6 @@ fun Navigation(
                 title = R.string.seedphraseManager,
                 text = R.string.seedphraseManagerInfo,
                 colors = listOf(SatoGray, Color.White, SatoGray),
-                backgroundImage = R.drawable.second_welcome_card,
                 onNext = {
                     navController.navigate(ThirdWelcomeView) {
                         popUpTo(0)
@@ -143,7 +140,6 @@ fun Navigation(
             WelcomeView(
                 title = R.string.usingNfc,
                 text = R.string.usingNfcInfo,
-                backgroundImage = R.drawable.third_welcome_screen,
                 isFullWidth = true,
                 link = linkUrl,
                 onNext = {
@@ -205,13 +201,6 @@ fun Navigation(
         }
         composable<CardInformation> {
             CardInformation(
-                context = context,
-                navController = navController,
-                viewModel = viewModel,
-            )
-        }
-        composable<CardAuthenticity> {
-            CardAuthenticity(
                 context = context,
                 navController = navController,
                 viewModel = viewModel,
@@ -298,8 +287,6 @@ object MenuView
 object SettingsView
 @Serializable
 object CardInformation
-@Serializable
-object CardAuthenticity
 @Serializable
 object EditCardLabelView
 @Serializable

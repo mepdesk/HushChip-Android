@@ -28,15 +28,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import uk.co.hushchip.app.CardAuthenticity
+import uk.co.hushchip.app.CardInformation
 import uk.co.hushchip.app.MenuView
 import uk.co.hushchip.app.PinEntryView
 import uk.co.hushchip.app.R
-import uk.co.hushchip.app.data.AuthenticityStatus
 import uk.co.hushchip.app.data.NfcResultCode
 import uk.co.hushchip.app.data.PinCodeAction
 import uk.co.hushchip.app.ui.components.shared.InfoPopUpDialog
-import uk.co.hushchip.app.ui.theme.SatoGreen
 import uk.co.hushchip.app.viewmodels.SharedViewModel
 
 @Composable
@@ -55,22 +53,6 @@ fun HomeHeaderRow(
         )
     }
 
-    // Logo
-    val logoColor = remember {
-        mutableStateOf(Color.Black)
-    }
-    logoColor.value = when (viewModel.authenticityStatus) {
-        AuthenticityStatus.AUTHENTIC -> {
-            SatoGreen
-        }
-        AuthenticityStatus.NOT_AUTHENTIC -> {
-            Color.Red
-        }
-        AuthenticityStatus.UNKNOWN -> {
-            Color.Black
-        }
-    }
-
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -82,7 +64,7 @@ fun HomeHeaderRow(
             modifier = Modifier.align(Alignment.CenterStart),
             onClick = {
                 if (viewModel.isCardDataAvailable) {
-                    navController.navigate(CardAuthenticity)
+                    navController.navigate(CardInformation)
                 } else {
                     showInfoDialog.value = !showInfoDialog.value
                 }
@@ -94,7 +76,6 @@ fun HomeHeaderRow(
                 modifier = Modifier
                     .size(45.dp),
                 contentScale = ContentScale.Crop,
-                colorFilter = ColorFilter.tint(logoColor.value)
             )
         }
         // TITLE

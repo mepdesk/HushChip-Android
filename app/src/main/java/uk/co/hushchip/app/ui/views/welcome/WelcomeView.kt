@@ -1,6 +1,5 @@
 package uk.co.hushchip.app.ui.views.welcome
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Box
@@ -18,16 +17,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import uk.co.hushchip.app.R
+import uk.co.hushchip.app.ui.components.shared.IllustrationPlaceholder
 import uk.co.hushchip.app.ui.components.shared.NextButton
 import uk.co.hushchip.app.ui.components.shared.HushButton
 import uk.co.hushchip.app.ui.components.shared.StepCircles
 import uk.co.hushchip.app.ui.components.shared.WelcomeViewTitle
 import uk.co.hushchip.app.ui.theme.HushButtonBlue
-import uk.co.hushchip.app.ui.theme.HushButtonPurple
 import uk.co.hushchip.app.ui.theme.HushColors
 
 @Composable
@@ -36,7 +33,7 @@ fun WelcomeView(
     text: Int,
     link: String? = null,
     colors: List<Color>? = null,
-    backgroundImage: Int,
+    @Suppress("UNUSED_PARAMETER") backgroundImage: Int = 0,
     isFullWidth: Boolean = false,
     onNext: () -> Unit,
     onBack: () -> Unit,
@@ -77,13 +74,9 @@ fun WelcomeView(
                 onClick = onClick
             )
             Spacer(modifier = Modifier.height(30.dp))
-            Image(
-                painter = painterResource(backgroundImage),
-                contentDescription = null,
-                alignment = Alignment.Center,
-                modifier = if (isFullWidth) Modifier.fillMaxWidth() else Modifier
-                    .size(300.dp),
-                contentScale = if (isFullWidth) ContentScale.FillWidth else ContentScale.Fit
+            IllustrationPlaceholder(
+                modifier = if (isFullWidth) Modifier.fillMaxWidth().height(200.dp) else Modifier
+                    .size(200.dp),
             )
             Spacer(modifier = Modifier.weight(1f))
             Box(

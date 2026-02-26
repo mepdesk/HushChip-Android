@@ -250,10 +250,10 @@ object NFCCardService {
                 seedkeeperStatus = cmdSet.seedkeeperGetStatus()
             }
 
-            // check authenticity
-            if (isMasterCard){
-                getCardAuthenticty()
-            }
+            // HushChip: Authenticity check disabled — cards don't have Satochip PKI certificates
+            // if (isMasterCard){
+            //     getCardAuthenticty()
+            // }
 
             // for backup card, get list of secretHeaders to backup (diff between what's on master versus backup)
             if (!isMasterCard){

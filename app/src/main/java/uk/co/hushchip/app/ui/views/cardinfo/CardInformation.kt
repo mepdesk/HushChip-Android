@@ -9,26 +9,20 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import uk.co.hushchip.app.CardAuthenticity
 import uk.co.hushchip.app.EditCardLabelView
 import uk.co.hushchip.app.PinEntryView
 import uk.co.hushchip.app.R
 import uk.co.hushchip.app.ShowCardLogs
-import uk.co.hushchip.app.data.AuthenticityStatus
 import uk.co.hushchip.app.data.NfcResultCode
 import uk.co.hushchip.app.data.PinCodeAction
 import uk.co.hushchip.app.ui.components.card.CardStatusField
 import uk.co.hushchip.app.ui.components.card.InfoField
 import uk.co.hushchip.app.ui.components.shared.HeaderAlternateRow
-import uk.co.hushchip.app.ui.theme.SatoGreen
 import uk.co.hushchip.app.ui.theme.SatoLightPurple
 import uk.co.hushchip.app.viewmodels.SharedViewModel
 
@@ -39,31 +33,10 @@ fun CardInformation(
     viewModel: SharedViewModel,
 ) {
 
-    // Authenticity
-    val logoColor = remember {
-        mutableStateOf(Color.Black)
-    }
-    val cardAuthenticityText = remember {
-        mutableStateOf(0)
-    }
-
-    val authenticityStatus = viewModel.authenticityStatus
     val cardLabel = viewModel.cardLabel
     val cardAppletVersion = viewModel.getAppletVersionString()
     val seedkeeperStatus = viewModel.getSeedkeeperStatus()
     val cardAuthentikey = viewModel.getAuthentikeyDescription()
-
-     when (authenticityStatus) {
-        AuthenticityStatus.AUTHENTIC -> {
-            cardAuthenticityText.value = R.string.cardIsGenuine
-            logoColor.value = SatoGreen
-        }
-        AuthenticityStatus.NOT_AUTHENTIC -> {
-            cardAuthenticityText.value = R.string.cardIsNotGenuine
-            logoColor.value = Color.Red
-        }
-        AuthenticityStatus.UNKNOWN -> {}
-    }
 
     Box(
         modifier = Modifier
@@ -94,20 +67,6 @@ fun CardInformation(
                         seedkeeperStatus = seedkeeperStatus
                     )
                     //Spacer(modifier = Modifier.height(24.dp))
-                }
-                item {
-                    InfoField(
-                        title = R.string.cardAuthenticity,
-                        text = stringResource(id = cardAuthenticityText.value),
-                        onClick = {
-                            navController.navigate(CardAuthenticity)
-                        },
-                        containerColor = logoColor.value,
-                        isClickable = true,
-                        icon = R.drawable.show_password,
-                        isPadded = false
-                    )
-                    Spacer(modifier = Modifier.height(32.dp))
                 }
                 item {
                     InfoField(

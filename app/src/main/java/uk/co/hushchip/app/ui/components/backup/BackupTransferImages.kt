@@ -6,12 +6,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import uk.co.hushchip.app.R
 import uk.co.hushchip.app.data.BackupStatus
-import uk.co.hushchip.app.ui.components.shared.GifImage
+import uk.co.hushchip.app.ui.components.shared.IllustrationPlaceholder
 
 @Composable
 fun BackupTransferImages(
@@ -19,32 +21,32 @@ fun BackupTransferImages(
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         when (backupStatus){
             BackupStatus.SUCCESS -> {
-                GifImage(
-                    modifier = Modifier
-                        .size(300.dp),
-                    image = R.drawable.second_welcome_card
+                IllustrationPlaceholder(
+                    modifier = Modifier.size(200.dp),
+                    label = "Backup complete"
                 )
             }
             BackupStatus.FAILURE -> {}
             else -> {
                 BackupTransferImage(
-                    image = R.drawable.backup_card,
+                    image = R.drawable.contactless_24px,
                     text = R.string.masterCard,
                     alpha = if (backupStatus == BackupStatus.FIRST_STEP || backupStatus == BackupStatus.FOURTH_STEP) 0.3f else 1f
                 )
-                BackupTransferImage(
+                IllustrationPlaceholder(
                     modifier = Modifier
-                        .padding(top = 20.dp)
-                        .height(120.dp),
-                    image = R.drawable.key_backup,
-                    alpha = if (backupStatus == BackupStatus.FIRST_STEP || backupStatus == BackupStatus.SECOND_STEP) 0.3f else 1f
+                        .padding(horizontal = 8.dp)
+                        .width(60.dp)
+                        .height(60.dp),
+                    label = "→"
                 )
                 BackupTransferImage(
-                    image = R.drawable.backup_card,
+                    image = R.drawable.contactless_24px,
                     text = R.string.backupCard,
                     alpha = if (backupStatus == BackupStatus.SECOND_STEP) 0.3f else 1f
                 )
