@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -12,8 +14,8 @@ android {
         applicationId = "uk.co.hushchip.app"
         minSdk = 24
         targetSdk = 34
-        versionCode = 103 // if versionName is x.y.z, versionCode is 10000x+100y+z
-        versionName = "0.1.3" // using semantic versioning x.y.z (0<=x,y,z<=99)
+        versionCode = 10000 // if versionName is x.y.z, versionCode is 10000x+100y+z
+        versionName = "1.0.0" // using semantic versioning x.y.z (0<=x,y,z<=99)
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -21,13 +23,28 @@ android {
         }
     }
 
+    signingConfigs {
+        create("release") {
+            val props = Properties().apply {
+                val file = rootProject.file("local.properties")
+                if (file.exists()) load(file.inputStream())
+            }
+            storeFile = file(props.getProperty("RELEASE_STORE_FILE", "placeholder.jks"))
+            storePassword = props.getProperty("RELEASE_STORE_PASSWORD", "")
+            keyAlias = props.getProperty("RELEASE_KEY_ALIAS", "")
+            keyPassword = props.getProperty("RELEASE_KEY_PASSWORD", "")
+        }
+    }
+
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {
