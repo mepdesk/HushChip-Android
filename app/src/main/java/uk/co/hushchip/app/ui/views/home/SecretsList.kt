@@ -1,5 +1,6 @@
 package uk.co.hushchip.app.ui.views.home
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -23,7 +24,6 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,7 +33,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -74,16 +79,47 @@ fun SecretsList(
                 .fillMaxSize()
                 .padding(horizontal = 20.dp)
         ) {
-            // Memory usage bar
-            LinearProgressIndicator(
-                progress = { memoryPercent / 100f },
+            // Memory usage bar with glow
+            Canvas(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(2.dp)
-                    .clip(RoundedCornerShape(1.dp)),
-                color = HushColors.textFaint,
-                trackColor = HushColors.border,
-            )
+                    .height(6.dp)
+            ) {
+                val barHeight = 2.dp.toPx()
+                val barRadius = 1.dp.toPx()
+                val barY = (size.height - barHeight) / 2f
+                val filledWidth = size.width * (memoryPercent / 100f)
+
+                // Track (unfilled)
+                drawRoundRect(
+                    color = HushColors.border.copy(alpha = 0.5f),
+                    topLeft = Offset(0f, barY),
+                    size = Size(size.width, barHeight),
+                    cornerRadius = CornerRadius(barRadius)
+                )
+
+                if (filledWidth > 0f) {
+                    // Glow behind filled portion
+                    drawRoundRect(
+                        color = HushColors.textFaint.copy(alpha = 0.2f),
+                        topLeft = Offset(-2.dp.toPx(), barY - 2.dp.toPx()),
+                        size = Size(filledWidth + 4.dp.toPx(), barHeight + 4.dp.toPx()),
+                        cornerRadius = CornerRadius(barRadius + 2.dp.toPx())
+                    )
+                    // Filled bar with gradient
+                    drawRoundRect(
+                        brush = Brush.horizontalGradient(
+                            colors = listOf(
+                                HushColors.textFaint.copy(alpha = 0.6f),
+                                HushColors.textFaint
+                            )
+                        ),
+                        topLeft = Offset(0f, barY),
+                        size = Size(filledWidth, barHeight),
+                        cornerRadius = CornerRadius(barRadius)
+                    )
+                }
+            }
             Spacer(modifier = Modifier.height(6.dp))
 
             // Stats text
@@ -101,13 +137,18 @@ fun SecretsList(
             )
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Search field
+            // Search field with inner shadow
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(44.dp)
                     .background(
-                        color = HushColors.bgRaised,
+                        brush = Brush.verticalGradient(
+                            colors = listOf(
+                                Color(0xFF0A0A0C),
+                                HushColors.bgSurface
+                            )
+                        ),
                         shape = RoundedCornerShape(10.dp)
                     )
                     .border(
@@ -206,19 +247,30 @@ fun SecretsList(
             }
         }
 
-        // FAB
+        // FAB with glow
         FloatingActionButton(
             onClick = { addNewSecret() },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(end = 20.dp, bottom = 20.dp)
                 .size(56.dp)
+                .shadow(
+                    elevation = 6.dp,
+                    shape = CircleShape,
+                    ambientColor = Color.White.copy(alpha = 0.05f),
+                    spotColor = Color.Black.copy(alpha = 0.3f)
+                )
                 .border(
                     width = 1.dp,
-                    color = HushColors.border,
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            Color.White.copy(alpha = 0.06f),
+                            Color.White.copy(alpha = 0.02f),
+                        )
+                    ),
                     shape = CircleShape
                 ),
-            containerColor = HushColors.bg,
+            containerColor = HushColors.bgRaised,
             elevation = FloatingActionButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp),
             shape = CircleShape
         ) {

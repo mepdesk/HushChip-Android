@@ -16,6 +16,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.stringResource
@@ -44,9 +46,20 @@ fun HushButton(
             .fillMaxWidth()
             .padding(horizontal = horizontalPadding)
             .height(52.dp)
+            .shadow(
+                elevation = 4.dp,
+                shape = shape,
+                ambientColor = Color.Black.copy(alpha = 0.4f),
+                spotColor = Color.Black.copy(alpha = 0.3f)
+            )
             .border(
                 width = 1.dp,
-                color = HushColors.border,
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        Color.White.copy(alpha = 0.06f),
+                        Color.White.copy(alpha = 0.02f),
+                    )
+                ),
                 shape = shape
             ),
         shape = shape,

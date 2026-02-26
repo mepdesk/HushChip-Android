@@ -20,8 +20,8 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,9 +41,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.TextStyle
@@ -84,13 +86,31 @@ fun NfcScanOverlay(
             contentAlignment = Alignment.Center
         ) {
             Surface(
-                shape = RoundedCornerShape(12.dp),
-                color = HushColors.bgRaised,
-                border = BorderStroke(1.dp, HushColors.border),
-                shadowElevation = 8.dp,
+                shape = RoundedCornerShape(16.dp),
+                color = Color.Transparent,
                 modifier = Modifier
                     .padding(horizontal = 40.dp)
                     .fillMaxWidth()
+                    .shadow(8.dp, RoundedCornerShape(16.dp))
+                    .background(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(
+                                Color(0xFF151517),
+                                Color(0xFF0E0E10),
+                            )
+                        ),
+                        shape = RoundedCornerShape(16.dp)
+                    )
+                    .border(
+                        1.dp,
+                        Brush.verticalGradient(
+                            listOf(
+                                Color.White.copy(alpha = 0.05f),
+                                Color.White.copy(alpha = 0.02f)
+                            )
+                        ),
+                        RoundedCornerShape(16.dp)
+                    )
             ) {
                 Column(
                     modifier = Modifier.padding(32.dp),
@@ -263,12 +283,15 @@ private fun NfcIconAnimation(status: NfcScanStatus) {
                 val arcOriginX = cx + phoneW / 2f + 4f
                 val arcOriginY = cy
 
+                // Depth multipliers: inner strongest, outer faintest
+                val depthMultipliers = listOf(1.0f, 0.6f, 0.3f)
+
                 if (isAnimating) {
                     val alphas = listOf(arc1Alpha, arc2Alpha, arc3Alpha)
                     for (i in 0..2) {
                         val radius = 12f + (i * 10f)
                         drawArc(
-                            color = arcColor.copy(alpha = alphas[i]),
+                            color = arcColor.copy(alpha = alphas[i] * depthMultipliers[i]),
                             startAngle = -50f,
                             sweepAngle = 100f,
                             useCenter = false,
@@ -282,7 +305,7 @@ private fun NfcIconAnimation(status: NfcScanStatus) {
                     for (i in 0..2) {
                         val radius = 12f + (i * 10f)
                         drawArc(
-                            color = arcColor.copy(alpha = 0.3f),
+                            color = arcColor.copy(alpha = 0.3f * depthMultipliers[i]),
                             startAngle = -50f,
                             sweepAngle = 100f,
                             useCenter = false,

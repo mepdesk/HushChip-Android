@@ -1,6 +1,7 @@
 package uk.co.hushchip.app.ui.components.shared
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,6 +17,9 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import uk.co.hushchip.app.ui.theme.HushColors
 import androidx.compose.ui.text.font.FontWeight
@@ -42,8 +46,29 @@ fun InfoPopUpDialog(
         Column(
             modifier = Modifier
                 .width(350.dp)
+                .shadow(
+                    elevation = 8.dp,
+                    shape = RoundedCornerShape(12.dp),
+                    ambientColor = Color.Black.copy(alpha = 0.4f),
+                    spotColor = Color.Black.copy(alpha = 0.3f)
+                )
                 .background(
-                    color = HushColors.bgRaised,
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            Color(0xFF151517),
+                            Color(0xFF0E0E10),
+                        )
+                    ),
+                    shape = RoundedCornerShape(12.dp)
+                )
+                .border(
+                    width = 1.dp,
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            Color.White.copy(alpha = 0.05f),
+                            Color.White.copy(alpha = 0.02f),
+                        )
+                    ),
                     shape = RoundedCornerShape(12.dp)
                 )
                 .clip(

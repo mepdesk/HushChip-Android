@@ -2,9 +2,14 @@ package uk.co.hushchip.app.ui.views.home
 
 import android.app.Activity
 import android.content.Context
+import androidx.compose.animation.core.EaseInOut
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -19,12 +24,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.TextStyle
@@ -142,40 +149,94 @@ fun CardIllustration(
     cardWidth: Int = 260,
     cardHeight: Int = 164,
 ) {
-    val goldColor = Color(0xFFB8A04A)
+    // NFC arc pulse animation
+    val infiniteTransition = rememberInfiniteTransition(label = "card_nfc")
+    val arcAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.04f,
+        targetValue = 0.12f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1500, easing = EaseInOut),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "arc_alpha"
+    )
 
     Box(
         modifier = Modifier
             .width(cardWidth.dp)
             .height(cardHeight.dp)
-            .shadow(
-                elevation = 8.dp,
-                shape = RoundedCornerShape(16.dp),
-                ambientColor = Color.Black.copy(alpha = 0.3f),
-                spotColor = Color.Black.copy(alpha = 0.2f)
-            )
+            // Multi-layer shadow for floating depth
+            .drawBehind {
+                // Layer 1: large soft shadow
+                drawRoundRect(
+                    color = Color.Black.copy(alpha = 0.3f),
+                    topLeft = Offset(0f, 6.dp.toPx()),
+                    size = Size(size.width + 2.dp.toPx(), size.height + 2.dp.toPx()),
+                    cornerRadius = CornerRadius(18.dp.toPx())
+                )
+                // Layer 2: tighter shadow
+                drawRoundRect(
+                    color = Color.Black.copy(alpha = 0.4f),
+                    topLeft = Offset(1.dp.toPx(), 3.dp.toPx()),
+                    size = Size(size.width, size.height),
+                    cornerRadius = CornerRadius(16.dp.toPx())
+                )
+            }
+            // Gradient card fill
             .background(
-                color = HushColors.bgRaised,
+                brush = Brush.linearGradient(
+                    colors = listOf(
+                        Color(0xFF1A1A1F),
+                        Color(0xFF141416),
+                        Color(0xFF101012),
+                    ),
+                    start = Offset.Zero,
+                    end = Offset(cardWidth.toFloat(), cardHeight.toFloat())
+                ),
                 shape = RoundedCornerShape(16.dp)
             )
-            .border(
-                width = 1.dp,
-                color = HushColors.border,
-                shape = RoundedCornerShape(16.dp)
-            )
+            // Gradient border — top-edge highlight
+            .drawBehind {
+                drawRoundRect(
+                    brush = Brush.linearGradient(
+                        colors = listOf(
+                            Color.White.copy(alpha = 0.06f),
+                            Color.White.copy(alpha = 0.02f),
+                        ),
+                        start = Offset(0f, 0f),
+                        end = Offset(0f, size.height)
+                    ),
+                    cornerRadius = CornerRadius(16.dp.toPx()),
+                    style = Stroke(width = 1.dp.toPx())
+                )
+            }
     ) {
-        // Gold EMV chip in top-left with contact pad detail lines
+        // Gold EMV chip with gradient
         Canvas(
             modifier = Modifier
                 .padding(start = 24.dp, top = 24.dp)
                 .size(width = 40.dp, height = 30.dp)
                 .align(Alignment.TopStart)
         ) {
+            // Chip gradient fill
             drawRoundRect(
-                color = goldColor,
+                brush = Brush.linearGradient(
+                    colors = listOf(
+                        Color(0xFFB4975A).copy(alpha = 0.15f),
+                        Color(0xFFB4975A).copy(alpha = 0.06f),
+                    ),
+                    start = Offset(0f, 0f),
+                    end = Offset(size.width, size.height)
+                ),
                 cornerRadius = CornerRadius(4f, 4f)
             )
-            val lineColor = goldColor.copy(alpha = 0.4f)
+            // Chip border
+            drawRoundRect(
+                color = Color(0xFFB4975A).copy(alpha = 0.25f),
+                cornerRadius = CornerRadius(4f, 4f),
+                style = Stroke(width = 1f)
+            )
+            val lineColor = Color(0xFFB4975A).copy(alpha = 0.15f)
             // Horizontal contact pad lines
             for (i in 1..3) {
                 val y = size.height * i / 4f
@@ -195,25 +256,30 @@ fun CardIllustration(
             )
         }
 
-        // NFC/contactless symbol in top-right — 3 concentric arcs
+        // NFC/contactless symbol with pulse animation
         Canvas(
             modifier = Modifier
                 .padding(end = 24.dp, top = 28.dp)
                 .size(22.dp)
                 .align(Alignment.TopEnd)
         ) {
-            val arcColor = HushColors.textFaint.copy(alpha = 0.4f)
             val center = Offset(size.width * 0.3f, size.height * 0.7f)
             // Small dot at origin
             drawCircle(
-                color = arcColor,
+                color = HushColors.textFaint.copy(alpha = arcAlpha),
                 radius = 1.5f,
                 center = center
             )
             for (i in 1..3) {
                 val radius = size.minDimension * 0.15f * i
+                // Varying opacity per arc for depth
+                val alphaMultiplier = when (i) {
+                    1 -> 1.0f
+                    2 -> 0.7f
+                    else -> 0.4f
+                }
                 drawArc(
-                    color = arcColor,
+                    color = HushColors.textFaint.copy(alpha = arcAlpha * alphaMultiplier),
                     startAngle = -60f,
                     sweepAngle = 120f,
                     useCenter = false,

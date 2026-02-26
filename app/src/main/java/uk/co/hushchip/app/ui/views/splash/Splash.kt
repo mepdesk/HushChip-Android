@@ -14,7 +14,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,32 +38,71 @@ fun SplashView() {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Gold EMV chip
+            // Gold EMV chip with radial glow
             Canvas(
-                modifier = Modifier.size(width = 56.dp, height = 42.dp)
+                modifier = Modifier.size(width = 80.dp, height = 66.dp)
             ) {
+                val chipWidth = 56.dp.toPx()
+                val chipHeight = 42.dp.toPx()
+                val chipLeft = (size.width - chipWidth) / 2f
+                val chipTop = (size.height - chipHeight) / 2f
+                val chipCenterX = size.width / 2f
+                val chipCenterY = size.height / 2f
+
+                // Soft gold radial glow behind the chip
+                drawCircle(
+                    brush = Brush.radialGradient(
+                        colors = listOf(
+                            Color(0xFFB4975A).copy(alpha = 0.08f),
+                            Color.Transparent
+                        ),
+                        center = Offset(chipCenterX, chipCenterY),
+                        radius = chipWidth * 1.2f
+                    )
+                )
+
+                // Chip gradient fill
                 drawRoundRect(
-                    color = goldColor,
+                    brush = Brush.linearGradient(
+                        colors = listOf(
+                            goldColor.copy(alpha = 0.9f),
+                            goldColor.copy(alpha = 0.6f),
+                        ),
+                        start = Offset(chipLeft, chipTop),
+                        end = Offset(chipLeft + chipWidth, chipTop + chipHeight)
+                    ),
+                    topLeft = Offset(chipLeft, chipTop),
+                    size = androidx.compose.ui.geometry.Size(chipWidth, chipHeight),
                     cornerRadius = CornerRadius(8f, 8f)
                 )
-                val lineColor = goldColor.copy(alpha = 0.4f)
+                // Chip border
+                drawRoundRect(
+                    color = goldColor.copy(alpha = 0.3f),
+                    topLeft = Offset(chipLeft, chipTop),
+                    size = androidx.compose.ui.geometry.Size(chipWidth, chipHeight),
+                    cornerRadius = CornerRadius(8f, 8f),
+                    style = Stroke(width = 1f)
+                )
+
+                val lineColor = goldColor.copy(alpha = 0.3f)
                 for (i in 1..4) {
-                    val y = size.height * i / 5f
+                    val y = chipTop + chipHeight * i / 5f
                     drawLine(
                         color = lineColor,
-                        start = Offset(4f, y),
-                        end = Offset(size.width - 4f, y),
+                        start = Offset(chipLeft + 4f, y),
+                        end = Offset(chipLeft + chipWidth - 4f, y),
                         strokeWidth = 1.5f
                     )
                 }
                 drawLine(
                     color = lineColor,
-                    start = Offset(size.width / 2f, 4f),
-                    end = Offset(size.width / 2f, size.height - 4f),
+                    start = Offset(chipCenterX, chipTop + 4f),
+                    end = Offset(chipCenterX, chipTop + chipHeight - 4f),
                     strokeWidth = 1.5f
                 )
             }
             Spacer(modifier = Modifier.height(12.dp))
+            // "HUSH" text with faint gold tint
             Text(
                 text = "HUSH",
                 style = TextStyle(
@@ -69,10 +110,11 @@ fun SplashView() {
                     fontWeight = FontWeight.Normal,
                     fontSize = 36.sp,
                     letterSpacing = 8.sp,
-                    color = HushColors.textBright
+                    color = Color(0xFFB4975A).copy(alpha = 0.4f)
                 )
             )
             Spacer(modifier = Modifier.height(4.dp))
+            // "HUSHCHIP" wordmark — very subtle
             Text(
                 text = "HUSHCHIP",
                 style = TextStyle(
@@ -80,7 +122,7 @@ fun SplashView() {
                     fontWeight = FontWeight.Normal,
                     fontSize = 11.sp,
                     letterSpacing = 5.sp,
-                    color = HushColors.textFaint
+                    color = HushColors.textGhost
                 )
             )
         }

@@ -17,6 +17,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -40,14 +45,38 @@ fun SecretButton(
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .shadow(
+                elevation = 2.dp,
+                shape = RoundedCornerShape(12.dp),
+                ambientColor = Color.Black.copy(alpha = 0.3f),
+                spotColor = Color.Black.copy(alpha = 0.2f)
+            )
             .hushClickEffect(onClick = { onClick() })
             .background(
-                color = HushColors.bgRaised,
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        HushColors.bgRaised,
+                        Color(0xFF0C0C0E),
+                    )
+                ),
                 shape = RoundedCornerShape(12.dp)
             )
+            .drawBehind {
+                drawLine(
+                    color = Color.White.copy(alpha = 0.04f),
+                    start = Offset(8.dp.toPx(), 0f),
+                    end = Offset(size.width - 8.dp.toPx(), 0f),
+                    strokeWidth = 1f
+                )
+            }
             .border(
                 width = 1.dp,
-                color = HushColors.border,
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        Color.White.copy(alpha = 0.06f),
+                        Color.White.copy(alpha = 0.02f),
+                    )
+                ),
                 shape = RoundedCornerShape(12.dp)
             )
             .padding(14.dp),

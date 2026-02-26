@@ -2,6 +2,7 @@ package uk.co.hushchip.app.ui.views.pincode
 
 import android.app.Activity
 import android.content.Context
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -27,7 +28,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -199,7 +204,7 @@ fun PinEntryView(
                 )
                 Spacer(modifier = Modifier.height(20.dp))
 
-                // PIN dots
+                // PIN dots with glow
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
@@ -207,20 +212,31 @@ fun PinEntryView(
                     val pinLen = activePinValue.value.length.coerceAtMost(16)
                     val dotsToShow = maxOf(4, pinLen)
                     for (i in 0 until dotsToShow) {
-                        Box(
-                            modifier = Modifier
-                                .size(10.dp)
-                                .clip(CircleShape)
-                                .then(
-                                    if (i < pinLen) {
-                                        Modifier.background(HushColors.textBody, CircleShape)
-                                    } else {
-                                        Modifier.border(1.dp, HushColors.border, CircleShape)
-                                    }
+                        val isFilled = i < pinLen
+                        Canvas(modifier = Modifier.size(if (isFilled) 18.dp else 10.dp)) {
+                            val dotRadius = if (isFilled) 5.dp.toPx() else 5.dp.toPx()
+                            if (isFilled) {
+                                // Glow layer
+                                drawCircle(
+                                    color = HushColors.textMuted.copy(alpha = 0.15f),
+                                    radius = dotRadius * 1.8f
                                 )
-                        )
+                                // Solid dot
+                                drawCircle(
+                                    color = HushColors.textBright,
+                                    radius = dotRadius
+                                )
+                            } else {
+                                // Empty dot — outline only
+                                drawCircle(
+                                    color = HushColors.border,
+                                    radius = dotRadius,
+                                    style = Stroke(width = 1.dp.toPx())
+                                )
+                            }
+                        }
                         if (i < dotsToShow - 1) {
-                            Spacer(modifier = Modifier.width(12.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
                         }
                     }
                 }
@@ -231,8 +247,14 @@ fun PinEntryView(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .border(1.dp, HushColors.danger, RoundedCornerShape(12.dp))
+                            .shadow(
+                                elevation = 4.dp,
+                                shape = RoundedCornerShape(12.dp),
+                                ambientColor = HushColors.danger.copy(alpha = 0.15f),
+                                spotColor = HushColors.danger.copy(alpha = 0.1f)
+                            )
                             .background(HushColors.dangerBg, RoundedCornerShape(12.dp))
+                            .border(1.dp, HushColors.dangerBorder, RoundedCornerShape(12.dp))
                             .padding(16.dp),
                         contentAlignment = Alignment.Center
                     ) {
@@ -288,7 +310,31 @@ fun PinEntryView(
                                     modifier = Modifier
                                         .size(72.dp)
                                         .padding(4.dp)
-                                        .background(HushColors.bgRaised, RoundedCornerShape(12.dp))
+                                        .shadow(
+                                            elevation = 2.dp,
+                                            shape = RoundedCornerShape(12.dp),
+                                            ambientColor = Color.Black.copy(alpha = 0.3f),
+                                            spotColor = Color.Black.copy(alpha = 0.2f)
+                                        )
+                                        .background(
+                                            brush = Brush.verticalGradient(
+                                                colors = listOf(
+                                                    Color(0xFF161618),
+                                                    Color(0xFF0E0E10),
+                                                )
+                                            ),
+                                            shape = RoundedCornerShape(12.dp)
+                                        )
+                                        .border(
+                                            width = 1.dp,
+                                            brush = Brush.verticalGradient(
+                                                colors = listOf(
+                                                    Color.White.copy(alpha = 0.06f),
+                                                    Color.White.copy(alpha = 0.02f),
+                                                )
+                                            ),
+                                            shape = RoundedCornerShape(12.dp)
+                                        )
                                         .hushClickEffect(
                                             onClick = {
                                                 showError.value = false
@@ -339,8 +385,31 @@ fun PinEntryView(
                         .fillMaxWidth()
                         .height(52.dp)
                         .alpha(if (isEnabled) 1f else 0.4f)
-                        .background(HushColors.bgRaised, RoundedCornerShape(12.dp))
-                        .border(1.dp, HushColors.border, RoundedCornerShape(12.dp))
+                        .shadow(
+                            elevation = 4.dp,
+                            shape = RoundedCornerShape(12.dp),
+                            ambientColor = Color.Black.copy(alpha = 0.4f),
+                            spotColor = Color.Black.copy(alpha = 0.3f)
+                        )
+                        .background(
+                            brush = Brush.verticalGradient(
+                                colors = listOf(
+                                    Color(0xFF161618),
+                                    Color(0xFF0E0E10),
+                                )
+                            ),
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                        .border(
+                            width = 1.dp,
+                            brush = Brush.verticalGradient(
+                                colors = listOf(
+                                    Color.White.copy(alpha = 0.06f),
+                                    Color.White.copy(alpha = 0.02f),
+                                )
+                            ),
+                            shape = RoundedCornerShape(12.dp)
+                        )
                         .hushClickEffect(
                             onClick = {
                                 if (!isEnabled) return@hushClickEffect

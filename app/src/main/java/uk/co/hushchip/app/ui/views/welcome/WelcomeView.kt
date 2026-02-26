@@ -11,6 +11,7 @@
 
 package uk.co.hushchip.app.ui.views.welcome
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
@@ -33,6 +34,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.TextStyle
@@ -113,19 +118,25 @@ fun WelcomeView(
                 )
             )
 
-            // Warning box (screen 3 only)
+            // Warning box (screen 3 only) with red glow
             warningText?.let {
                 Spacer(modifier = Modifier.height(16.dp))
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .border(
-                            width = 1.dp,
-                            color = HushColors.danger,
-                            shape = RoundedCornerShape(12.dp)
+                        .shadow(
+                            elevation = 4.dp,
+                            shape = RoundedCornerShape(12.dp),
+                            ambientColor = HushColors.danger.copy(alpha = 0.15f),
+                            spotColor = HushColors.danger.copy(alpha = 0.1f)
                         )
                         .background(
                             color = HushColors.dangerBg,
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                        .border(
+                            width = 1.dp,
+                            color = HushColors.dangerBorder,
                             shape = RoundedCornerShape(12.dp)
                         )
                         .padding(16.dp),
@@ -152,18 +163,34 @@ fun WelcomeView(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Button
+            // Button with depth
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(52.dp)
+                    .shadow(
+                        elevation = 4.dp,
+                        shape = RoundedCornerShape(12.dp),
+                        ambientColor = Color.Black.copy(alpha = 0.4f),
+                        spotColor = Color.Black.copy(alpha = 0.3f)
+                    )
                     .background(
-                        color = HushColors.bgRaised,
+                        brush = Brush.verticalGradient(
+                            colors = listOf(
+                                Color(0xFF161618),
+                                Color(0xFF0E0E10),
+                            )
+                        ),
                         shape = RoundedCornerShape(12.dp)
                     )
                     .border(
                         width = 1.dp,
-                        color = HushColors.border,
+                        brush = Brush.verticalGradient(
+                            colors = listOf(
+                                Color.White.copy(alpha = 0.06f),
+                                Color.White.copy(alpha = 0.02f),
+                            )
+                        ),
                         shape = RoundedCornerShape(12.dp)
                     )
                     .hushClickEffect(onClick = onNext),
@@ -194,13 +221,31 @@ private fun DotIndicator(currentIndex: Int) {
     ) {
         for (i in 0..2) {
             if (i == currentIndex) {
-                Box(
+                // Active dot with glow
+                Canvas(
                     modifier = Modifier
-                        .width(16.dp)
-                        .height(6.dp)
-                        .clip(RoundedCornerShape(3.dp))
-                        .background(HushColors.textMuted)
-                )
+                        .width(20.dp)
+                        .height(10.dp)
+                ) {
+                    val dotWidth = 16.dp.toPx()
+                    val dotHeight = 6.dp.toPx()
+                    val left = (size.width - dotWidth) / 2f
+                    val top = (size.height - dotHeight) / 2f
+                    // Glow behind active dot
+                    drawRoundRect(
+                        color = HushColors.textMuted.copy(alpha = 0.15f),
+                        cornerRadius = CornerRadius(4.dp.toPx()),
+                        topLeft = Offset(left - 2.dp.toPx(), top - 2.dp.toPx()),
+                        size = androidx.compose.ui.geometry.Size(dotWidth + 4.dp.toPx(), dotHeight + 4.dp.toPx())
+                    )
+                    // Active dot
+                    drawRoundRect(
+                        color = HushColors.textMuted,
+                        cornerRadius = CornerRadius(3.dp.toPx()),
+                        topLeft = Offset(left, top),
+                        size = androidx.compose.ui.geometry.Size(dotWidth, dotHeight)
+                    )
+                }
             } else {
                 Box(
                     modifier = Modifier
