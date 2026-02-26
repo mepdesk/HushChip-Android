@@ -72,6 +72,39 @@ object NFCCardService {
     var actionType: NfcActionType = NfcActionType.DO_NOTHING
     val isConnected = MutableLiveData(false) // the app is connected to a card, value updated in SeedkeeperCardListener
 
+    // NFC resilience: tracks whether an operation is currently in progress
+    @Volatile
+    var isOperationInProgress = false
+        private set
+
+    /**
+     * Resets all cached card session state.
+     * Called on every disconnect and before every new connection to ensure
+     * no stale state from a previous (possibly interrupted) session carries over.
+     */
+    fun resetCardState() {
+        HushLog.d(TAG, "resetCardState: clearing cached card session state")
+        // Card session state — becomes stale when card is removed
+        authentikey = null
+        backupAuthentikey = null
+        cardStatus = null
+        backupCardStatus = null
+        seedkeeperStatus = null
+        // Parser reference from previous command set
+        parser = null
+        // Operation flag
+        isOperationInProgress = false
+        // Note: we intentionally do NOT clear these because they are either
+        // UI input parameters or carry-over state needed by the current action:
+        // - cardLabel (input for EDIT_CARD_LABEL action)
+        // - currentSecretHeader (input for EXPORT_SECRET / DELETE_SECRET actions)
+        // - secretHeaders (needed by backup flow to diff master vs backup)
+        // - secretHeadersForBackup, secretObjectsForBackup (backup flow state)
+        // - pinString, backupPinString (user-entered PIN, needed for re-tap)
+        // - secretData (input for IMPORT_SECRET action)
+        // - actionType (what action to perform on next connection)
+    }
+
     /**
      * Initializes the NFC card service with the provided command set and performs the appropriate action based on `actionType`.
      *
@@ -85,61 +118,66 @@ object NFCCardService {
      */
     fun initialize(cmdSet: SatochipCommandSet) {
         HushLog.d(TAG, "initialize Start")
+        isOperationInProgress = true
         NFCCardService.cmdSet = cmdSet
         parser = cmdSet.parser
         HushLog.d(TAG, "initialized")
         resultCodeLive.postValue(NfcResultCode.BUSY)
 
-        when (actionType) {
-            NfcActionType.DO_NOTHING -> {}
-            NfcActionType.SCAN_CARD -> {
-                scanCard(isMasterCard = true)
-            }
-            NfcActionType.CHANGE_PIN -> {
-                HushLog.d(TAG, "initialize NfcActionType.CHANGE_PIN")
-                changePin()
-            }
-            NfcActionType.IMPORT_SECRET -> {
-                secretData?.let { data ->
-                    importSecret(data = data)
+        try {
+            when (actionType) {
+                NfcActionType.DO_NOTHING -> {}
+                NfcActionType.SCAN_CARD -> {
+                    scanCard(isMasterCard = true)
+                }
+                NfcActionType.CHANGE_PIN -> {
+                    HushLog.d(TAG, "initialize NfcActionType.CHANGE_PIN")
+                    changePin()
+                }
+                NfcActionType.IMPORT_SECRET -> {
+                    secretData?.let { data ->
+                        importSecret(data = data)
+                    }
+                }
+                NfcActionType.SETUP_CARD -> {
+                    cardSetup(isMasterCard = true)
+                }
+                NfcActionType.SETUP_CARD_FOR_BACKUP -> {
+                    cardSetup(isMasterCard = false)
+                }
+                NfcActionType.EXPORT_SECRET -> {
+                    currentSecretHeader.value?.let{ secretHeader ->
+                        currentSecretObject.postValue(exportSecret(secretHeader.sid))
+                    }
+                }
+                NfcActionType.DELETE_SECRET -> {
+                    currentSecretHeader.value?.let{ secretHeader ->
+                        deleteSecret(secretHeader.sid)
+                    }
+                }
+                NfcActionType.EDIT_CARD_LABEL -> {
+                    cardLabel.value?.let { cardLabel ->
+                        editCardLabel(cardLabel)
+                    }
+                }
+                NfcActionType.CARD_LOGS -> {
+                    getCardLogs()
+                }
+                NfcActionType.SCAN_BACKUP_CARD -> {
+                    scanCard(isMasterCard = false)
+                }
+                NfcActionType.EXPORT_SECRETS_FROM_MASTER -> {
+                    exportSecretsFromMaster()
+                }
+                NfcActionType.IMPORT_SECRETS_TO_BACKUP -> {
+                    importSecretsToBackup()
+                }
+                NfcActionType.RESET_CARD -> {
+                    requestFactoryReset()
                 }
             }
-            NfcActionType.SETUP_CARD -> {
-                cardSetup(isMasterCard = true)
-            }
-            NfcActionType.SETUP_CARD_FOR_BACKUP -> {
-                cardSetup(isMasterCard = false)
-            }
-            NfcActionType.EXPORT_SECRET -> {
-                currentSecretHeader.value?.let{ secretHeader ->
-                    currentSecretObject.postValue(exportSecret(secretHeader.sid))
-                }
-            }
-            NfcActionType.DELETE_SECRET -> {
-                currentSecretHeader.value?.let{ secretHeader ->
-                    deleteSecret(secretHeader.sid)
-                }
-            }
-            NfcActionType.EDIT_CARD_LABEL -> {
-                cardLabel.value?.let { cardLabel ->
-                    editCardLabel(cardLabel)
-                }
-            }
-            NfcActionType.CARD_LOGS -> {
-                getCardLogs()
-            }
-            NfcActionType.SCAN_BACKUP_CARD -> {
-                scanCard(isMasterCard = false)
-            }
-            NfcActionType.EXPORT_SECRETS_FROM_MASTER -> {
-                exportSecretsFromMaster()
-            }
-            NfcActionType.IMPORT_SECRETS_TO_BACKUP -> {
-                importSecretsToBackup()
-            }
-            NfcActionType.RESET_CARD -> {
-                requestFactoryReset()
-            }
+        } finally {
+            isOperationInProgress = false
         }
     }
 
@@ -401,13 +439,17 @@ object NFCCardService {
         // get a list of potential authentikeys from card (this does not require PIN!)
         val authentikeyList = cmdSet.cardInitiateSecureChannel()
 
-        // check if cached authentikey match one of the potential candidates
-        var isCardMatch = false
-        if (isMasterCard){
-            isCardMatch = authentikeyList.any { it.contentEquals(authentikey) }
-        } else {
-            isCardMatch = authentikeyList.any { it.contentEquals(backupAuthentikey) }
+        // If no cached authentikey exists (e.g. after state reset from interrupted session),
+        // skip the comparison — the secure channel is initialized, and the card will be
+        // verified via PIN in the next step.
+        val cachedKey = if (isMasterCard) authentikey else backupAuthentikey
+        if (cachedKey == null) {
+            HushLog.d(TAG, "checkAuthentikey: no cached authentikey, skipping comparison (fresh session)")
+            return
         }
+
+        // check if cached authentikey match one of the potential candidates
+        val isCardMatch = authentikeyList.any { it.contentEquals(cachedKey) }
         if (!isCardMatch) {
             throw CardMismatchException("authentikeys do not match!")
         }

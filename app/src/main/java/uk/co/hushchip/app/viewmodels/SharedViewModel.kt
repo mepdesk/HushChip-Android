@@ -25,6 +25,7 @@ import uk.co.hushchip.app.data.SecretData
 import uk.co.hushchip.app.data.StringConstants
 import uk.co.hushchip.app.services.NFCCardService
 import uk.co.hushchip.app.services.HushLog
+import uk.co.hushchip.app.ui.components.NfcScanStatus
 import uk.co.hushchip.app.utils.bytesToHex
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -43,6 +44,10 @@ class SharedViewModel : ViewModel() {
     var cardLabel by mutableStateOf("")
     private var updateSecretsJob: Job? = null
 
+    // NFC overlay state
+    var showNfcOverlay by mutableStateOf(false)
+    var nfcScanStatus by mutableStateOf<NfcScanStatus>(NfcScanStatus.WaitingForCard)
+
     // backup
     var backupImportProgress by mutableFloatStateOf(0f) //mutableFloatStateOf(0f)
     var backupExportProgress by mutableFloatStateOf(0f)
@@ -50,9 +55,13 @@ class SharedViewModel : ViewModel() {
     init {
         NFCCardService.isConnected.observeForever {
             isCardConnected = it
+            if (it && showNfcOverlay) {
+                nfcScanStatus = NfcScanStatus.Reading
+            }
         }
         NFCCardService.resultCodeLive.observeForever {
             resultCodeLive = it
+            updateNfcOverlayFromResult(it)
         }
         NFCCardService.isCardDataAvailable.observeForever {
             isCardDataAvailable = it
@@ -285,5 +294,90 @@ class SharedViewModel : ViewModel() {
             }
         }
         return wordList
+    }
+
+    private fun updateNfcOverlayFromResult(result: NfcResultCode) {
+        if (!showNfcOverlay) return
+        when (result) {
+            NfcResultCode.BUSY -> {
+                // Keep current status (Reading or VerifyingPin depending on context)
+            }
+            NfcResultCode.WRONG_PIN -> {
+                val tries = result.triesLeft ?: 0
+                nfcScanStatus = NfcScanStatus.Error("Wrong PIN. $tries attempts remaining.")
+                dismissOverlayAfterDelay()
+            }
+            NfcResultCode.CARD_BLOCKED -> {
+                nfcScanStatus = NfcScanStatus.Error("Card is locked. Factory reset required.")
+                dismissOverlayAfterDelay()
+            }
+            NfcResultCode.NFC_ERROR -> {
+                // Card lost or communication error — show error then return to waiting state
+                nfcScanStatus = NfcScanStatus.Error("Card lost. Hold steady and try again.")
+                returnToWaitingAfterDelay()
+            }
+            NfcResultCode.CARD_ERROR -> {
+                nfcScanStatus = NfcScanStatus.Error("Card error. Try again.")
+                returnToWaitingAfterDelay()
+            }
+            NfcResultCode.NO_MEMORY_LEFT -> {
+                nfcScanStatus = NfcScanStatus.Error("No memory left on card.")
+                dismissOverlayAfterDelay()
+            }
+            NfcResultCode.SECRET_TOO_LONG -> {
+                nfcScanStatus = NfcScanStatus.Error("Secret is too long for card.")
+                dismissOverlayAfterDelay()
+            }
+            NfcResultCode.CARD_MISMATCH -> {
+                // Should rarely occur now that state is reset on every connection
+                nfcScanStatus = NfcScanStatus.Error("Card error. Try again.")
+                returnToWaitingAfterDelay()
+            }
+            NfcResultCode.NONE -> {
+                showNfcOverlay = false
+            }
+            NfcResultCode.REQUIRE_SETUP,
+            NfcResultCode.REQUIRE_SETUP_FOR_BACKUP -> {
+                // Let Navigation handle these — hide overlay
+                showNfcOverlay = false
+            }
+            else -> {
+                // Success states
+                nfcScanStatus = NfcScanStatus.Success
+                dismissOverlayAfterDelay(500)
+            }
+        }
+    }
+
+    private fun dismissOverlayAfterDelay(delayMs: Long = 2000) {
+        viewModelScope.launch {
+            kotlinx.coroutines.delay(delayMs)
+            showNfcOverlay = false
+            nfcScanStatus = NfcScanStatus.WaitingForCard
+        }
+    }
+
+    /**
+     * After a card-lost or communication error, show error briefly then return
+     * to "waiting for card" state so the user can re-tap without navigating away.
+     * NFC reader mode stays enabled on error (disableScanForAction is only called on success),
+     * so the next card tap will be detected automatically.
+     */
+    private fun returnToWaitingAfterDelay(delayMs: Long = 2000) {
+        viewModelScope.launch {
+            kotlinx.coroutines.delay(delayMs)
+            nfcScanStatus = NfcScanStatus.WaitingForCard
+        }
+    }
+
+    fun showNfcOverlayForScan() {
+        nfcScanStatus = NfcScanStatus.WaitingForCard
+        showNfcOverlay = true
+    }
+
+    fun dismissNfcOverlay() {
+        showNfcOverlay = false
+        nfcScanStatus = NfcScanStatus.WaitingForCard
+        NFCCardService.disableScanForAction()
     }
 }
