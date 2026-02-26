@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Seedkeeper"
+rootProject.name = "HushChip"
 include(":app")
  

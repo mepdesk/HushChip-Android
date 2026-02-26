@@ -1,0 +1,11 @@
+package uk.co.hushchip.app.data
+
+enum class BackupStatus {
+    DEFAULT,
+    FIRST_STEP,
+    SECOND_STEP,
+    THIRD_STEP,
+    FOURTH_STEP,
+    SUCCESS,
+    FAILURE,
+}

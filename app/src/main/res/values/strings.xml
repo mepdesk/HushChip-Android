@@ -1,7 +1,6 @@
 <resources>
     <!--General-->
     <string name="app_name">Seedkeeper</string>
-    <string name="title_activity_webview">WebviewActivity</string>
     <string name="welcome">Welcome</string>
     <string name="welcomeInfo">Seedkeeper lets you easily generate, import and export a variety of crypto related secrets.</string>
     <string name="seedphraseManager">Your seedphrases manager</string>

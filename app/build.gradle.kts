@@ -2,16 +2,14 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.googleServices)
-    alias(libs.plugins.firebaseCrashlitics)
 }
 
 android {
-    namespace = "org.satochip.seedkeeper"
+    namespace = "uk.co.hushchip.app"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "org.satochip.seedkeeper"
+        applicationId = "uk.co.hushchip.app"
         minSdk = 24
         targetSdk = 34
         versionCode = 103 // if versionName is x.y.z, versionCode is 10000x+100y+z
@@ -88,8 +86,4 @@ dependencies {
 
     //QR string to image converter
     implementation(libs.qrcode.kotlin.android)
-
-    //Firebase
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.crashlytics)
 }

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.NFC" />
-    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-feature android:name="android.hardware.nfc" android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -15,11 +15,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Seedkeeper"
         tools:targetApi="31">
-        <activity
-            android:name=".WebviewActivity"
-            android:exported="false"
-            android:label="@string/title_activity_webview"
-            android:theme="@style/Theme.Seedkeeper" />
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTask"
