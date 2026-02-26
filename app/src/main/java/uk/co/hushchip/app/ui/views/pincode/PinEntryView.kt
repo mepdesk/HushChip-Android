@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -50,6 +51,7 @@ import uk.co.hushchip.app.services.HushLog
 import uk.co.hushchip.app.ui.components.shared.HeaderAlternateRow
 import uk.co.hushchip.app.ui.theme.HushColors
 import uk.co.hushchip.app.ui.theme.outfitFamily
+import uk.co.hushchip.app.utils.HapticUtil
 import uk.co.hushchip.app.utils.hushClickEffect
 import uk.co.hushchip.app.viewmodels.SharedViewModel
 
@@ -61,6 +63,8 @@ fun PinEntryView(
     pinCodeAction: PinCodeAction,
     isBackupCard: Boolean,
 ) {
+    val view = LocalView.current
+
     LaunchedEffect(viewModel.resultCodeLive) {
         HushLog.d("PinEntryView", "LaunchedEffect resultCodeLive: ${viewModel.resultCodeLive}")
 
@@ -338,6 +342,7 @@ fun PinEntryView(
                                         .hushClickEffect(
                                             onClick = {
                                                 showError.value = false
+                                                HapticUtil.tick(view)
                                                 if (key == "DEL") {
                                                     if (activePinValue.value.isNotEmpty()) {
                                                         activePinValue.value =

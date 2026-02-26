@@ -42,6 +42,8 @@ import uk.co.hushchip.app.BackupView
 import uk.co.hushchip.app.CardInformation
 import uk.co.hushchip.app.FirstWelcomeView
 import uk.co.hushchip.app.PinEntryView
+import uk.co.hushchip.app.AboutView
+import uk.co.hushchip.app.BuildConfig
 import uk.co.hushchip.app.R
 import uk.co.hushchip.app.SettingsView
 import uk.co.hushchip.app.ShowCardLogs
@@ -170,18 +172,12 @@ fun MenuView(
                 SectionHeader(text = "ABOUT")
                 SettingsGroup {
                     SettingsRow(
-                        iconRes = R.drawable.ic_code_brackets,
-                        title = "Open Source",
-                        onClick = {
-                            navController.navigate(SettingsView)
-                        }
-                    )
-                    GroupDivider()
-                    SettingsRow(
                         iconRes = R.drawable.ic_info_outline,
-                        title = "Version",
-                        subtitle = "App v1.0 (1)",
-                        onClick = {}
+                        title = "About HushChip",
+                        subtitle = "v${BuildConfig.VERSION_NAME}",
+                        onClick = {
+                            navController.navigate(AboutView)
+                        }
                     )
                 }
 

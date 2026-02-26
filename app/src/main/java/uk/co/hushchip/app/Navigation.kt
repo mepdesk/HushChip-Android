@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
@@ -46,6 +47,7 @@ import uk.co.hushchip.app.data.HushChipPreferences
 import uk.co.hushchip.app.services.HushLog
 import uk.co.hushchip.app.ui.components.NfcScanOverlay
 import uk.co.hushchip.app.ui.theme.HushColors
+import uk.co.hushchip.app.utils.HapticUtil
 import uk.co.hushchip.app.ui.views.addsecret.AddSecretView
 import uk.co.hushchip.app.ui.views.backup.BackupView
 import uk.co.hushchip.app.ui.views.home.CardIllustration
@@ -60,6 +62,7 @@ import uk.co.hushchip.app.ui.views.pincode.PinEntryView
 import uk.co.hushchip.app.ui.views.settings.SettingsView
 import uk.co.hushchip.app.ui.views.showcardlogs.ShowCardLogsView
 import uk.co.hushchip.app.ui.views.showlogs.ShowLogsView
+import uk.co.hushchip.app.ui.views.about.AboutView
 import uk.co.hushchip.app.ui.views.splash.SplashView
 import uk.co.hushchip.app.ui.views.welcome.WelcomeView
 import uk.co.hushchip.app.viewmodels.SharedViewModel
@@ -85,6 +88,8 @@ fun Navigation(
             HomeView
         }
 
+    val view = LocalView.current
+
     // FIRST TIME SETUP
     LaunchedEffect(viewModel.resultCodeLive) {
         if (viewModel.resultCodeLive == NfcResultCode.REQUIRE_SETUP) {
@@ -103,6 +108,53 @@ fun Navigation(
                     isBackupCard = true,
                 )
             )
+        }
+    }
+
+    // Haptic feedback on NFC results
+    LaunchedEffect(viewModel.resultCodeLive) {
+        when (viewModel.resultCodeLive) {
+            // Card detected / PIN accepted / success states
+            NfcResultCode.CARD_SCANNED_SUCCESSFULLY,
+            NfcResultCode.BACKUP_CARD_SCANNED_SUCCESSFULLY,
+            NfcResultCode.CARD_SETUP_SUCCESSFUL,
+            NfcResultCode.CARD_SETUP_FOR_BACKUP_SUCCESSFUL,
+            NfcResultCode.PIN_CHANGED,
+            NfcResultCode.SECRET_IMPORTED_SUCCESSFULLY,
+            NfcResultCode.SECRET_EXPORTED_SUCCESSFULLY,
+            NfcResultCode.CARD_LABEL_CHANGED_SUCCESSFULLY,
+            NfcResultCode.CARD_LOGS_FETCHED_SUCCESSFULLY,
+            NfcResultCode.SECRETS_EXPORTED_SUCCESSFULLY_FROM_MASTER,
+            NfcResultCode.CARD_SUCCESSFULLY_BACKED_UP -> {
+                HapticUtil.confirm(view)
+            }
+            // Wrong PIN
+            NfcResultCode.WRONG_PIN,
+            NfcResultCode.CARD_BLOCKED -> {
+                HapticUtil.reject(view)
+            }
+            // Card lost / communication error
+            NfcResultCode.NFC_ERROR,
+            NfcResultCode.CARD_ERROR,
+            NfcResultCode.CARD_MISMATCH -> {
+                HapticUtil.reject(view)
+            }
+            // Secret deleted
+            NfcResultCode.SECRET_DELETED -> {
+                HapticUtil.heavy(view)
+            }
+            // Factory reset
+            NfcResultCode.CARD_RESET -> {
+                HapticUtil.heavy(view)
+            }
+            else -> {}
+        }
+    }
+
+    // Haptic feedback when card is first detected
+    LaunchedEffect(viewModel.isCardConnected) {
+        if (viewModel.isCardConnected) {
+            HapticUtil.confirm(view)
         }
     }
 
@@ -321,6 +373,12 @@ fun Navigation(
                 viewModel = viewModel,
             )
         }
+        composable<AboutView> {
+            AboutView(
+                context = context,
+                navController = navController,
+            )
+        }
     }
 
     // NFC Scan Overlay — layered over all screens
@@ -368,6 +426,8 @@ object ShowLogsView
 object ShowCardLogs
 @Serializable
 object FactoryResetView
+@Serializable
+object AboutView
 @Serializable
 object MySecretView
 

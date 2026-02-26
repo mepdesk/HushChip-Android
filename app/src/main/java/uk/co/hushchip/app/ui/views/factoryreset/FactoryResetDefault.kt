@@ -18,6 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalView
 import uk.co.hushchip.app.ui.theme.HushColors
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -31,6 +32,7 @@ import uk.co.hushchip.app.data.NfcActionType
 import uk.co.hushchip.app.ui.components.settings.CardResetButton
 import uk.co.hushchip.app.ui.components.settings.ResetCardTextField
 import uk.co.hushchip.app.ui.components.shared.HushButton
+import uk.co.hushchip.app.utils.HapticUtil
 import uk.co.hushchip.app.viewmodels.SharedViewModel
 
 @Composable
@@ -40,6 +42,7 @@ fun FactoryResetDefault(
     viewModel: SharedViewModel,
     factoryResetStatus: MutableState<FactoryResetStatus>,
 ) {
+    val view = LocalView.current
     val isChecked = remember {
         mutableStateOf(false)
     }
@@ -82,6 +85,7 @@ fun FactoryResetDefault(
             text = stringResource(id = R.string.resetMyCard),
             onClick = {
                 if (isChecked.value) {
+                    HapticUtil.heavy(view)
                     factoryResetStatus.value = FactoryResetStatus.RESET_READY
                 }
             },

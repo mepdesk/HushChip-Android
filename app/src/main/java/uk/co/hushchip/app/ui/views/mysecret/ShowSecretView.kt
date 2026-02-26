@@ -22,6 +22,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalView
 import uk.co.hushchip.app.ui.theme.HushColors
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -45,6 +46,7 @@ import uk.co.hushchip.app.ui.components.mysecret.SecretInfoField
 import uk.co.hushchip.app.ui.components.shared.HeaderAlternateRow
 import uk.co.hushchip.app.ui.components.shared.HushButton
 import uk.co.hushchip.app.ui.theme.HushButtonPurple
+import uk.co.hushchip.app.utils.HapticUtil
 import uk.co.hushchip.app.utils.webviewActivityIntent
 import uk.co.hushchip.app.viewmodels.SharedViewModel
 
@@ -54,6 +56,7 @@ fun ShowSecretView(
     viewModel: SharedViewModel,
     navController: NavHostController,
 ) {
+    val view = LocalView.current
     val scrollState = rememberScrollState()
     val secretText = remember {
         mutableStateOf("")
@@ -330,6 +333,7 @@ fun ShowSecretView(
                                     showConfirmDeleteMsg.value = true
                                 } else if (hasUserConfirmedTerms.value == true) {
                                     // delete secret
+                                    HapticUtil.heavy(view)
                                     viewModel.showNfcOverlayForScan()
                                     viewModel.scanCardForAction(
                                         activity = context as Activity,
