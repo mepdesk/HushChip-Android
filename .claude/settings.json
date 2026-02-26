@@ -7,7 +7,8 @@
       "Bash(grep -l \"showNfcDialog\" /Users/ron/HushChip-Android/app/src/main/java/uk/co/hushchip/app/ui/views/**/*.kt)",
       "Bash(/usr/libexec/java_home)",
       "Bash(JAVA_HOME=\"/Applications/Android Studio.app/Contents/jbr/Contents/Home\" ./gradlew assembleDebug)",
-      "Bash(git add app/src/main/java/uk/co/hushchip/app/services/NFCCardService.kt app/src/main/java/uk/co/hushchip/app/services/SeedkeeperCardListener.kt app/src/main/java/uk/co/hushchip/app/viewmodels/SharedViewModel.kt)"
+      "Bash(git add app/src/main/java/uk/co/hushchip/app/services/NFCCardService.kt app/src/main/java/uk/co/hushchip/app/services/SeedkeeperCardListener.kt app/src/main/java/uk/co/hushchip/app/viewmodels/SharedViewModel.kt)",
+      "Bash(git add app/src/main/java/uk/co/hushchip/app/MainActivity.kt app/src/main/java/uk/co/hushchip/app/ui/components/NfcScanOverlay.kt app/src/main/java/uk/co/hushchip/app/ui/components/home/SecretButton.kt app/src/main/java/uk/co/hushchip/app/ui/components/shared/HushButton.kt app/src/main/java/uk/co/hushchip/app/ui/components/shared/InfoPopUpDialog.kt app/src/main/java/uk/co/hushchip/app/ui/views/addsecret/AddSecretView.kt app/src/main/java/uk/co/hushchip/app/ui/views/home/HomeView.kt app/src/main/java/uk/co/hushchip/app/ui/views/home/SecretsList.kt app/src/main/java/uk/co/hushchip/app/ui/views/menu/MenuView.kt app/src/main/java/uk/co/hushchip/app/ui/views/pincode/PinEntryView.kt app/src/main/java/uk/co/hushchip/app/ui/views/settings/SettingsView.kt app/src/main/java/uk/co/hushchip/app/ui/views/splash/Splash.kt app/src/main/java/uk/co/hushchip/app/ui/views/welcome/WelcomeView.kt)"
     ]
   }
 }

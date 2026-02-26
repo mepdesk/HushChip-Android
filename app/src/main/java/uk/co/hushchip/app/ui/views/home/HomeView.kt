@@ -146,8 +146,8 @@ fun HomeView(
 
 @Composable
 fun CardIllustration(
-    cardWidth: Int = 260,
-    cardHeight: Int = 164,
+    cardWidth: Int = 280,
+    cardHeight: Int = 176,
 ) {
     // NFC arc pulse animation
     val infiniteTransition = rememberInfiniteTransition(label = "card_nfc")
@@ -214,8 +214,8 @@ fun CardIllustration(
         // Gold EMV chip with gradient
         Canvas(
             modifier = Modifier
-                .padding(start = 24.dp, top = 24.dp)
-                .size(width = 40.dp, height = 30.dp)
+                .padding(start = 40.dp, top = 32.dp)
+                .size(width = 32.dp, height = 24.dp)
                 .align(Alignment.TopStart)
         ) {
             // Chip gradient fill
@@ -259,14 +259,15 @@ fun CardIllustration(
         // NFC/contactless symbol with pulse animation
         Canvas(
             modifier = Modifier
-                .padding(end = 24.dp, top = 28.dp)
+                .padding(end = 28.dp, top = 32.dp)
                 .size(22.dp)
                 .align(Alignment.TopEnd)
         ) {
+            val nfcColor = Color.White.copy(alpha = 0.15f)
             val center = Offset(size.width * 0.3f, size.height * 0.7f)
             // Small dot at origin
             drawCircle(
-                color = HushColors.textFaint.copy(alpha = arcAlpha),
+                color = nfcColor.copy(alpha = arcAlpha),
                 radius = 1.5f,
                 center = center
             )
@@ -279,7 +280,7 @@ fun CardIllustration(
                     else -> 0.4f
                 }
                 drawArc(
-                    color = HushColors.textFaint.copy(alpha = arcAlpha * alphaMultiplier),
+                    color = nfcColor.copy(alpha = arcAlpha * alphaMultiplier),
                     startAngle = -60f,
                     sweepAngle = 120f,
                     useCenter = false,
@@ -295,13 +296,13 @@ fun CardIllustration(
             text = "H U S H",
             modifier = Modifier
                 .align(Alignment.BottomStart)
-                .padding(start = 24.dp, bottom = 20.dp),
+                .padding(start = 40.dp, bottom = 24.dp),
             style = TextStyle(
                 fontFamily = outfitFamily,
                 fontWeight = FontWeight.Normal,
                 fontSize = 10.sp,
                 letterSpacing = 4.sp,
-                color = HushColors.textFaint
+                color = HushColors.textGhost
             )
         )
     }

@@ -162,13 +162,6 @@ fun MenuView(
                             }
                         }
                     )
-                    GroupDivider()
-                    SettingsRow(
-                        iconRes = R.drawable.ic_fingerprint,
-                        title = "Biometric Unlock",
-                        trailingText = "SOON",
-                        onClick = {}
-                    )
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
