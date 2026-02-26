@@ -127,7 +127,7 @@ fun MenuView(
                     GroupDivider()
                     SettingsRow(
                         iconRes = R.drawable.ic_sync,
-                        title = "Backup",
+                        title = "Backup to Another Card",
                         onClick = {
                             if (viewModel.isCardDataAvailable) {
                                 navController.navigate(BackupView)
