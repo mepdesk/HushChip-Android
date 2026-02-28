@@ -1,6 +1,5 @@
 package uk.co.signstr.app.nip46
 
-import android.util.Log
 import kotlinx.serialization.json.*
 import okhttp3.*
 import java.util.concurrent.TimeUnit
@@ -27,7 +26,6 @@ class NostrRelay(
     private var shouldReconnect = true
 
     companion object {
-        private const val TAG = "NostrRelay"
         private const val MAX_RECONNECT_DELAY = 60_000L
     }
 
@@ -36,7 +34,6 @@ class NostrRelay(
         val request = Request.Builder().url(url).build()
         webSocket = client.newWebSocket(request, object : WebSocketListener() {
             override fun onOpen(webSocket: WebSocket, response: Response) {
-                Log.d(TAG, "Connected to $url")
                 reconnectAttempts = 0
                 listener.onConnected(url)
             }
@@ -52,7 +49,6 @@ class NostrRelay(
             }
 
             override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-                Log.e(TAG, "WebSocket failure on $url: ${t.message}")
                 listener.onError(url, t.message ?: "Unknown error")
                 listener.onDisconnected(url)
                 scheduleReconnect()
@@ -75,15 +71,10 @@ class NostrRelay(
                     val msg = if (arr.size > 3) arr[3].jsonPrimitive.content else ""
                     listener.onOk(url, eventId, accepted, msg)
                 }
-                "EOSE" -> { /* End of stored events - no action needed */ }
-                "NOTICE" -> {
-                    val msg = arr[1].jsonPrimitive.content
-                    Log.d(TAG, "NOTICE from $url: $msg")
-                }
+                "EOSE" -> { /* End of stored events */ }
+                "NOTICE" -> { /* Relay notice */ }
             }
-        } catch (e: Exception) {
-            Log.e(TAG, "Error parsing relay message: ${e.message}")
-        }
+        } catch (_: Exception) { }
     }
 
     fun subscribe(subscriptionId: String, filters: JsonObject) {
@@ -93,13 +84,11 @@ class NostrRelay(
             add(filters)
         }.toString()
         webSocket?.send(msg)
-        Log.d(TAG, "REQ sent to $url: $msg")
     }
 
     fun publish(eventJson: String) {
         val msg = "[\"EVENT\",$eventJson]"
         webSocket?.send(msg)
-        Log.d(TAG, "EVENT sent to $url")
     }
 
     fun close() {
@@ -115,7 +104,6 @@ class NostrRelay(
             (1000L * (1L shl minOf(reconnectAttempts, 6))),
             MAX_RECONNECT_DELAY
         )
-        Log.d(TAG, "Reconnecting to $url in ${delay}ms (attempt $reconnectAttempts)")
         Thread {
             Thread.sleep(delay)
             if (shouldReconnect) connect()

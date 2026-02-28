@@ -1,14 +1,11 @@
 package uk.co.signstr.app
 
-import android.app.Activity
 import android.content.Context
 import android.widget.Toast
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricPrompt
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,6 +14,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
+import uk.co.signstr.app.data.SignstrPreferences
 import uk.co.signstr.app.ui.components.shared.*
 import uk.co.signstr.app.ui.theme.SignstrColors
 import uk.co.signstr.app.ui.theme.outfitFamily
@@ -25,6 +25,9 @@ import uk.co.signstr.app.ui.views.events.EventsView
 import uk.co.signstr.app.ui.views.identity.IdentityView
 import uk.co.signstr.app.ui.views.settings.SettingsView
 import uk.co.signstr.app.ui.views.splash.SplashView
+import uk.co.signstr.app.ui.views.onboarding.OnboardingView
+import uk.co.signstr.app.ui.views.keysetup.KeySetupView
+import uk.co.signstr.app.ui.views.keysetup.BackupKeyView
 import uk.co.signstr.app.utils.signstrClickEffect
 import uk.co.signstr.app.viewmodels.SignstrViewModel
 import kotlinx.coroutines.delay
@@ -36,103 +39,152 @@ enum class SignstrTab(val label: String) {
     SETTINGS("SETTINGS")
 }
 
+enum class AppScreen {
+    SPLASH, ONBOARDING, KEY_SETUP, BACKUP_KEY, MAIN
+}
+
 @Composable
 fun SignstrNavigation(
     context: Context,
     viewModel: SignstrViewModel
 ) {
-    var showSplash by remember { mutableStateOf(true) }
+    var currentScreen by remember { mutableStateOf(AppScreen.SPLASH) }
     var currentTab by remember { mutableStateOf(SignstrTab.CONNECT) }
-    var showCreateDialog by remember { mutableStateOf(false) }
-    var showExportDialog by remember { mutableStateOf(false) }
+    var pendingNsecForBackup by remember { mutableStateOf<String?>(null) }
 
-    // Splash timer
     LaunchedEffect(Unit) {
         viewModel.initialize()
-        delay(1500)
-        showSplash = false
-        // If no identities, show create dialog
-        if (viewModel.identities.isEmpty()) {
-            showCreateDialog = true
+        delay(2000)
+        currentScreen = when {
+            !SignstrPreferences.isOnboardingComplete(context) -> AppScreen.ONBOARDING
+            !SignstrPreferences.isKeySetupComplete(context) || viewModel.identities.isEmpty() -> AppScreen.KEY_SETUP
+            else -> AppScreen.MAIN
         }
     }
 
-    // Approval dialog
     val showApproval = viewModel.showApprovalDialog.value
     val pendingRequest = viewModel.pendingRequest.value
 
     Box(modifier = Modifier.fillMaxSize()) {
-        AnimatedVisibility(visible = showSplash, enter = fadeIn(), exit = fadeOut()) {
-            SplashView()
-        }
+        when (currentScreen) {
+            AppScreen.SPLASH -> SplashView()
 
-        AnimatedVisibility(visible = !showSplash, enter = fadeIn(), exit = fadeOut()) {
-            Column(modifier = Modifier
-                .fillMaxSize()
-                .statusBarsPadding()
-            ) {
-                // Content area
-                Box(modifier = Modifier.weight(1f)) {
-                    when (currentTab) {
-                        SignstrTab.CONNECT -> ConnectView(context, viewModel)
-                        SignstrTab.EVENTS -> EventsView(viewModel)
-                        SignstrTab.IDENTITY -> IdentityView(context, viewModel, onCreateIdentity = { showCreateDialog = true })
-                        SignstrTab.SETTINGS -> SettingsView(context, viewModel, onExportNsec = { showExportDialog = true })
-                    }
-                }
-
-                // Tab bar
-                TabBar(currentTab = currentTab, onTabSelected = { currentTab = it })
-            }
-        }
-
-        // Create identity dialog
-        if (showCreateDialog) {
-            CreateIdentityDialog(
-                onDismiss = { showCreateDialog = false },
-                onCreateNew = { name ->
-                    viewModel.createIdentity(name)
-                    showCreateDialog = false
-                    Toast.makeText(context, "Identity created", Toast.LENGTH_SHORT).show()
-                },
-                onImport = { name, nsec ->
-                    val identity = viewModel.importIdentity(name, nsec)
-                    if (identity != null) {
-                        showCreateDialog = false
-                        Toast.makeText(context, "Identity imported", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(context, "Invalid nsec", Toast.LENGTH_SHORT).show()
-                    }
+            AppScreen.ONBOARDING -> OnboardingView(
+                onComplete = {
+                    SignstrPreferences.setOnboardingComplete(context, true)
+                    currentScreen = AppScreen.KEY_SETUP
                 }
             )
-        }
 
-        // Export nsec dialog
-        if (showExportDialog) {
-            val identity = viewModel.activeIdentity.value
-            if (identity != null) {
-                val nsec = remember(identity.id) { viewModel.getNsec(identity.id) }
-                if (nsec != null) {
-                    ExportNsecDialog(
-                        nsec = nsec,
-                        context = context,
-                        onDismiss = { showExportDialog = false }
-                    )
-                } else {
-                    LaunchedEffect(Unit) { showExportDialog = false }
+            AppScreen.KEY_SETUP -> KeySetupView(
+                onIdentityCreated = { identity ->
+                    val nsec = viewModel.getNsec(identity.id)
+                    pendingNsecForBackup = nsec
+                    currentScreen = AppScreen.BACKUP_KEY
+                },
+                viewModel = viewModel,
+                context = context
+            )
+
+            AppScreen.BACKUP_KEY -> BackupKeyView(
+                nsec = pendingNsecForBackup ?: "",
+                context = context,
+                onComplete = {
+                    SignstrPreferences.setKeySetupComplete(context, true)
+                    SignstrPreferences.setFirstLaunchDone(context)
+                    pendingNsecForBackup = null
+                    currentScreen = AppScreen.MAIN
                 }
-            } else {
-                LaunchedEffect(Unit) { showExportDialog = false }
+            )
+
+            AppScreen.MAIN -> {
+                Column(modifier = Modifier
+                    .fillMaxSize()
+                    .statusBarsPadding()
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(44.dp)
+                            .background(SignstrColors.bg)
+                            .padding(horizontal = 16.dp),
+                        contentAlignment = Alignment.CenterStart
+                    ) {
+                        Text(
+                            text = "SIGNSTR",
+                            style = TextStyle(
+                                fontFamily = outfitFamily,
+                                fontWeight = FontWeight.Normal,
+                                fontSize = 11.sp,
+                                letterSpacing = 5.sp,
+                                color = SignstrColors.textMuted
+                            )
+                        )
+                    }
+
+                    Box(modifier = Modifier.weight(1f)) {
+                        when (currentTab) {
+                            SignstrTab.CONNECT -> ConnectView(context, viewModel)
+                            SignstrTab.EVENTS -> EventsView(viewModel)
+                            SignstrTab.IDENTITY -> IdentityView(
+                                context = context,
+                                viewModel = viewModel,
+                                onCreateIdentity = {
+                                    currentScreen = AppScreen.KEY_SETUP
+                                }
+                            )
+                            SignstrTab.SETTINGS -> SettingsView(
+                                context = context,
+                                viewModel = viewModel,
+                                onDeleteAllData = {
+                                    viewModel.deleteAllData()
+                                    currentScreen = AppScreen.KEY_SETUP
+                                },
+                                onResetApp = {
+                                    viewModel.resetApp()
+                                    currentScreen = AppScreen.ONBOARDING
+                                }
+                            )
+                        }
+                    }
+
+                    TabBar(currentTab = currentTab, onTabSelected = { currentTab = it })
+                }
             }
         }
 
-        // Approval dialog
+        // Approval dialog with biometric gate
         if (showApproval && pendingRequest != null) {
             ApprovalDialog(
                 request = pendingRequest,
                 onApprove = {
-                    // Biometric prompt would go here for non-safe kinds
-                    viewModel.approveRequest()
+                    val activity = context as? FragmentActivity
+                    val biometricsEnabled = SignstrPreferences.isBiometricsEnabled(context)
+                    if (activity != null && biometricsEnabled) {
+                        val canAuth = BiometricManager.from(context)
+                            .canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK)
+                        if (canAuth == BiometricManager.BIOMETRIC_SUCCESS) {
+                            val executor = ContextCompat.getMainExecutor(context)
+                            val prompt = BiometricPrompt(activity, executor,
+                                object : BiometricPrompt.AuthenticationCallback() {
+                                    override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                                        viewModel.approveRequest()
+                                    }
+                                    override fun onAuthenticationError(errorCode: Int, errString: CharSequence) { }
+                                    override fun onAuthenticationFailed() { }
+                                })
+                            val promptInfo = BiometricPrompt.PromptInfo.Builder()
+                                .setTitle("Sign Nostr Event")
+                                .setSubtitle("Authenticate to approve signing")
+                                .setNegativeButtonText("Cancel")
+                                .build()
+                            prompt.authenticate(promptInfo)
+                        } else {
+                            viewModel.approveRequest()
+                        }
+                    } else {
+                        viewModel.approveRequest()
+                    }
                 },
                 onReject = { viewModel.rejectRequest() }
             )
@@ -165,114 +217,11 @@ private fun TabBar(currentTab: SignstrTab, onTabSelected: (SignstrTab) -> Unit) 
                     style = TextStyle(
                         fontFamily = outfitFamily,
                         fontWeight = FontWeight.Normal,
-                        fontSize = 9.sp,
-                        letterSpacing = 2.sp,
+                        fontSize = 8.sp,
+                        letterSpacing = 1.sp,
                         color = if (isActive) SignstrColors.textMuted else SignstrColors.textGhost
                     )
                 )
-            }
-        }
-    }
-}
-
-@Composable
-private fun ExportNsecDialog(nsec: String, context: Context, onDismiss: () -> Unit) {
-    var revealed by remember { mutableStateOf(false) }
-
-    androidx.compose.ui.window.Dialog(onDismissRequest = onDismiss) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(SignstrColors.bgRaised, RoundedCornerShape(16.dp))
-                .padding(24.dp)
-        ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
-                    text = "EXPORT NSEC",
-                    style = TextStyle(
-                        fontFamily = outfitFamily,
-                        fontWeight = FontWeight.Normal,
-                        fontSize = 11.sp,
-                        letterSpacing = 4.sp,
-                        color = SignstrColors.danger
-                    )
-                )
-                Spacer(modifier = Modifier.height(12.dp))
-
-                // Warning
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(SignstrColors.dangerBg, RoundedCornerShape(8.dp))
-                        .padding(12.dp)
-                ) {
-                    Text(
-                        text = "Anyone who sees this key controls your Nostr identity. Only export if you need to recover or migrate.",
-                        style = TextStyle(
-                            fontFamily = outfitFamily,
-                            fontWeight = FontWeight.Light,
-                            fontSize = 12.sp,
-                            color = SignstrColors.danger,
-                            lineHeight = 18.sp
-                        )
-                    )
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-
-                if (revealed) {
-                    Text(
-                        text = nsec,
-                        style = TextStyle(
-                            fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
-                            fontWeight = FontWeight.Normal,
-                            fontSize = 11.sp,
-                            color = SignstrColors.textBody,
-                            lineHeight = 16.sp
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(SignstrColors.bgSurface, RoundedCornerShape(8.dp))
-                            .padding(12.dp)
-                    )
-                } else {
-                    Text(
-                        text = "nsec1" + "\u2022".repeat(40),
-                        style = TextStyle(
-                            fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
-                            fontWeight = FontWeight.Normal,
-                            fontSize = 11.sp,
-                            color = SignstrColors.textGhost,
-                            lineHeight = 16.sp
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(SignstrColors.bgSurface, RoundedCornerShape(8.dp))
-                            .padding(12.dp)
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    GhostButton(
-                        text = if (revealed) "Hide" else "Reveal",
-                        onClick = { revealed = !revealed },
-                        modifier = Modifier.weight(1f),
-                        isDanger = true
-                    )
-                    GhostButton(
-                        text = "Copy",
-                        onClick = {
-                            uk.co.signstr.app.utils.ClipboardUtil.copyWithAutoClear(
-                                context, "nsec", nsec
-                            )
-                        },
-                        modifier = Modifier.weight(1f)
-                    )
-                }
             }
         }
     }

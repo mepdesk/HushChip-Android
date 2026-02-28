@@ -1,7 +1,9 @@
 package uk.co.signstr.app
 
 import android.app.Activity
+import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,6 +17,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import uk.co.signstr.app.services.SignstrForegroundService
 import uk.co.signstr.app.ui.theme.SignstrTheme
 import uk.co.signstr.app.viewmodels.SignstrViewModel
 
@@ -51,6 +54,28 @@ class MainActivity : ComponentActivity() {
                         viewModel = viewModel
                     )
                 }
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.isAppInForeground.value = true
+        startForegroundServiceIfNeeded()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.isAppInForeground.value = false
+    }
+
+    private fun startForegroundServiceIfNeeded() {
+        if (viewModel.connections.isNotEmpty() || viewModel.identities.isNotEmpty()) {
+            val intent = Intent(this, SignstrForegroundService::class.java)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(intent)
+            } else {
+                startService(intent)
             }
         }
     }

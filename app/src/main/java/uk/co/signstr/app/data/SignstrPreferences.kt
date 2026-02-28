@@ -13,6 +13,10 @@ object SignstrPreferences {
     private const val KEY_ACTIVE_IDENTITY_ID = "active_identity_id"
     private const val KEY_FIRST_LAUNCH = "first_launch"
     private const val KEY_DEFAULT_RELAYS = "default_relays"
+    private const val KEY_ONBOARDING_COMPLETE = "onboardingComplete"
+    private const val KEY_KEY_SETUP_COMPLETE = "keySetupComplete"
+    private const val KEY_BIOMETRICS_ENABLED = "biometricsEnabled"
+    private const val KEY_NOTIFICATIONS_ENABLED = "notificationsEnabled"
 
     private val json = Json { ignoreUnknownKeys = true; encodeDefaults = true }
 
@@ -24,6 +28,30 @@ object SignstrPreferences {
 
     fun setFirstLaunchDone(context: Context) =
         prefs(context).edit().putBoolean(KEY_FIRST_LAUNCH, false).apply()
+
+    fun isOnboardingComplete(context: Context): Boolean =
+        prefs(context).getBoolean(KEY_ONBOARDING_COMPLETE, false)
+
+    fun setOnboardingComplete(context: Context, complete: Boolean) =
+        prefs(context).edit().putBoolean(KEY_ONBOARDING_COMPLETE, complete).apply()
+
+    fun isKeySetupComplete(context: Context): Boolean =
+        prefs(context).getBoolean(KEY_KEY_SETUP_COMPLETE, false)
+
+    fun setKeySetupComplete(context: Context, complete: Boolean) =
+        prefs(context).edit().putBoolean(KEY_KEY_SETUP_COMPLETE, complete).apply()
+
+    fun isBiometricsEnabled(context: Context): Boolean =
+        prefs(context).getBoolean(KEY_BIOMETRICS_ENABLED, true)
+
+    fun setBiometricsEnabled(context: Context, enabled: Boolean) =
+        prefs(context).edit().putBoolean(KEY_BIOMETRICS_ENABLED, enabled).apply()
+
+    fun isNotificationsEnabled(context: Context): Boolean =
+        prefs(context).getBoolean(KEY_NOTIFICATIONS_ENABLED, true)
+
+    fun setNotificationsEnabled(context: Context, enabled: Boolean) =
+        prefs(context).edit().putBoolean(KEY_NOTIFICATIONS_ENABLED, enabled).apply()
 
     fun getActiveIdentityId(context: Context): String? =
         prefs(context).getString(KEY_ACTIVE_IDENTITY_ID, null)
@@ -53,7 +81,7 @@ object SignstrPreferences {
     }
 
     fun saveEventLog(context: Context, entries: List<EventLogEntry>) {
-        val trimmed = if (entries.size > 500) entries.takeLast(500) else entries
+        val trimmed = if (entries.size > 500) entries.take(500) else entries
         prefs(context).edit().putString(KEY_EVENT_LOG, json.encodeToString(trimmed)).apply()
     }
 
@@ -67,9 +95,17 @@ object SignstrPreferences {
     fun saveDefaultRelays(context: Context, relays: List<String>) =
         prefs(context).edit().putString(KEY_DEFAULT_RELAYS, json.encodeToString(relays)).apply()
 
+    fun clearAllData(context: Context) {
+        prefs(context).edit().clear().apply()
+    }
+
+    fun resetApp(context: Context) {
+        prefs(context).edit().clear().apply()
+    }
+
     val DEFAULT_RELAYS = listOf(
+        "wss://relay.nsec.app",
         "wss://relay.damus.io",
-        "wss://relay.primal.net",
-        "wss://relay.nostr.band"
+        "wss://nos.lol"
     )
 }

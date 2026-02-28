@@ -11,8 +11,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -104,15 +102,17 @@ private fun EventLogCard(entry: EventLogEntry) {
     val dateFormat = SimpleDateFormat("MMM d, HH:mm:ss", Locale.getDefault())
     val timeStr = dateFormat.format(Date(entry.timestamp))
 
+    val badgeColor = when (entry.statusBadge) {
+        "REJECTED" -> SignstrColors.danger
+        "SAFE-AUTO" -> SignstrColors.textGhost
+        "AUTO-APPROVED" -> SignstrColors.textFaint
+        else -> SignstrColors.success
+    }
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(SignstrColors.bgRaised, Color(0xFF0C0C0E))
-                ),
-                shape = RoundedCornerShape(10.dp)
-            )
+            .background(SignstrColors.bgRaised, RoundedCornerShape(10.dp))
             .border(1.dp, SignstrColors.border, RoundedCornerShape(10.dp))
             .padding(12.dp)
     ) {
@@ -123,7 +123,7 @@ private fun EventLogCard(entry: EventLogEntry) {
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = entry.method,
+                    text = entry.kindDescription,
                     style = TextStyle(
                         fontFamily = outfitFamily,
                         fontWeight = FontWeight.Normal,
@@ -166,13 +166,13 @@ private fun EventLogCard(entry: EventLogEntry) {
                 )
             }
             Text(
-                text = if (entry.approved) "APPROVED" else "REJECTED",
+                text = entry.statusBadge,
                 style = TextStyle(
                     fontFamily = outfitFamily,
                     fontWeight = FontWeight.Normal,
                     fontSize = 9.sp,
                     letterSpacing = 1.sp,
-                    color = if (entry.approved) SignstrColors.success else SignstrColors.danger
+                    color = badgeColor
                 )
             )
         }
