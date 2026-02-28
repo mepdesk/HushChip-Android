@@ -1,11 +1,9 @@
 package uk.co.signstr.app
 
-import android.app.Activity
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -16,21 +14,20 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.fragment.app.FragmentActivity
 import uk.co.signstr.app.services.SignstrForegroundService
 import uk.co.signstr.app.ui.theme.SignstrTheme
 import uk.co.signstr.app.viewmodels.SignstrViewModel
 
-class MainActivity : ComponentActivity() {
+class MainActivity : FragmentActivity() {
 
     private val viewModel: SignstrViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setContent {
-            val context = LocalContext.current as Activity
-            context.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
             SignstrTheme {
                 Box(
                     modifier = Modifier
@@ -50,7 +47,7 @@ class MainActivity : ComponentActivity() {
                         }
                 ) {
                     SignstrNavigation(
-                        context = context,
+                        context = this@MainActivity,
                         viewModel = viewModel
                     )
                 }
@@ -70,13 +67,17 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun startForegroundServiceIfNeeded() {
-        if (viewModel.connections.isNotEmpty() || viewModel.identities.isNotEmpty()) {
-            val intent = Intent(this, SignstrForegroundService::class.java)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                startForegroundService(intent)
-            } else {
-                startService(intent)
+        try {
+            if (viewModel.connections.isNotEmpty() || viewModel.identities.isNotEmpty()) {
+                val intent = Intent(this, SignstrForegroundService::class.java)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    startForegroundService(intent)
+                } else {
+                    startService(intent)
+                }
             }
+        } catch (_: Exception) {
+            // Foreground service may fail if app is in background or restricted
         }
     }
 }

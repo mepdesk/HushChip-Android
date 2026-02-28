@@ -39,10 +39,30 @@ fun ConnectView(
     var showQr by remember { mutableStateOf(connections.isEmpty()) }
     val bunkerUri = viewModel.bunkerUri.value
     var selectedConnection by remember { mutableStateOf<SignstrConnection?>(null) }
+    var showScanner by remember { mutableStateOf(false) }
 
     LaunchedEffect(activeIdentity) {
         viewModel.updateBunkerUri()
         if (connections.isEmpty()) showQr = true
+    }
+
+    // Full-screen scanner overlay
+    if (showScanner && activeIdentity != null) {
+        ScannerView(
+            context = context,
+            onConnect = { info ->
+                viewModel.nip46Service?.addConnection(
+                    clientPubkey = info.pubkey,
+                    relayUrls = info.relays,
+                    secret = info.secret,
+                    appName = info.name,
+                    identity = activeIdentity
+                )
+                showScanner = false
+            },
+            onBack = { showScanner = false }
+        )
+        return
     }
 
     Column(
@@ -120,13 +140,24 @@ fun ConnectView(
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp)
             ) {
-                GhostButton(
-                    text = "Show Bunker QR",
-                    onClick = {
-                        viewModel.updateBunkerUri()
-                        showQr = true
-                    }
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    GhostButton(
+                        text = "Show Bunker QR",
+                        onClick = {
+                            viewModel.updateBunkerUri()
+                            showQr = true
+                        },
+                        modifier = Modifier.weight(1f)
+                    )
+                    GhostButton(
+                        text = "Add Connection",
+                        onClick = { showScanner = true },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
                 Spacer(modifier = Modifier.height(16.dp))
                 SectionLabel("CONNECTIONS")
             }

@@ -1,7 +1,8 @@
 package uk.co.signstr.app.ui.views.identity
 
 import android.content.Context
-import android.widget.Toast
+import android.content.Intent
+import android.net.Uri
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.compose.foundation.background
@@ -230,6 +231,11 @@ fun IdentityView(
                     modifier = Modifier.weight(1f)
                 )
             }
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            // NostrKey Card
+            NostrKeyCard(context = context)
 
             Spacer(modifier = Modifier.height(40.dp))
         }
@@ -669,6 +675,68 @@ private fun SafeKindsEditorDialog(
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun NostrKeyCard(context: Context) {
+    SectionLabel("HARDWARE")
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(SignstrColors.bgRaised, RoundedCornerShape(12.dp))
+            .border(1.dp, SignstrColors.border, RoundedCornerShape(12.dp))
+            .padding(16.dp)
+    ) {
+        Column {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                // Phone icon drawn with text
+                Text(
+                    text = "\uD83D\uDCF1",
+                    fontSize = 20.sp
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "GO AIR-GAPPED",
+                    style = TextStyle(
+                        fontFamily = outfitFamily,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 11.sp,
+                        letterSpacing = 4.sp,
+                        color = SignstrColors.textBright
+                    )
+                )
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text = "Your key lives on this device. Want it off? NostrKey card stores your nsec in a secure element. Your key never touches your phone again. Tap to sign. Nothing to hack.",
+                style = TextStyle(
+                    fontFamily = outfitFamily,
+                    fontWeight = FontWeight.Light,
+                    fontSize = 12.sp,
+                    color = SignstrColors.textMuted,
+                    lineHeight = 18.sp
+                )
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text = "GBP 14.99",
+                style = TextStyle(
+                    fontFamily = outfitFamily,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 14.sp,
+                    color = SignstrColors.textBody
+                )
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            GhostButton(
+                text = "Learn More",
+                onClick = {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://signstr.com/card"))
+                    context.startActivity(intent)
+                }
+            )
         }
     }
 }
