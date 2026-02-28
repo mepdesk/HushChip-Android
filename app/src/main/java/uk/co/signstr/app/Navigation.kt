@@ -67,7 +67,10 @@ fun SignstrNavigation(
         }
 
         AnimatedVisibility(visible = !showSplash, enter = fadeIn(), exit = fadeOut()) {
-            Column(modifier = Modifier.fillMaxSize()) {
+            Column(modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding()
+            ) {
                 // Content area
                 Box(modifier = Modifier.weight(1f)) {
                     when (currentTab) {
@@ -108,14 +111,18 @@ fun SignstrNavigation(
         if (showExportDialog) {
             val identity = viewModel.activeIdentity.value
             if (identity != null) {
-                val nsec = remember { viewModel.getNsec(identity.id) }
+                val nsec = remember(identity.id) { viewModel.getNsec(identity.id) }
                 if (nsec != null) {
                     ExportNsecDialog(
                         nsec = nsec,
                         context = context,
                         onDismiss = { showExportDialog = false }
                     )
+                } else {
+                    LaunchedEffect(Unit) { showExportDialog = false }
                 }
+            } else {
+                LaunchedEffect(Unit) { showExportDialog = false }
             }
         }
 
@@ -139,6 +146,7 @@ private fun TabBar(currentTab: SignstrTab, onTabSelected: (SignstrTab) -> Unit) 
         modifier = Modifier
             .fillMaxWidth()
             .background(SignstrColors.bg)
+            .navigationBarsPadding()
             .padding(top = 1.dp)
             .padding(horizontal = 8.dp, vertical = 12.dp),
         horizontalArrangement = Arrangement.SpaceEvenly

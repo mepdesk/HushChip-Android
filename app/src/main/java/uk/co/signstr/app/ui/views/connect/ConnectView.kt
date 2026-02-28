@@ -37,11 +37,13 @@ fun ConnectView(
 ) {
     val activeIdentity = viewModel.activeIdentity.value
     val connections = viewModel.getActiveConnections()
-    var showQr by remember { mutableStateOf(false) }
+    // Auto-show QR when there are no connections yet
+    var showQr by remember { mutableStateOf(connections.isEmpty()) }
     val bunkerUri = viewModel.bunkerUri.value
 
     LaunchedEffect(activeIdentity) {
         viewModel.updateBunkerUri()
+        if (connections.isEmpty()) showQr = true
     }
 
     Column(

@@ -28,6 +28,8 @@ class NIP46Service(
 
     private val relays = ConcurrentHashMap<String, NostrRelay>()
     private val processedEventIds = ConcurrentHashMap.newKeySet<String>()
+    // Map identity pubkey -> current bunker secret for connect validation
+    private val pendingSecrets = ConcurrentHashMap<String, String>()
     private val json = Json { ignoreUnknownKeys = true }
 
     companion object {
@@ -124,8 +126,11 @@ class NIP46Service(
         val msg = json.parseToJsonElement(decrypted).jsonObject
         val requestId = msg["id"]?.jsonPrimitive?.content ?: return
         val method = msg["method"]?.jsonPrimitive?.content ?: return
-        val params = msg["params"]?.jsonArray?.map {
-            it.jsonPrimitive.content
+        // Params can contain JSON objects (e.g. sign_event sends an event object as a string)
+        // or plain strings. Handle both cases.
+        val params = msg["params"]?.jsonArray?.map { element ->
+            if (element is JsonPrimitive) element.content
+            else element.toString()
         } ?: emptyList()
 
         Log.d(TAG, "NIP-46 method=$method requestId=$requestId from=$clientPubkey")
@@ -185,7 +190,19 @@ class NIP46Service(
         identity: SignstrIdentity,
         privkey: ByteArray
     ) {
+        // NIP-46 connect params: [<remote_user_pubkey>, <secret>]
+        // params[0] = signer pubkey (echoed by client), params[1] = secret
         val secret = if (params.size > 1) params[1] else ""
+
+        // Validate secret against our pending bunker secret
+        val expectedSecret = pendingSecrets[identity.pubkeyHex]
+        if (expectedSecret != null && secret.isNotEmpty() && secret != expectedSecret) {
+            Log.w(TAG, "Connect secret mismatch from $clientPubkey")
+            sendResponse(requestId, clientPubkey, identity.pubkeyHex, privkey,
+                error = "Secret mismatch")
+            return
+        }
+
         val connections = SignstrPreferences.getConnections(context).toMutableList()
         val existing = connections.find { it.clientPubkeyHex == clientPubkey && it.identityId == identity.id }
 
@@ -200,7 +217,6 @@ class NIP46Service(
             id = UUID.randomUUID().toString(),
             identityId = identity.id,
             clientPubkeyHex = clientPubkey,
-            clientName = if (params.isNotEmpty()) params[0] else "",
             relays = relayUrls,
             secret = secret,
             createdAt = System.currentTimeMillis() / 1000
@@ -334,6 +350,7 @@ class NIP46Service(
 
     fun generateBunkerUri(identity: SignstrIdentity): String {
         val secret = NIP44.bytesToHex(ByteArray(16).also { SecureRandom().nextBytes(it) })
+        pendingSecrets[identity.pubkeyHex] = secret
         val relays = SignstrPreferences.getDefaultRelays(context)
         val relayParams = relays.joinToString("&") { "relay=$it" }
         return "bunker://${identity.pubkeyHex}?$relayParams&secret=$secret"

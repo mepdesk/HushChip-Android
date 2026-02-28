@@ -1,6 +1,8 @@
 package uk.co.signstr.app.viewmodels
 
 import android.app.Application
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -22,6 +24,8 @@ class SignstrViewModel(application: Application) : AndroidViewModel(application)
 
     var nip46Service: NIP46Service? = null
         private set
+
+    private val mainHandler = Handler(Looper.getMainLooper())
 
     companion object {
         private const val TAG = "SignstrViewModel"
@@ -50,16 +54,22 @@ class SignstrViewModel(application: Application) : AndroidViewModel(application)
         nip46Service = NIP46Service(
             context = context,
             onSigningRequest = { request ->
-                pendingRequest.value = request
-                showApprovalDialog.value = true
+                mainHandler.post {
+                    pendingRequest.value = request
+                    showApprovalDialog.value = true
+                }
             },
             onConnectionRequest = { connection ->
-                if (connections.none { it.id == connection.id }) {
-                    connections.add(connection)
+                mainHandler.post {
+                    if (connections.none { it.id == connection.id }) {
+                        connections.add(connection)
+                    }
                 }
             },
             onEventLogged = { entry ->
-                eventLog.add(entry)
+                mainHandler.post {
+                    eventLog.add(entry)
+                }
             }
         )
         nip46Service?.start()
@@ -158,16 +168,20 @@ class SignstrViewModel(application: Application) : AndroidViewModel(application)
 
     fun approveRequest() {
         val request = pendingRequest.value ?: return
-        nip46Service?.approveRequest(request)
         showApprovalDialog.value = false
         pendingRequest.value = null
+        Thread {
+            nip46Service?.approveRequest(request)
+        }.start()
     }
 
     fun rejectRequest() {
         val request = pendingRequest.value ?: return
-        nip46Service?.rejectRequest(request)
         showApprovalDialog.value = false
         pendingRequest.value = null
+        Thread {
+            nip46Service?.rejectRequest(request)
+        }.start()
     }
 
     fun getActiveConnections(): List<SignstrConnection> {

@@ -228,7 +228,7 @@ fun SettingsView(
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "GPL-3.0 \u2022 github.com/hushchip/Signstr-Android",
+                text = "GPL-3.0 \u2022 github.com/nicepayments/signstr-android",
                 style = TextStyle(
                     fontFamily = outfitFamily,
                     fontWeight = FontWeight.Light,

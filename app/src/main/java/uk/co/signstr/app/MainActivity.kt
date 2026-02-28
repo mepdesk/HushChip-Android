@@ -5,11 +5,10 @@ import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
@@ -24,37 +23,33 @@ class MainActivity : ComponentActivity() {
     private val viewModel: SignstrViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setContent {
             val context = LocalContext.current as Activity
             context.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
             SignstrTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .drawBehind {
-                                drawRect(color = Color(0xFF09090B))
-                                drawCircle(
-                                    brush = Brush.radialGradient(
-                                        colors = listOf(
-                                            Color(0xFF111115),
-                                            Color(0xFF09090B)
-                                        ),
-                                        center = Offset(size.width / 2f, size.height * 0.35f),
-                                        radius = size.width * 0.9f
-                                    )
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .drawBehind {
+                            drawRect(color = Color(0xFF09090B))
+                            drawCircle(
+                                brush = Brush.radialGradient(
+                                    colors = listOf(
+                                        Color(0xFF111115),
+                                        Color(0xFF09090B)
+                                    ),
+                                    center = Offset(size.width / 2f, size.height * 0.35f),
+                                    radius = size.width * 0.9f
                                 )
-                            }
-                    ) {
-                        SignstrNavigation(
-                            context = context,
-                            viewModel = viewModel
-                        )
-                    }
+                            )
+                        }
+                ) {
+                    SignstrNavigation(
+                        context = context,
+                        viewModel = viewModel
+                    )
                 }
             }
         }
