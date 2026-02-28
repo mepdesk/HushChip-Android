@@ -1,25 +1,32 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# Signstr ProGuard rules
 
-# Satochip card communication library — do not obfuscate
--keep class org.satochip.** { *; }
--dontwarn org.satochip.**
-
-# Keep NFC service
--keep class uk.co.hushchip.app.services.** { *; }
+# Keep NIP-46 service and crypto
+-keep class uk.co.signstr.app.services.** { *; }
+-keep class uk.co.signstr.app.crypto.** { *; }
+-keep class uk.co.signstr.app.nip46.** { *; }
+-keep class uk.co.signstr.app.data.** { *; }
 
 # Preserve line numbers for debugging stack traces
 -keepattributes SourceFile,LineNumberTable
 -renamesourcefileattribute SourceFile
 
-# OkHttp platform checks
+# OkHttp
 -dontwarn org.bouncycastle.jsse.**
 -dontwarn org.conscrypt.**
 -dontwarn org.openjsse.**
+-dontwarn okhttp3.internal.platform.**
 
 # SLF4J
 -dontwarn org.slf4j.**
+
+# kotlinx.serialization
+-keepattributes *Annotation*, InnerClasses
+-dontnote kotlinx.serialization.AnnotationsKt
+-keepclassmembers class kotlinx.serialization.json.** { *** Companion; }
+-keepclasseswithmembers class kotlinx.serialization.json.** { kotlinx.serialization.KSerializer serializer(...); }
+-keep,includedescriptorclasses class uk.co.signstr.app.data.**$$serializer { *; }
+-keepclassmembers class uk.co.signstr.app.data.** { *** Companion; }
+-keepclasseswithmembers class uk.co.signstr.app.data.** { kotlinx.serialization.KSerializer serializer(...); }
+
+# ML Kit barcode scanning
+-dontwarn com.google.mlkit.**

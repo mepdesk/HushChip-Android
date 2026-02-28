@@ -7,15 +7,15 @@ plugins {
 }
 
 android {
-    namespace = "uk.co.hushchip.app"
+    namespace = "uk.co.signstr.app"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "uk.co.hushchip.app"
-        minSdk = 24
+        applicationId = "uk.co.signstr.app"
+        minSdk = 26
         targetSdk = 34
-        versionCode = 10000 // if versionName is x.y.z, versionCode is 10000x+100y+z
-        versionName = "1.0.0" // using semantic versioning x.y.z (0<=x,y,z<=99)
+        versionCode = 10000
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -69,7 +69,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -78,6 +77,34 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+
+    // Navigation
+    implementation(libs.navigation.compose)
+    implementation(libs.kotlinx.serialization.json)
+
+    // QR code
+    implementation(libs.qrcode.kotlin.android)
+
+    // Image loading
+    implementation(libs.coil.compose)
+
+    // WebSocket / HTTP
+    implementation(libs.okhttp)
+
+    // Biometrics
+    implementation(libs.biometric)
+
+    // Secure storage
+    implementation(libs.security.crypto)
+
+    // CameraX + ML Kit for QR scanning
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+    implementation(libs.mlkit.barcode)
+
+    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -85,23 +112,4 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
-    //satochip libraries
-    implementation(files("libs/satochip-lib-0.2.3.jar"))
-    implementation(files("libs/satochip-android-0.0.2.jar"))
-
-    // libs dependencies
-    implementation(libs.bitcoinj.core)
-    implementation(libs.guava)
-
-    //Type safe navigation
-    implementation(libs.navigation.compose)
-    implementation(libs.kotlinx.serialization.json)
-
-    //Compose coil image
-    implementation(libs.coil.gif)
-    implementation(libs.coil.compose)
-
-    //QR string to image converter
-    implementation(libs.qrcode.kotlin.android)
 }

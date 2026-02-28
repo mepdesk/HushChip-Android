@@ -19,6 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "HushChip"
+rootProject.name = "Signstr"
 include(":app")
- 
